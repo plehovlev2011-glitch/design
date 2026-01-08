@@ -57,6 +57,10 @@ html, body {
   animation: none;
 }
 
+#load3.hiding {
+  animation: fadeOut 0.8s ease-out forwards;
+}
+
 .main-content {
   display: none;
 }
@@ -76,6 +80,7 @@ html, body {
   height: auto;
   display: block;
   pointer-events: none;
+  animation: fadeInZoom 1.2s ease-out;
 }
 
 .block-screen {
@@ -104,13 +109,29 @@ html, body {
 .error-text {
   background: rgba(0, 0, 0, 0.7);
   padding: 30px 50px;
-  border-radius: 10px;
+  border-radius: 1000px;
   max-width: 80%;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .audio-element {
@@ -164,6 +185,7 @@ function showLoadStep(step) {
   document.getElementById('load1').classList.remove('active');
   document.getElementById('load2').classList.remove('active');
   document.getElementById('load3').classList.remove('active');
+  document.getElementById('load3').classList.remove('hiding');
   
   if (document.getElementById(`load${step}`)) {
     document.getElementById(`load${step}`).classList.add('active');
@@ -172,9 +194,16 @@ function showLoadStep(step) {
 
 // Функция завершения загрузки
 function finishLoading() {
-  loadScreen.style.display = 'none';
-  mainContent.classList.add('active');
-  setTimeout(() => playClickSound(), 300);
+  // Добавляем анимацию исчезновения для load3
+  const load3 = document.getElementById('load3');
+  load3.classList.add('hiding');
+  
+  // После завершения анимации fade out показываем основное изображение
+  setTimeout(() => {
+    loadScreen.style.display = 'none';
+    mainContent.classList.add('active');
+    setTimeout(() => playClickSound(), 300);
+  }, 800); // Длительность анимации fadeOut
 }
 
 // Процесс загрузки

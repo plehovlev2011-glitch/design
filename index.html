@@ -3,13 +3,6 @@
 <head>
 <title>/l - дизайню с душой</title>
 <style>
-@font-face {
-  font-family: 'Anonymous Pro';
-  src: url('https://fonts.googleapis.com/css2?family=Anonymous+Pro&display=swap');
-  font-weight: normal;
-  font-style: normal;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -17,7 +10,7 @@
   box-sizing: border-box;
   -webkit-user-select: none;
   user-select: none;
-  cursor: url('curs.png'), auto !important;
+  cursor: url('curs.png'), auto;
 }
 
 html, body {
@@ -28,7 +21,7 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Anonymous Pro', monospace;
+  font-family: 'Courier New', monospace;
 }
 
 .load-screen {
@@ -54,7 +47,14 @@ html, body {
 
 .load-screen img.active {
   display: block;
+}
+
+#load1.active {
   animation: fadeIn 0.5s ease-in;
+}
+
+#load2.active, #load3.active {
+  animation: none;
 }
 
 .main-content {
@@ -89,7 +89,7 @@ html, body {
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  font-family: 'Anonymous Pro', monospace;
+  font-family: 'Courier New', monospace;
   color: white;
   font-size: 24px;
   text-align: center;
@@ -150,24 +150,21 @@ const loadScreen = document.getElementById('loadScreen');
 const mainContent = document.getElementById('mainContent');
 const blockScreen = document.getElementById('blockScreen');
 const clickSound = document.getElementById('clickSound');
-let currentLoadStep = 1;
 
 // Функция для воспроизведения звука
 function playClickSound() {
   if (clickSound) {
     clickSound.currentTime = 0;
-    clickSound.play().catch(e => console.log("Звук не воспроизведен:", e));
+    clickSound.play().catch(e => {});
   }
 }
 
 // Функция для показа загрузки
 function showLoadStep(step) {
-  // Скрываем все изображения загрузки
   document.getElementById('load1').classList.remove('active');
   document.getElementById('load2').classList.remove('active');
   document.getElementById('load3').classList.remove('active');
   
-  // Показываем нужный шаг
   if (document.getElementById(`load${step}`)) {
     document.getElementById(`load${step}`).classList.add('active');
   }
@@ -177,35 +174,33 @@ function showLoadStep(step) {
 function finishLoading() {
   loadScreen.style.display = 'none';
   mainContent.classList.add('active');
-  
-  // Воспроизводим звук при появлении основного изображения
   setTimeout(() => playClickSound(), 300);
 }
 
 // Процесс загрузки
 function startLoadingProcess() {
-  // Шаг 1: load1 на 1 секунду
+  // Шаг 1: load1 на 1 секунду (с fade in)
   showLoadStep(1);
   
   setTimeout(() => {
-    // Шаг 2: load2 на 0.7 секунды
+    // Шаг 2: load2 на 0.7 секунды (без анимации)
     showLoadStep(2);
     
     setTimeout(() => {
-      // Шаг 3: load3 на случайное время от 0.2 до 2 секунд
+      // Шаг 3: load3 на случайное время от 0.2 до 2 секунд (без анимации)
       showLoadStep(3);
-      const randomTime = 200 + Math.random() * 1800; // 200ms - 2000ms
+      const randomTime = 200 + Math.random() * 1800;
       
       setTimeout(() => {
         finishLoading();
       }, randomTime);
       
-    }, 700); // load2 на экране 700ms
+    }, 700);
     
-  }, 1000); // load1 на экране 1000ms
+  }, 1000);
 }
 
-// Защита от контекстного меню
+// Защита и звуки
 document.oncontextmenu = function(e) {
   playClickSound();
   return false;
@@ -214,7 +209,6 @@ document.oncontextmenu = function(e) {
 document.onselectstart = function() { return false; };
 document.ondragstart = function() { return false; };
 
-// Блокировка горячих клавиш
 document.onkeydown = function(e) {
   playClickSound();
   
@@ -225,13 +219,12 @@ document.onkeydown = function(e) {
   }
 };
 
-// Воспроизведение звука при клике в любом месте
 document.addEventListener('click', function(e) {
   playClickSound();
   e.preventDefault();
 });
 
-// Анимация заголовка вкладки
+// Анимация заголовка
 let titleIndex = 0;
 const titles = [
   "/l - дизайню с душой",
@@ -243,34 +236,34 @@ function changeTitle() {
   titleIndex = (titleIndex + 1) % titles.length;
 }
 
-// Запускаем смену заголовка каждые 5 секунд
 setInterval(changeTitle, 5000);
 
-// Защита от открытия консоли
+// Защита от консоли
 setInterval(function() {
   if (window.outerHeight - window.innerHeight > 200 || 
       window.outerWidth - window.innerWidth > 200) {
-    // Показываем блок-экран ошибки
     mainContent.style.display = 'none';
     loadScreen.style.display = 'none';
     blockScreen.classList.add('active');
-    
-    // Воспроизводим звук
     playClickSound();
   }
 }, 2000);
 
-// Запускаем процесс загрузки при полной загрузке страницы
+// Запуск при загрузке страницы
 window.addEventListener('load', function() {
-  // Даем небольшую задержку перед началом загрузки
   setTimeout(() => {
     startLoadingProcess();
   }, 300);
+  
+  // Предзагрузка курсора
+  if (typeof window.Cursor === 'undefined') {
+    let cursorImg = new Image();
+    cursorImg.src = 'curs.png';
+  }
 });
 
 // Предзагрузка звука
 window.addEventListener('DOMContentLoaded', function() {
-  // Пытаемся загрузить звук заранее
   if (clickSound) {
     clickSound.load();
   }

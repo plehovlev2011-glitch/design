@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>/l - дизайню с душой</title>
+<title>/l - координаты кликов</title>
 <style>
 * {
   margin: 0;
@@ -10,7 +10,7 @@
   box-sizing: border-box;
   -webkit-user-select: none;
   user-select: none;
-  cursor: url('curs.png'), auto;
+  cursor: crosshair;
 }
 
 html, body {
@@ -19,283 +19,288 @@ html, body {
   overflow: hidden;
   background: #0011ff;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Courier New', monospace;
-}
-
-.load-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #0011ff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-}
-
-.load-screen img {
-  max-width: 95vw;
-  max-height: 95vh;
-  width: auto;
-  height: auto;
-  display: none;
-}
-
-.load-screen img.active {
-  display: block;
-}
-
-#load1.active {
-  animation: fadeIn 0.5s ease-in;
-}
-
-#load2.active, #load3.active {
-  animation: none;
-}
-
-#load3.hiding {
-  animation: fadeOut 0.8s ease-out forwards;
-}
-
-.main-content {
-  display: none;
-}
-
-.main-content.active {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.main-content img {
-  max-width: 95vw;
-  max-height: 95vh;
-  width: auto;
-  height: auto;
-  display: block;
-  pointer-events: none;
-  animation: fadeInZoom 1.2s ease-out;
-}
-
-.block-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #0011ff;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  font-family: 'Courier New', monospace;
-  color: white;
-  font-size: 24px;
-  text-align: center;
-  padding: 20px;
   flex-direction: column;
+  font-family: 'Courier New', monospace;
 }
 
-.block-screen.active {
+.container {
+  flex: 1;
+  position: relative;
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.error-text {
-  background: rgba(0, 0, 0, 0.7);
-  padding: 30px 50px;
-  border-radius: 1000px;
-  max-width: 80%;
+.main-image {
+  max-width: 95vw;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  display: block;
+  cursor: crosshair;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.coordinates-panel {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px;
+  font-size: 14px;
+  height: 20vh;
+  overflow-y: auto;
+  border-top: 2px solid white;
 }
 
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+.coordinates-panel h3 {
+  margin: 0 0 10px 0;
+  color: #00ff00;
 }
 
-@keyframes fadeInZoom {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+.coordinates-list {
+  font-family: 'Courier New', monospace;
+  margin-bottom: 10px;
 }
 
-.audio-element {
-  display: none;
+.coord-item {
+  margin-bottom: 5px;
+  padding: 3px 0;
+  border-bottom: 1px solid #333;
+}
+
+.coord-item:last-child {
+  border-bottom: none;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+button {
+  background: #00ff00;
+  color: black;
+  border: none;
+  padding: 8px 15px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #00cc00;
+}
+
+.clear-btn {
+  background: #ff5555;
+}
+
+.clear-btn:hover {
+  background: #cc0000;
+}
+
+.coord-marker {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: red;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1000;
+  border: 2px solid white;
+  animation: pulse 0.5s;
+}
+
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.5); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.coord-number {
+  position: absolute;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  background: red;
+  padding: 2px 5px;
+  border-radius: 3px;
+  transform: translate(-50%, -25px);
+  pointer-events: none;
+  z-index: 1000;
 }
 </style>
 </head>
 <body>
-<!-- Экран загрузки -->
-<div class="load-screen" id="loadScreen">
-  <img id="load1" src="load1.png" alt="">
-  <img id="load2" src="load2.png" alt="">
-  <img id="load3" src="load3.png" alt="">
+<div class="container" id="imageContainer">
+  <img src="hello.png" class="main-image" id="mainImage" alt="Ваше изображение">
 </div>
 
-<!-- Основной контент -->
-<div class="main-content" id="mainContent">
-  <img src="hello.png">
-</div>
-
-<!-- Блок-экран ошибки -->
-<div class="block-screen" id="blockScreen">
-  <div class="error-text">
-    ой. произошла ошибка.<br>
-    пожалуйста, обнови страницу!
+<div class="coordinates-panel">
+  <h3>Координаты кликов (последний — сверху)</h3>
+  <div class="coordinates-list" id="coordList">
+    <!-- Сюда будут добавляться координаты -->
+  </div>
+  
+  <div class="controls">
+    <button onclick="copyAllCoordinates()">📋 Копировать все координаты</button>
+    <button onclick="copyLastCoordinate()">📋 Копировать последнюю координату</button>
+    <button class="clear-btn" onclick="clearAllCoordinates()">🗑️ Очистить все</button>
   </div>
 </div>
 
-<!-- Аудио элемент для звуков -->
-<audio id="clickSound" class="audio-element" preload="auto">
-  <source src="entr.mp3" type="audio/mpeg">
-</audio>
-
 <script>
-// Инициализация переменных
-const loadScreen = document.getElementById('loadScreen');
-const mainContent = document.getElementById('mainContent');
-const blockScreen = document.getElementById('blockScreen');
-const clickSound = document.getElementById('clickSound');
+let clickCount = 0;
+const coordinates = [];
 
-// Функция для воспроизведения звука
-function playClickSound() {
-  if (clickSound) {
-    clickSound.currentTime = 0;
-    clickSound.play().catch(e => {});
-  }
-}
-
-// Функция для показа загрузки
-function showLoadStep(step) {
-  document.getElementById('load1').classList.remove('active');
-  document.getElementById('load2').classList.remove('active');
-  document.getElementById('load3').classList.remove('active');
-  document.getElementById('load3').classList.remove('hiding');
+// Обработчик клика по изображению
+document.getElementById('imageContainer').addEventListener('click', function(e) {
+  const img = document.getElementById('mainImage');
+  const container = this;
   
-  if (document.getElementById(`load${step}`)) {
-    document.getElementById(`load${step}`).classList.add('active');
-  }
-}
-
-// Функция завершения загрузки
-function finishLoading() {
-  // Добавляем анимацию исчезновения для load3
-  const load3 = document.getElementById('load3');
-  load3.classList.add('hiding');
+  // Получаем координаты относительно изображения
+  const rect = img.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
   
-  // После завершения анимации fade out показываем основное изображение
-  setTimeout(() => {
-    loadScreen.style.display = 'none';
-    mainContent.classList.add('active');
-    setTimeout(() => playClickSound(), 300);
-  }, 800); // Длительность анимации fadeOut
-}
-
-// Процесс загрузки
-function startLoadingProcess() {
-  // Шаг 1: load1 на 1 секунду (с fade in)
-  showLoadStep(1);
+  // Координаты относительно изображения
+  const x = Math.round(e.clientX - rect.left);
+  const y = Math.round(e.clientY - rect.top);
   
-  setTimeout(() => {
-    // Шаг 2: load2 на 0.7 секунды (без анимации)
-    showLoadStep(2);
-    
-    setTimeout(() => {
-      // Шаг 3: load3 на случайное время от 0.2 до 2 секунд (без анимации)
-      showLoadStep(3);
-      const randomTime = 200 + Math.random() * 1800;
-      
-      setTimeout(() => {
-        finishLoading();
-      }, randomTime);
-      
-    }, 700);
-    
-  }, 1000);
-}
-
-// Защита и звуки
-document.oncontextmenu = function(e) {
-  playClickSound();
-  return false;
-};
-
-document.onselectstart = function() { return false; };
-document.ondragstart = function() { return false; };
-
-document.onkeydown = function(e) {
-  playClickSound();
+  // Координаты в процентах
+  const xPercent = Math.round((x / rect.width) * 100);
+  const yPercent = Math.round((y / rect.height) * 100);
   
-  if (e.key === "F12" || 
-      (e.ctrlKey && e.shiftKey && e.key === "I") ||
-      (e.ctrlKey && e.key === "u")) {
-    return false;
-  }
-};
-
-document.addEventListener('click', function(e) {
-  playClickSound();
-  e.preventDefault();
+  clickCount++;
+  
+  // Сохраняем координату
+  const coordData = {
+    id: clickCount,
+    x: x,
+    y: y,
+    xPercent: xPercent,
+    yPercent: yPercent,
+    width: Math.round(rect.width),
+    height: Math.round(rect.height)
+  };
+  
+  coordinates.unshift(coordData); // Добавляем в начало
+  
+  // Создаем маркер
+  createMarker(e.clientX - containerRect.left, e.clientY - containerRect.top, clickCount);
+  
+  // Обновляем список
+  updateCoordinatesList();
+  
+  console.log(`Клик #${clickCount}: X=${x}px (${xPercent}%), Y=${y}px (${yPercent}%)`);
 });
 
-// Анимация заголовка
-let titleIndex = 0;
-const titles = [
-  "/l - дизайню с душой",
-  "/l - быстро, круто, надежно"
-];
-
-function changeTitle() {
-  document.title = titles[titleIndex];
-  titleIndex = (titleIndex + 1) % titles.length;
+// Создание маркера на месте клика
+function createMarker(x, y, number) {
+  const container = document.getElementById('imageContainer');
+  
+  const marker = document.createElement('div');
+  marker.className = 'coord-marker';
+  marker.style.left = x + 'px';
+  marker.style.top = y + 'px';
+  
+  const numberLabel = document.createElement('div');
+  numberLabel.className = 'coord-number';
+  numberLabel.textContent = number;
+  numberLabel.style.left = x + 'px';
+  numberLabel.style.top = y + 'px';
+  
+  container.appendChild(marker);
+  container.appendChild(numberLabel);
+  
+  // Удаляем через 10 секунд
+  setTimeout(() => {
+    marker.remove();
+    numberLabel.remove();
+  }, 10000);
 }
 
-setInterval(changeTitle, 5000);
+// Обновление списка координат
+function updateCoordinatesList() {
+  const list = document.getElementById('coordList');
+  list.innerHTML = '';
+  
+  coordinates.forEach(coord => {
+    const item = document.createElement('div');
+    item.className = 'coord-item';
+    item.innerHTML = `
+      <strong>#${coord.id}:</strong> 
+      X=${coord.x}px (${coord.xPercent}%), 
+      Y=${coord.y}px (${coord.yPercent}%) 
+      [${coord.width}×${coord.height}]
+    `;
+    list.appendChild(item);
+  });
+}
 
-// Защита от консоли
-setInterval(function() {
-  if (window.outerHeight - window.innerHeight > 200 || 
-      window.outerWidth - window.innerWidth > 200) {
-    mainContent.style.display = 'none';
-    loadScreen.style.display = 'none';
-    blockScreen.classList.add('active');
-    playClickSound();
+// Копирование всех координат
+function copyAllCoordinates() {
+  let text = `Координаты кликов для изображения:\n`;
+  text += `Размер изображения: ${coordinates[0]?.width || 0}×${coordinates[0]?.height || 0}px\n\n`;
+  
+  coordinates.forEach(coord => {
+    text += `#${coord.id}: X=${coord.x}px (${coord.xPercent}%), Y=${coord.y}px (${coord.yPercent}%)\n`;
+  });
+  
+  // Формат для JS кода
+  text += `\n// Для JavaScript кода:\n`;
+  coordinates.forEach(coord => {
+    text += `{x1: ${coord.x-50}, y1: ${coord.y-25}, x2: ${coord.x+50}, y2: ${coord.y+25}, url: 'page.html'},\n`;
+  });
+  
+  copyToClipboard(text);
+  alert(`Скопировано ${coordinates.length} координат!`);
+}
+
+// Копирование последней координаты
+function copyLastCoordinate() {
+  if (coordinates.length === 0) {
+    alert('Нет координат для копирования!');
+    return;
   }
-}, 2000);
+  
+  const last = coordinates[0];
+  const text = `X=${last.x}px (${last.xPercent}%), Y=${last.y}px (${last.yPercent}%)`;
+  
+  copyToClipboard(text);
+  alert('Последняя координата скопирована!');
+}
 
-// Запуск при загрузке страницы
+// Очистка всех координат
+function clearAllCoordinates() {
+  if (confirm('Очистить все координаты и маркеры?')) {
+    clickCount = 0;
+    coordinates.length = 0;
+    
+    // Удаляем все маркеры
+    document.querySelectorAll('.coord-marker, .coord-number').forEach(el => el.remove());
+    
+    updateCoordinatesList();
+    alert('Все координаты очищены!');
+  }
+}
+
+// Вспомогательная функция для копирования в буфер обмена
+function copyToClipboard(text) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textarea);
+}
+
+// Инструкция при загрузке
 window.addEventListener('load', function() {
   setTimeout(() => {
-    startLoadingProcess();
-  }, 300);
-  
-  // Предзагрузка курсора
-  if (typeof window.Cursor === 'undefined') {
-    let cursorImg = new Image();
-    cursorImg.src = 'curs.png';
-  }
-});
-
-// Предзагрузка звука
-window.addEventListener('DOMContentLoaded', function() {
-  if (clickSound) {
-    clickSound.load();
-  }
+    alert('Кликайте по кнопкам на изображении, чтобы определить их координаты.\nКоординаты будут отображаться внизу с возможностью копирования.');
+  }, 500);
 });
 </script>
 </body>

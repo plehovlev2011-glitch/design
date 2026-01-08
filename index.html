@@ -1,406 +1,420 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>/l - дизайню с душой</title>
+<title>Инструмент выделения областей</title>
 <style>
 * {
   margin: 0;
   padding: 0;
-  border: 0;
   box-sizing: border-box;
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: url('curs.png'), auto;
 }
 
-html, body {
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  background: #0011ff;
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f0f0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.toolbar {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.controls {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Courier New', monospace;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
 }
 
-.load-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #0011ff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-}
-
-.load-screen img {
-  max-width: 95vw;
-  max-height: 95vh;
-  width: auto;
-  height: auto;
-  display: none;
-}
-
-.load-screen img.active {
-  display: block;
-}
-
-#load1.active {
-  animation: fadeIn 0.5s ease-in;
-}
-
-#load2.active, #load3.active {
-  animation: none;
-}
-
-#load3.hiding {
-  animation: fadeOut 0.8s ease-out forwards;
-}
-
-.main-content {
-  display: none;
-  position: relative;
-}
-
-.main-content.active {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.main-image {
-  max-width: 95vw;
-  max-height: 95vh;
-  width: auto;
-  height: auto;
-  display: block;
-  pointer-events: none;
-  animation: fadeInZoom 1.2s ease-out;
-}
-
-/* Невидимые кликабельные области */
-.click-area {
-  position: absolute;
-  background: rgba(255, 0, 0, 0.3); /* Полупрозрачный красный для отладки */
+button {
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
   transition: background 0.2s;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+button#clear {
+  background: #dc3545;
+}
+
+button#clear:hover {
+  background: #c82333;
+}
+
+.info {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #666;
+}
+
+.image-container {
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  display: inline-block;
+}
+
+#mainImage {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  cursor: crosshair;
+}
+
+.selection-area {
+  position: absolute;
+  border: 2px solid #007bff;
+  background: rgba(0, 123, 255, 0.1);
+  pointer-events: none;
   z-index: 10;
 }
 
-.click-area:hover {
-  background: rgba(0, 255, 0, 0.3); /* Зеленый при наведении */
-}
-
-/* Скрыть области после отладки */
-.click-area.debug {
-  background: rgba(255, 0, 0, 0.3);
-}
-
-.click-area.debug:hover {
-  background: rgba(0, 255, 0, 0.3);
-}
-
-/* Скрыть области в релизе */
-.click-area.release {
-  background: transparent !important;
-}
-
-.block-screen {
-  position: fixed;
-  top: 0;
+.selection-label {
+  position: absolute;
+  top: -30px;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: #0011ff;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  font-family: 'Courier New', monospace;
+  background: #007bff;
   color: white;
-  font-size: 24px;
-  text-align: center;
-  padding: 20px;
-  flex-direction: column;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
 
-.block-screen.active {
-  display: flex;
+.coordinates-display {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  max-width: 300px;
+  z-index: 1000;
 }
 
-.error-text {
-  background: rgba(0, 0, 0, 0.7);
-  padding: 30px 50px;
-  border-radius: 1000px;
-  max-width: 80%;
+.coordinates-display h3 {
+  margin-top: 0;
+  color: #00ff00;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+#coordOutput {
+  background: #222;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  font-size: 12px;
+  margin-top: 10px;
 }
 
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+.button-name {
+  width: 150px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-@keyframes fadeInZoom {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.audio-element {
-  display: none;
+.current-action {
+  background: #28a745;
+  color: white;
 }
 </style>
 </head>
 <body>
-<!-- Экран загрузки -->
-<div class="load-screen" id="loadScreen">
-  <img id="load1" src="load1.png" alt="">
-  <img id="load2" src="load2.png" alt="">
-  <img id="load3" src="load3.png" alt="">
-</div>
-
-<!-- Основной контент -->
-<div class="main-content" id="mainContent">
-  <img src="hello.png" class="main-image">
+<div class="container">
+  <div class="toolbar">
+    <h1>Инструмент выделения областей для изображения</h1>
+    
+    <div class="controls">
+      <select id="buttonSelect" class="button-name">
+        <option value="about">обо мне</option>
+        <option value="contacts">контакты</option>
+        <option value="cases">кейсы</option>
+        <option value="why">почему я</option>
+        <option value="other">остальное</option>
+        <option value="custom">другая область</option>
+      </select>
+      
+      <button id="startSelect" class="current-action">Начать выделение</button>
+      <button id="clear">Очистить всё</button>
+      <button id="copy">Копировать код</button>
+      <button id="export">Экспорт в файл</button>
+    </div>
+    
+    <div class="info">
+      <strong>Инструкция:</strong><br>
+      1. Выберите название кнопки<br>
+      2. Нажмите "Начать выделение"<br>
+      3. Нажмите и протяните на изображении для выделения области<br>
+      4. Повторите для каждой кнопки<br>
+      5. Скопируйте готовый код
+    </div>
+  </div>
   
-  <!-- Кликабельные области на основе ваших координат -->
-  <div class="click-area debug" id="aboutBtn" 
-       style="left: 22px; top: 237px; width: 120px; height: 50px;" 
-       title="обо мне"></div>
-  
-  <div class="click-area debug" id="contactsBtn" 
-       style="left: 173px; top: 235px; width: 120px; height: 50px;" 
-       title="контакты"></div>
-  
-  <div class="click-area debug" id="casesBtn" 
-       style="left: 313px; top: 237px; width: 120px; height: 50px;" 
-       title="кейсы"></div>
-  
-  <div class="click-area debug" id="whyBtn" 
-       style="left: 421px; top: 235px; width: 120px; height: 50px;" 
-       title="почему я"></div>
-  
-  <div class="click-area debug" id="otherBtn" 
-       style="left: 584px; top: 233px; width: 120px; height: 50px;" 
-       title="остальное"></div>
-</div>
-
-<!-- Блок-экран ошибки -->
-<div class="block-screen" id="blockScreen">
-  <div class="error-text">
-    ой. произошла ошибка.<br>
-    пожалуйста, обнови страницу!
+  <div class="image-container">
+    <img id="mainImage" src="hello.png" alt="Ваше изображение">
   </div>
 </div>
 
-<!-- Аудио элемент для звуков -->
-<audio id="clickSound" class="audio-element" preload="auto">
-  <source src="entr.mp3" type="audio/mpeg">
-</audio>
+<div class="coordinates-display">
+  <h3>Готовый код:</h3>
+  <div id="coordOutput">// Области будут отображаться здесь</div>
+</div>
 
 <script>
-// Инициализация переменных
-const loadScreen = document.getElementById('loadScreen');
-const mainContent = document.getElementById('mainContent');
-const blockScreen = document.getElementById('blockScreen');
-const clickSound = document.getElementById('clickSound');
+let isSelecting = false;
+let startX, startY;
+let currentSelection = null;
+let selections = [];
+let currentButtonName = 'about';
+let buttonCounter = 1;
 
-// Функция для воспроизведения звука
-function playClickSound() {
-  if (clickSound) {
-    clickSound.currentTime = 0;
-    clickSound.play().catch(e => {});
-  }
-}
+const image = document.getElementById('mainImage');
+const buttonSelect = document.getElementById('buttonSelect');
+const startSelectBtn = document.getElementById('startSelect');
+const clearBtn = document.getElementById('clear');
+const copyBtn = document.getElementById('copy');
+const exportBtn = document.getElementById('export');
+const coordOutput = document.getElementById('coordOutput');
 
-// Функция для показа загрузки
-function showLoadStep(step) {
-  document.getElementById('load1').classList.remove('active');
-  document.getElementById('load2').classList.remove('active');
-  document.getElementById('load3').classList.remove('active');
-  document.getElementById('load3').classList.remove('hiding');
-  
-  if (document.getElementById(`load${step}`)) {
-    document.getElementById(`load${step}`).classList.add('active');
-  }
-}
-
-// Функция завершения загрузки
-function finishLoading() {
-  const load3 = document.getElementById('load3');
-  load3.classList.add('hiding');
-  
-  setTimeout(() => {
-    loadScreen.style.display = 'none';
-    mainContent.classList.add('active');
-    
-    // Переключить на релизный режим (скрыть области)
-    setTimeout(() => {
-      document.querySelectorAll('.click-area').forEach(area => {
-        area.classList.remove('debug');
-        area.classList.add('release');
-      });
-    }, 2000); // Через 2 секунды скрываем области
-    
-    setTimeout(() => playClickSound(), 300);
-  }, 800);
-}
-
-// Процесс загрузки
-function startLoadingProcess() {
-  showLoadStep(1);
-  
-  setTimeout(() => {
-    showLoadStep(2);
-    
-    setTimeout(() => {
-      showLoadStep(3);
-      const randomTime = 200 + Math.random() * 1800;
-      
-      setTimeout(() => {
-        finishLoading();
-      }, randomTime);
-      
-    }, 700);
-    
-  }, 1000);
-}
-
-// Обработчики кликов по кнопкам
-function setupClickAreas() {
-  // Кнопка "обо мне"
-  document.getElementById('aboutBtn').addEventListener('click', function(e) {
-    playClickSound();
-    e.stopPropagation();
-    // Здесь можно открыть другую страницу
-    // window.open('about.html', '_self');
-    alert('Переход на страницу "обо мне"');
-  });
-  
-  // Кнопка "контакты"
-  document.getElementById('contactsBtn').addEventListener('click', function(e) {
-    playClickSound();
-    e.stopPropagation();
-    // window.open('contacts.html', '_self');
-    alert('Переход на страницу "контакты"');
-  });
-  
-  // Кнопка "кейсы"
-  document.getElementById('casesBtn').addEventListener('click', function(e) {
-    playClickSound();
-    e.stopPropagation();
-    // window.open('cases.html', '_self');
-    alert('Переход на страницу "кейсы"');
-  });
-  
-  // Кнопка "почему я"
-  document.getElementById('whyBtn').addEventListener('click', function(e) {
-    playClickSound();
-    e.stopPropagation();
-    // window.open('why.html', '_self');
-    alert('Переход на страницу "почему я"');
-  });
-  
-  // Кнопка "остальное"
-  document.getElementById('otherBtn').addEventListener('click', function(e) {
-    playClickSound();
-    e.stopPropagation();
-    // window.open('other.html', '_self');
-    alert('Переход на страницу "остальное"');
-  });
-}
-
-// Защита и звуки
-document.oncontextmenu = function(e) {
-  playClickSound();
-  return false;
+// Загрузка изображения
+image.onload = function() {
+  console.log('Изображение загружено:', this.width, 'x', this.height);
+  updateCodeDisplay();
 };
 
-document.onselectstart = function() { return false; };
-document.ondragstart = function() { return false; };
-
-document.onkeydown = function(e) {
-  playClickSound();
-  
-  if (e.key === "F12" || 
-      (e.ctrlKey && e.shiftKey && e.key === "I") ||
-      (e.ctrlKey && e.key === "u")) {
-    return false;
-  }
+image.onerror = function() {
+  alert('Ошибка загрузки изображения hello.png. Убедитесь, что файл находится в той же папке.');
 };
 
-// Анимация заголовка
-let titleIndex = 0;
-const titles = [
-  "/l - дизайню с душой",
-  "/l - быстро, круто, надежно"
-];
+// Изменение названия кнопки
+buttonSelect.addEventListener('change', function() {
+  currentButtonName = this.value;
+  if (currentButtonName === 'custom') {
+    const customName = prompt('Введите название области:', 'область' + buttonCounter);
+    if (customName) {
+      currentButtonName = customName;
+      buttonCounter++;
+    } else {
+      currentButtonName = 'about';
+      this.value = 'about';
+    }
+  }
+});
 
-function changeTitle() {
-  document.title = titles[titleIndex];
-  titleIndex = (titleIndex + 1) % titles.length;
+// Начало выделения
+startSelectBtn.addEventListener('click', function() {
+  isSelecting = true;
+  image.style.cursor = 'crosshair';
+  this.textContent = 'Режим выделения активен';
+  this.classList.add('current-action');
+  alert('Теперь нажмите и протяните на изображении чтобы выделить область');
+});
+
+// События мыши
+image.addEventListener('mousedown', function(e) {
+  if (!isSelecting) return;
+  
+  const rect = image.getBoundingClientRect();
+  startX = e.clientX - rect.left;
+  startY = e.clientY - rect.top;
+  
+  // Создаем область выделения
+  currentSelection = document.createElement('div');
+  currentSelection.className = 'selection-area';
+  currentSelection.style.left = startX + 'px';
+  currentSelection.style.top = startY + 'px';
+  currentSelection.style.width = '0px';
+  currentSelection.style.height = '0px';
+  
+  // Добавляем метку
+  const label = document.createElement('div');
+  label.className = 'selection-label';
+  label.textContent = currentButtonName;
+  currentSelection.appendChild(label);
+  
+  this.parentElement.appendChild(currentSelection);
+});
+
+image.addEventListener('mousemove', function(e) {
+  if (!isSelecting || !currentSelection) return;
+  
+  const rect = image.getBoundingClientRect();
+  const currentX = e.clientX - rect.left;
+  const currentY = e.clientY - rect.top;
+  
+  const width = currentX - startX;
+  const height = currentY - startY;
+  
+  currentSelection.style.width = Math.abs(width) + 'px';
+  currentSelection.style.height = Math.abs(height) + 'px';
+  
+  if (width < 0) {
+    currentSelection.style.left = currentX + 'px';
+  }
+  if (height < 0) {
+    currentSelection.style.top = currentY + 'px';
+  }
+});
+
+image.addEventListener('mouseup', function(e) {
+  if (!isSelecting || !currentSelection) return;
+  
+  const rect = image.getBoundingClientRect();
+  const endX = e.clientX - rect.left;
+  const endY = e.clientY - rect.top;
+  
+  // Вычисляем координаты
+  const x1 = Math.min(startX, endX);
+  const y1 = Math.min(startY, endY);
+  const x2 = Math.max(startX, endX);
+  const y2 = Math.max(startY, endY);
+  
+  // Сохраняем область
+  selections.push({
+    name: currentButtonName,
+    x1: Math.round(x1),
+    y1: Math.round(y1),
+    x2: Math.round(x2),
+    y2: Math.round(y2),
+    width: Math.round(x2 - x1),
+    height: Math.round(y2 - y1)
+  });
+  
+  // Сбрасываем состояние
+  isSelecting = false;
+  currentSelection = null;
+  image.style.cursor = 'default';
+  startSelectBtn.textContent = 'Начать выделение';
+  startSelectBtn.classList.remove('current-action');
+  
+  // Обновляем отображение
+  updateCodeDisplay();
+  
+  alert(`Область "${currentButtonName}" сохранена: ${Math.round(x1)}x${Math.round(y1)} - ${Math.round(x2)}x${Math.round(y2)}`);
+});
+
+// Очистка всего
+clearBtn.addEventListener('click', function() {
+  if (confirm('Удалить все выделенные области?')) {
+    selections = [];
+    document.querySelectorAll('.selection-area').forEach(el => el.remove());
+    updateCodeDisplay();
+  }
+});
+
+// Копирование кода
+copyBtn.addEventListener('click', function() {
+  const code = generateCode();
+  navigator.clipboard.writeText(code)
+    .then(() => alert('Код скопирован в буфер обмена!'))
+    .catch(err => {
+      const textArea = document.createElement('textarea');
+      textArea.value = code;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert('Код скопирован в буфер обмена!');
+    });
+});
+
+// Экспорт в файл
+exportBtn.addEventListener('click', function() {
+  const code = generateCode();
+  const blob = new Blob([code], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'image-with-areas.html';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// Генерация кода
+function generateCode() {
+  const imageWidth = image.naturalWidth;
+  const imageHeight = image.naturalHeight;
+  
+  let htmlCode = `<!-- Области для кнопок на изображении hello.png -->
+<!-- Размер изображения: ${imageWidth}x${imageHeight} -->
+<!-- Сгенерировано с помощью инструмента выделения -->\n\n`;
+
+  selections.forEach(area => {
+    // Координаты в процентах (для адаптивности)
+    const x1Percent = ((area.x1 / imageWidth) * 100).toFixed(2);
+    const y1Percent = ((area.y1 / imageHeight) * 100).toFixed(2);
+    const x2Percent = ((area.x2 / imageWidth) * 100).toFixed(2);
+    const y2Percent = ((area.y2 / imageHeight) * 100).toFixed(2);
+    
+    htmlCode += `<!-- ${area.name} -->\n`;
+    htmlCode += `<div class="click-area" \n`;
+    htmlCode += `     style="left: ${x1Percent}%; top: ${y1Percent}%; \n`;
+    htmlCode += `            width: ${((area.width / imageWidth) * 100).toFixed(2)}%; \n`;
+    htmlCode += `            height: ${((area.height / imageHeight) * 100).toFixed(2)}%;"\n`;
+    htmlCode += `     onclick="window.open('${area.name.replace(/\s+/g, '_').toLowerCase()}.html', '_self')"\n`;
+    htmlCode += `     title="${area.name}">\n`;
+    htmlCode += `</div>\n\n`;
+  });
+
+  return htmlCode;
 }
 
-setInterval(changeTitle, 5000);
-
-// Защита от консоли
-setInterval(function() {
-  if (window.outerHeight - window.innerHeight > 200 || 
-      window.outerWidth - window.innerWidth > 200) {
-    mainContent.style.display = 'none';
-    loadScreen.style.display = 'none';
-    blockScreen.classList.add('active');
-    playClickSound();
+// Обновление отображения кода
+function updateCodeDisplay() {
+  if (selections.length === 0) {
+    coordOutput.textContent = '// Выделите области на изображении';
+    return;
   }
-}, 2000);
-
-// Запуск при загрузке страницы
-window.addEventListener('load', function() {
-  setTimeout(() => {
-    startLoadingProcess();
-  }, 300);
   
-  // Настройка кликабельных областей
-  setupClickAreas();
+  const imageWidth = image.naturalWidth;
+  const imageHeight = image.naturalHeight;
   
-  // Предзагрузка курсора
-  if (typeof window.Cursor === 'undefined') {
-    let cursorImg = new Image();
-    cursorImg.src = 'curs.png';
-  }
-});
+  let displayText = `Размер изображения: ${imageWidth}x${imageHeight}\n\n`;
+  
+  selections.forEach((area, index) => {
+    displayText += `${index + 1}. ${area.name}:\n`;
+    displayText += `   Координаты: ${area.x1},${area.y1} - ${area.x2},${area.y2}\n`;
+    displayText += `   Размер: ${area.width}x${area.height}\n`;
+    displayText += `   В процентах: ${((area.x1/imageWidth)*100).toFixed(1)}%,${((area.y1/imageHeight)*100).toFixed(1)}% - ${((area.x2/imageWidth)*100).toFixed(1)}%,${((area.y2/imageHeight)*100).toFixed(1)}%\n\n`;
+  });
+  
+  coordOutput.textContent = displayText;
+}
 
-// Предзагрузка звука
-window.addEventListener('DOMContentLoaded', function() {
-  if (clickSound) {
-    clickSound.load();
-  }
-});
-
-// Обработчик кликов вне областей (для тестирования)
-document.addEventListener('click', function(e) {
-  // Проверяем, не кликнули ли мы по кликабельной области
-  if (!e.target.classList.contains('click-area')) {
-    playClickSound();
-    e.preventDefault();
-  }
-});
+// Инициализация
+updateCodeDisplay();
 </script>
 </body>
 </html>

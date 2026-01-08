@@ -1,453 +1,178 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>AREA SELECTOR TOOL</title>
+<title>Area Selector</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap');
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'IBM Plex Mono', monospace;
-  letter-spacing: 0.5px;
-}
-
 body {
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-  min-height: 100vh;
-  padding: 25px;
-}
-
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
+  margin: 20px;
+  font-family: Arial, sans-serif;
 }
 
 .toolbar {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  padding: 25px 30px;
-  border-radius: 6000px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
-.toolbar h1 {
-  color: #5a6c7d;
-  font-size: 22px;
-  font-weight: 400;
-  text-align: center;
-  margin-bottom: 25px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-}
-
-.controls-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-bottom: 25px;
-}
-
-.control-group {
+.controls {
   display: flex;
-  flex-direction: column;
   gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
 }
 
-.control-group label {
-  color: #7d8fa3;
-  font-size: 13px;
-  text-transform: uppercase;
-  font-weight: 500;
-}
-
-.select-area, .button-name {
-  background: rgba(245, 247, 250, 0.8);
-  border: 1.5px solid rgba(179, 192, 209, 0.3);
-  padding: 14px 20px;
-  border-radius: 6000px;
+input, select, button {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   font-size: 14px;
-  color: #5a6c7d;
-  outline: none;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
 }
 
-.select-area:focus, .button-name:focus {
-  border-color: #a8c6df;
-  background: rgba(255, 255, 255, 0.95);
+input {
+  width: 200px;
 }
 
-.button-name {
-  background: rgba(255, 249, 242, 0.8);
-  border-color: rgba(223, 211, 195, 0.4);
-}
-
-.button-name::placeholder {
-  color: #b0a699;
-  text-transform: none;
-}
-
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
-  padding-top: 20px;
-  border-top: 1px solid rgba(179, 192, 209, 0.2);
-}
-
-.action-btn {
-  background: linear-gradient(135deg, #a8d8ea 0%, #8cc2d8 100%);
+button {
+  background: #007bff;
+  color: white;
   border: none;
-  padding: 16px 35px;
-  border-radius: 6000px;
-  color: #2c536c;
-  font-size: 14px;
-  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  min-width: 200px;
-  box-shadow: 0 6px 20px rgba(168, 214, 234, 0.3);
+  min-width: 100px;
 }
 
-.action-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(168, 214, 234, 0.4);
-  background: linear-gradient(135deg, #9ad0e5 0%, #7bb8d0 100%);
+button:hover {
+  background: #0056b3;
 }
 
-.action-btn#clear {
-  background: linear-gradient(135deg, #ffb8b8 0%, #ff9e9e 100%);
-  color: #8c4a4a;
-  box-shadow: 0 6px 20px rgba(255, 184, 184, 0.3);
+#clear {
+  background: #dc3545;
 }
 
-.action-btn#clear:hover {
-  background: linear-gradient(135deg, #ffa8a8 0%, #ff8e8e 100%);
-  box-shadow: 0 10px 25px rgba(255, 184, 184, 0.4);
+#clear:hover {
+  background: #c82333;
 }
 
-.action-btn#copy {
-  background: linear-gradient(135deg, #b5e8c3 0%, #9bd8ac 100%);
-  color: #3c6c4a;
-  box-shadow: 0 6px 20px rgba(181, 232, 195, 0.3);
+#copy {
+  background: #28a745;
 }
 
-.action-btn#copy:hover {
-  background: linear-gradient(135deg, #a5e0b5 0%, #8bc89c 100%);
-  box-shadow: 0 10px 25px rgba(181, 232, 195, 0.4);
+#copy:hover {
+  background: #218838;
 }
 
-.action-btn.active {
-  background: linear-gradient(135deg, #ffd8a8 0%, #ffc48e 100%);
-  color: #8c6c4a;
-  box-shadow: 0 8px 25px rgba(255, 216, 168, 0.4);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-  100% { transform: scale(1); }
+#active {
+  background: #ffc107;
+  color: #000;
 }
 
 .image-container {
   position: relative;
-  background: white;
-  border-radius: 25px;
-  overflow: hidden;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
-  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  display: inline-block;
+  border: 1px solid #ddd;
+  background: #fff;
 }
 
 #mainImage {
   display: block;
   max-width: 100%;
   height: auto;
-  transition: opacity 0.3s;
 }
 
 .selection-area {
   position: absolute;
-  border: 3px solid rgba(168, 214, 234, 0.8);
-  background: rgba(168, 214, 234, 0.15);
-  border-radius: 6000px;
+  border: 2px solid #007bff;
+  background: rgba(0, 123, 255, 0.2);
   pointer-events: none;
   z-index: 10;
-  backdrop-filter: blur(4px);
 }
 
 .selection-label {
   position: absolute;
-  top: -40px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(168, 214, 234, 0.95);
-  color: #2c536c;
-  padding: 8px 20px;
+  top: -25px;
+  left: 0;
+  background: #007bff;
+  color: white;
+  padding: 2px 8px;
   font-size: 12px;
-  border-radius: 6000px;
+  border-radius: 3px;
   white-space: nowrap;
-  border: 1.5px solid rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 500;
-  min-width: 120px;
-  text-align: center;
 }
 
 #coordOutput {
-  display: none;
-}
-
-.status-bar {
   position: fixed;
-  bottom: 25px;
-  right: 25px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  padding: 18px 30px;
-  border-radius: 6000px;
-  font-size: 14px;
-  color: #5a6c7d;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-  z-index: 1000;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
-
-.selection-count {
-  background: rgba(168, 214, 234, 0.2);
-  padding: 4px 12px;
-  border-radius: 6000px;
-  margin-left: 10px;
-  color: #2c536c;
-  font-weight: 500;
-}
-
-.instructions {
-  background: rgba(255, 253, 250, 0.95);
-  backdrop-filter: blur(12px);
-  padding: 25px;
-  border-radius: 25px;
-  margin-bottom: 25px;
-  border: 1.5px solid rgba(223, 211, 195, 0.3);
-  color: #8c7a6c;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.instructions h3 {
-  color: #a89a8c;
-  margin-bottom: 15px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 500;
-}
-
-.instruction-step {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 15px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid rgba(223, 211, 195, 0.2);
-}
-
-.step-number {
-  background: linear-gradient(135deg, #a8d8ea 0%, #8cc2d8 100%);
-  color: #2c536c;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 500;
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-.mode-indicator {
-  position: fixed;
-  top: 25px;
-  left: 25px;
-  background: rgba(255, 216, 168, 0.95);
-  backdrop-filter: blur(12px);
-  padding: 12px 25px;
-  border-radius: 6000px;
+  bottom: 10px;
+  right: 10px;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 10px;
+  font-family: monospace;
   font-size: 12px;
-  color: #8c6c4a;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  font-weight: 500;
-  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  max-width: 400px;
+  max-height: 200px;
+  overflow: auto;
   display: none;
-  z-index: 1000;
 }
 
-.mode-indicator.active {
-  display: block;
-  animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.image-container.selecting #mainImage {
-  cursor: crosshair;
-  opacity: 0.95;
+.info {
+  color: #666;
+  font-size: 12px;
+  margin-top: 10px;
 }
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="instructions">
-    <h3>ИНСТРУКЦИЯ</h3>
-    <div class="instruction-step">
-      <div class="step-number">1</div>
-      <div>ВВЕДИТЕ НАЗВАНИЕ КНОПКИ В ВЕРХНЕМ РЕГИСТРЕ</div>
-    </div>
-    <div class="instruction-step">
-      <div class="step-number">2</div>
-      <div>НАЖМИТЕ "НАЧАТЬ ВЫДЕЛЕНИЕ"</div>
-    </div>
-    <div class="instruction-step">
-      <div class="step-number">3</div>
-      <div>КЛИКНИТЕ И ПРОТЯНИТЕ НА ИЗОБРАЖЕНИИ</div>
-    </div>
-    <div class="instruction-step">
-      <div class="step-number">4</div>
-      <div>ПОВТОРИТЕ ДЛЯ КАЖДОЙ ОБЛАСТИ</div>
-    </div>
-    <div class="instruction-step">
-      <div class="step-number">5</div>
-      <div>НАЖМИТЕ "СКОПИРОВАТЬ КОД"</div>
-    </div>
+
+<div class="toolbar">
+  <h3>Выделение областей на изображении</h3>
+  
+  <div class="controls">
+    <input type="text" id="buttonName" placeholder="Название кнопки" value="about">
+    <input type="text" id="buttonLink" placeholder="Ссылка" value="about.html">
+    <button id="startSelect">Начать выделение</button>
+    <button id="clear">Очистить</button>
+    <button id="copy">Копировать код</button>
   </div>
   
-  <div class="toolbar">
-    <h1>ИНСТРУМЕНТ ВЫДЕЛЕНИЯ ОБЛАСТЕЙ</h1>
-    
-    <div class="controls-grid">
-      <div class="control-group">
-        <label>НАЗВАНИЕ КНОПКИ</label>
-        <input type="text" id="buttonName" class="button-name" 
-               placeholder="ВВЕДИТЕ НАЗВАНИЕ" value="ABOUT" 
-               style="text-transform: uppercase;">
-      </div>
-      
-      <div class="control-group">
-        <label>ССЫЛКА</label>
-        <input type="text" id="buttonLink" class="select-area" 
-               placeholder="PAGE.HTML" value="ABOUT.HTML">
-      </div>
-      
-      <div class="control-group">
-        <label>ЦВЕТ ОБЛАСТИ</label>
-        <select id="areaColor" class="select-area">
-          <option value="#A8D8EA">ГОЛУБОЙ</option>
-          <option value="#B5E8C3">ЗЕЛЕНЫЙ</option>
-          <option value="#FFD8A8">ПЕРСИКОВЫЙ</option>
-          <option value="#E8B5E8">СИРЕНЕВЫЙ</option>
-          <option value="#D8D8A8">ПЕСОЧНЫЙ</option>
-        </select>
-      </div>
-    </div>
-    
-    <div class="actions">
-      <button id="startSelect" class="action-btn">НАЧАТЬ ВЫДЕЛЕНИЕ</button>
-      <button id="clear" class="action-btn">ОЧИСТИТЬ ВСЁ</button>
-      <button id="copy" class="action-btn">СКОПИРОВАТЬ КОД</button>
-    </div>
-  </div>
-  
-  <div class="image-container" id="imageContainer">
-    <img id="mainImage" src="hello.png" alt="ВАШЕ ИЗОБРАЖЕНИЕ">
+  <div class="info">
+    Инструкция: 1) Введите название 2) Нажмите "Начать выделение" 3) Кликните и протяните на изображении
   </div>
 </div>
 
-<div class="mode-indicator" id="modeIndicator">
-  РЕЖИМ ВЫДЕЛЕНИЯ АКТИВЕН
+<div class="image-container">
+  <img id="mainImage" src="hello.png" alt="Ваше изображение">
 </div>
 
-<div class="status-bar" id="statusBar">
-  ОБЛАСТЕЙ ВЫДЕЛЕНО: <span class="selection-count" id="selectionCount">0</span>
-</div>
-
-<textarea id="coordOutput" style="display: none;"></textarea>
+<textarea id="coordOutput"></textarea>
 
 <script>
 let isSelecting = false;
 let startX, startY;
 let currentSelection = null;
 let selections = [];
-let currentColor = '#A8D8EA';
 
 const image = document.getElementById('mainImage');
-const imageContainer = document.getElementById('imageContainer');
 const buttonName = document.getElementById('buttonName');
 const buttonLink = document.getElementById('buttonLink');
-const areaColor = document.getElementById('areaColor');
 const startSelectBtn = document.getElementById('startSelect');
 const clearBtn = document.getElementById('clear');
 const copyBtn = document.getElementById('copy');
-const statusBar = document.getElementById('statusBar');
-const selectionCount = document.getElementById('selectionCount');
-const modeIndicator = document.getElementById('modeIndicator');
 const coordOutput = document.getElementById('coordOutput');
-
-// Верхний регистр для всех вводов
-buttonName.addEventListener('input', function() {
-  this.value = this.value.toUpperCase();
-});
-
-buttonLink.addEventListener('input', function() {
-  this.value = this.value.toUpperCase();
-});
-
-// Изменение цвета
-areaColor.addEventListener('change', function() {
-  currentColor = this.value;
-});
 
 // Начало выделения
 startSelectBtn.addEventListener('click', function() {
-  if (!buttonName.value.trim()) {
-    alert('ВВЕДИТЕ НАЗВАНИЕ КНОПКИ');
-    buttonName.focus();
-    return;
-  }
-  
   isSelecting = true;
-  imageContainer.classList.add('selecting');
-  this.classList.add('active');
-  modeIndicator.classList.add('active');
-  modeIndicator.style.backgroundColor = currentColor + 'F0';
+  image.style.cursor = 'crosshair';
+  this.textContent = 'Выделяйте...';
+  this.style.background = '#ffc107';
 });
 
 // События мыши
-imageContainer.addEventListener('mousedown', function(e) {
-  if (!isSelecting || e.target !== image) return;
+image.addEventListener('mousedown', function(e) {
+  if (!isSelecting) return;
   
-  const rect = image.getBoundingClientRect();
+  const rect = this.getBoundingClientRect();
   startX = e.clientX - rect.left;
   startY = e.clientY - rect.top;
   
@@ -458,24 +183,20 @@ imageContainer.addEventListener('mousedown', function(e) {
   currentSelection.style.top = startY + 'px';
   currentSelection.style.width = '0px';
   currentSelection.style.height = '0px';
-  currentSelection.style.borderColor = currentColor;
-  currentSelection.style.backgroundColor = currentColor + '26';
   
   // Добавляем метку
   const label = document.createElement('div');
   label.className = 'selection-label';
   label.textContent = buttonName.value;
-  label.style.backgroundColor = currentColor;
-  label.style.color = getContrastColor(currentColor);
   currentSelection.appendChild(label);
   
-  this.appendChild(currentSelection);
+  this.parentElement.appendChild(currentSelection);
 });
 
-imageContainer.addEventListener('mousemove', function(e) {
-  if (!isSelecting || !currentSelection || e.target !== image) return;
+image.addEventListener('mousemove', function(e) {
+  if (!isSelecting || !currentSelection) return;
   
-  const rect = image.getBoundingClientRect();
+  const rect = this.getBoundingClientRect();
   const currentX = e.clientX - rect.left;
   const currentY = e.clientY - rect.top;
   
@@ -493,10 +214,10 @@ imageContainer.addEventListener('mousemove', function(e) {
   }
 });
 
-imageContainer.addEventListener('mouseup', function(e) {
-  if (!isSelecting || !currentSelection || e.target !== image) return;
+image.addEventListener('mouseup', function(e) {
+  if (!isSelecting || !currentSelection) return;
   
-  const rect = image.getBoundingClientRect();
+  const rect = this.getBoundingClientRect();
   const endX = e.clientX - rect.left;
   const endY = e.clientY - rect.top;
   
@@ -506,70 +227,42 @@ imageContainer.addEventListener('mouseup', function(e) {
   const x2 = Math.max(startX, endX);
   const y2 = Math.max(startY, endY);
   
-  const width = x2 - x1;
-  const height = y2 - y1;
-  
-  // Проверяем минимальный размер
-  if (width < 10 || height < 10) {
-    currentSelection.remove();
-    currentSelection = null;
-    alert('СЛИШКОМ МАЛЕНЬКАЯ ОБЛАСТЬ. ВЫДЕЛИТЕ БОЛЬШУЮ ОБЛАСТЬ.');
-    return;
-  }
-  
   // Сохраняем область
   selections.push({
     name: buttonName.value,
     link: buttonLink.value,
-    color: currentColor,
     x1: Math.round(x1),
     y1: Math.round(y1),
     x2: Math.round(x2),
     y2: Math.round(y2),
-    width: Math.round(width),
-    height: Math.round(height),
-    imgWidth: image.naturalWidth,
-    imgHeight: image.naturalHeight
+    width: Math.round(x2 - x1),
+    height: Math.round(y2 - y1)
   });
-  
-  // Фиксируем размеры
-  currentSelection.style.left = x1 + 'px';
-  currentSelection.style.top = y1 + 'px';
-  currentSelection.style.width = width + 'px';
-  currentSelection.style.height = height + 'px';
   
   // Сбрасываем состояние
   isSelecting = false;
   currentSelection = null;
-  imageContainer.classList.remove('selecting');
-  startSelectBtn.classList.remove('active');
-  modeIndicator.classList.remove('active');
+  image.style.cursor = 'default';
+  startSelectBtn.textContent = 'Начать выделение';
+  startSelectBtn.style.background = '#007bff';
   
-  // Обновляем счетчик
-  updateStatus();
-  
-  // Автоматически генерируем следующее название
-  generateNextName();
+  // Показываем координаты
+  console.log(`Сохранено: ${buttonName.value} - ${x1},${y1} - ${x2},${y2}`);
+  alert(`Область "${buttonName.value}" сохранена!`);
 });
 
-// Очистка всего
+// Очистка
 clearBtn.addEventListener('click', function() {
-  if (selections.length === 0) {
-    alert('НЕТ ВЫДЕЛЕННЫХ ОБЛАСТЕЙ');
-    return;
-  }
-  
-  if (confirm('УДАЛИТЬ ВСЕ ВЫДЕЛЕННЫЕ ОБЛАСТИ?')) {
+  if (confirm('Удалить все области?')) {
     selections = [];
     document.querySelectorAll('.selection-area').forEach(el => el.remove());
-    updateStatus();
   }
 });
 
 // Копирование кода
 copyBtn.addEventListener('click', function() {
   if (selections.length === 0) {
-    alert('НЕТ ВЫДЕЛЕННЫХ ОБЛАСТЕЙ');
+    alert('Нет выделенных областей');
     return;
   }
   
@@ -577,110 +270,44 @@ copyBtn.addEventListener('click', function() {
   coordOutput.value = code;
   coordOutput.style.display = 'block';
   coordOutput.select();
-  
-  try {
-    if (navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(code)
-        .then(() => showCopySuccess())
-        .catch(() => fallbackCopy());
-    } else {
-      fallbackCopy();
-    }
-  } catch (err) {
-    fallbackCopy();
-  }
-  
+  document.execCommand('copy');
   coordOutput.style.display = 'none';
+  
+  alert('Код скопирован!');
 });
 
 // Генерация кода
 function generateCode() {
-  let htmlCode = `<!-- ВЫДЕЛЕННЫЕ ОБЛАСТИ ДЛЯ ИЗОБРАЖЕНИЯ HELLO.PNG -->
-<!-- РАЗМЕР ИЗОБРАЖЕНИЯ: ${image.naturalWidth}X${image.naturalHeight} -->
-<!-- СГЕНЕРИРОВАНО С ПОМОЩЬЮ ИНСТРУМЕНТА ВЫДЕЛЕНИЯ -->
-<!-- КОЛИЧЕСТВО ОБЛАСТЕЙ: ${selections.length} -->
-<!-- ВРЕМЯ СОЗДАНИЯ: ${new Date().toLocaleString()} -->\n\n`;
-
+  let htmlCode = '<!-- Кликабельные области -->\n\n';
+  
   selections.forEach(area => {
-    // Координаты в процентах
-    const x1Percent = ((area.x1 / area.imgWidth) * 100).toFixed(3);
-    const y1Percent = ((area.y1 / area.imgHeight) * 100).toFixed(3);
-    const widthPercent = ((area.width / area.imgWidth) * 100).toFixed(3);
-    const heightPercent = ((area.height / area.imgHeight) * 100).toFixed(3);
+    const xPercent = ((area.x1 / image.naturalWidth) * 100).toFixed(3);
+    const yPercent = ((area.y1 / image.naturalHeight) * 100).toFixed(3);
+    const widthPercent = ((area.width / image.naturalWidth) * 100).toFixed(3);
+    const heightPercent = ((area.height / image.naturalHeight) * 100).toFixed(3);
     
-    htmlCode += `<!-- ${area.name} -->\n`;
-    htmlCode += `<div class="click-area" \n`;
-    htmlCode += `     style="position: absolute;\n`;
-    htmlCode += `            left: ${x1Percent}%;\n`;
-    htmlCode += `            top: ${y1Percent}%;\n`;
-    htmlCode += `            width: ${widthPercent}%;\n`;
-    htmlCode += `            height: ${heightPercent}%;\n`;
-    htmlCode += `            border-radius: 6000px;\n`;
-    htmlCode += `            cursor: pointer;"\n`;
-    htmlCode += `     onclick="window.open('${area.link.toLowerCase()}', '_self'); playClickSound();"\n`;
-    htmlCode += `     title="${area.name}"\n`;
-    htmlCode += `     onmouseover="this.style.backgroundColor='${area.color}40'"\n`;
-    htmlCode += `     onmouseout="this.style.backgroundColor='transparent'">\n`;
-    htmlCode += `</div>\n\n`;
+    htmlCode += `<div class="click-area" 
+     style="position: absolute;
+            left: ${xPercent}%;
+            top: ${yPercent}%;
+            width: ${widthPercent}%;
+            height: ${heightPercent}%;
+            cursor: pointer;"
+     onclick="window.open('${area.link}', '_self')"
+     title="${area.name}">
+</div>\n\n`;
   });
-
+  
   return htmlCode;
 }
 
-// Вспомогательные функции
-function getContrastColor(hexcolor) {
-  const r = parseInt(hexcolor.substr(1, 2), 16);
-  const g = parseInt(hexcolor.substr(3, 2), 16);
-  const b = parseInt(hexcolor.substr(5, 2), 16);
-  const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-  return (yiq >= 128) ? '#2C3E50' : '#FFFFFF';
-}
-
-function generateNextName() {
-  const currentName = buttonName.value;
-  const commonNames = ['ABOUT', 'CONTACTS', 'CASES', 'WHY', 'OTHER', 'HOME', 'WORK', 'SERVICES', 'PORTFOLIO', 'BLOG'];
-  
-  if (commonNames.includes(currentName)) {
-    const currentIndex = commonNames.indexOf(currentName);
-    const nextIndex = (currentIndex + 1) % commonNames.length;
-    buttonName.value = commonNames[nextIndex];
-    buttonLink.value = commonNames[nextIndex] + '.HTML';
-  }
-}
-
-function updateStatus() {
-  selectionCount.textContent = selections.length;
-  statusBar.style.display = selections.length > 0 ? 'block' : 'none';
-}
-
-function showCopySuccess() {
-  const originalText = copyBtn.textContent;
-  copyBtn.textContent = 'КОД СКОПИРОВАН!';
-  copyBtn.style.background = 'linear-gradient(135deg, #b5e8c3 0%, #9bd8ac 100%)';
-  
-  setTimeout(() => {
-    copyBtn.textContent = originalText;
-    copyBtn.style.background = 'linear-gradient(135deg, #b5e8c3 0%, #9bd8ac 100%)';
-  }, 2000);
-  
-  alert(`КОД УСПЕШНО СКОПИРОВАН!\n\nОБЛАСТЕЙ: ${selections.length}\nРАЗМЕР ИЗОБРАЖЕНИЯ: ${image.naturalWidth}X${image.naturalHeight}`);
-}
-
-function fallbackCopy() {
-  document.execCommand('copy');
-  showCopySuccess();
-}
-
-// Инициализация
-updateStatus();
-
-// Загрузка изображения
+// Проверка загрузки изображения
 image.onload = function() {
-  console.log('ИЗОБРАЖЕНИЕ ЗАГРУЖЕНО:', this.naturalWidth, 'X', this.naturalHeight);
+  console.log('Изображение загружено:', this.naturalWidth, 'x', this.naturalHeight);
 };
 
 image.onerror = function() {
-  alert('ОШИБКА ЗАГРУЗКИ ИЗОБРАЖЕНИЯ HELLO.PNG');
+  alert('Ошибка загрузки hello.png. Убедитесь, что файл в той же папке.');
 };
 </script>
 </body>

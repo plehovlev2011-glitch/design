@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Пицца-Плекс Компаньон | Фазбер Энтертейнмент</title>
+    <title>Эффект стеклянной призмы - Навбар</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -14,913 +14,400 @@
             font-family: 'Inter', sans-serif;
         }
         
-        :root {
-            --freddy-brown: #8B4513;
-            --chica-yellow: #FFD700;
-            --monty-green: #228B22;
-            --roxy-pink: #FF69B4;
-            --bonnie-blue: #4169E1;
-            --dark-bg: #1a1a2e;
-            --light-bg: #fef7ff;
-            --surface: #fff;
-            --on-surface: #1d1b20;
-            --on-surface-variant: #49454f;
-            --primary: #6750a4;
-            --on-primary: #fff;
-            --primary-container: #e9ddff;
-            --secondary-container: #e8def8;
-            --outline: #79747e;
-            --surface-variant: #e7e0ec;
-            --shadow: rgba(0, 0, 0, 0.1);
-            --success: #0d7817;
-            --warning: #ba1a1a;
-            --card-gradient: linear-gradient(135deg, #8B4513 0%, #d2691e 100%);
-        }
-        
         body {
-            background-color: var(--light-bg);
-            color: var(--on-surface);
-            max-width: 500px;
-            margin: 0 auto;
-            box-shadow: 0 0 20px var(--shadow);
+            background: linear-gradient(45deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            position: relative;
-            padding-bottom: 90px;
-        }
-        
-        .header {
-            background: linear-gradient(to right, var(--primary), #7c5cb0);
-            color: white;
-            padding: 22px 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header-content {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow-x: hidden;
         }
         
-        .header-text h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        
-        .header-text p {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            font-weight: 400;
-        }
-        
-        .fazbear-logo {
-            width: 48px;
-            height: 48px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23FFD700" stroke="%23ffffff" stroke-width="2.5"/><text x="50" y="65" text-anchor="middle" font-family="Inter" font-weight="700" font-size="42" fill="%236750a4">F</text></svg>') no-repeat center;
-            background-size: contain;
-        }
-        
-        .main-content {
-            padding: 0 20px 20px;
-        }
-        
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 24px 0 16px;
-            color: var(--primary);
-        }
-        
-        /* Обновленная карта Faz в стиле Material 3 */
-        .bonus-card {
-            background: var(--card-gradient);
-            border-radius: 24px;
-            padding: 24px;
-            color: white;
-            box-shadow: 0 10px 25px rgba(139, 69, 19, 0.2);
-            margin-bottom: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .bonus-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 150px;
-            height: 250px;
-            background: rgba(255,255,255,0.15);
-            transform: rotate(30deg);
-            border-radius: 40px;
-        }
-        
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .user-name {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        
-        .user-status {
-            font-size: 0.95rem;
-            opacity: 0.9;
-            font-weight: 500;
-        }
-        
-        .card-level {
-            background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            backdrop-filter: blur(10px);
-        }
-        
-        .barcode-container {
-            background: rgba(255,255,255,0.9);
-            padding: 16px;
-            border-radius: 16px;
-            text-align: center;
-            margin: 20px 0;
-            backdrop-filter: blur(10px);
-        }
-        
-        .barcode {
-            font-family: 'Libre Barcode 39', monospace;
-            font-size: 3rem;
-            letter-spacing: 6px;
-            color: #333;
-        }
-        
-        .card-number {
-            font-family: monospace;
-            font-size: 1rem;
-            letter-spacing: 2px;
-            margin-top: 8px;
-            font-weight: 500;
-            color: #555;
-        }
-        
-        .card-details {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        
-        .detail-item {
-            text-align: center;
-        }
-        
-        .detail-value {
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-        
-        .detail-label {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            margin-top: 4px;
-        }
-        
-        /* Увеличенные и суперскругленные кнопки */
-        .buttons-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin: 20px 0;
-        }
-        
-        .btn {
-            padding: 20px;
-            border: none;
-            border-radius: 3000px;
-            font-weight: 600;
-            color: white;
-            font-size: 1.05rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            box-shadow: 0 4px 12px var(--shadow);
-        }
-        
-        .btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px var(--shadow);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .btn-freddy {
-            background-color: var(--freddy-brown);
-        }
-        
-        .btn-chica {
-            background-color: var(--chica-yellow);
-            color: var(--on-surface);
-        }
-        
-        .btn-monty {
-            background-color: var(--monty-green);
-        }
-        
-        .btn-roxy {
-            background-color: var(--roxy-pink);
-        }
-        
-        .btn-bonnie {
-            background-color: var(--surface-variant);
-            color: var(--on-surface-variant);
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        
-        /* Обновленный контейнер локаций */
-        .locations-container {
-            background: var(--surface);
-            border-radius: 24px;
-            padding: 0;
-            margin: 20px 0;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
-        
-        .location-item {
-            padding: 20px;
-            border-bottom: 1px solid var(--surface-variant);
-            transition: background-color 0.2s;
-        }
-        
-        .location-item:last-child {
-            border-bottom: none;
-        }
-        
-        .location-item:hover {
-            background-color: rgba(103, 80, 164, 0.05);
-        }
-        
-        .location-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        
-        .location-name {
-            font-weight: 600;
-            font-size: 1.05rem;
-            color: var(--on-surface);
-        }
-        
-        .location-status {
-            font-size: 0.85rem;
-            padding: 6px 12px;
-            border-radius: 100px;
-            font-weight: 600;
-        }
-        
-        .status-open {
-            background-color: rgba(13, 120, 23, 0.1);
-            color: var(--success);
-        }
-        
-        .status-closed {
-            background-color: rgba(186, 26, 26, 0.1);
-            color: var(--warning);
-        }
-        
-        .location-description {
-            font-size: 0.95rem;
-            color: var(--on-surface-variant);
-            line-height: 1.5;
-        }
-        
-        .location-details {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-            font-size: 0.85rem;
-            color: var(--outline);
-        }
-        
-        .detail-icon {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        /* Секции информации */
-        .employee-section, .warning-box {
-            background: var(--surface);
-            border-radius: 24px;
-            padding: 24px;
-            margin: 25px 0;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-        }
-        
-        .employee-title, .warning-title {
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.1rem;
-        }
-        
-        .corridor-info {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: var(--on-surface-variant);
-            margin-top: 12px;
-        }
-        
-        .color-legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 16px;
-        }
-        
-        .color-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            background: var(--surface-variant);
-            padding: 8px 12px;
-            border-radius: 100px;
-        }
-        
-        .color-box {
-            width: 20px;
-            height: 20px;
-            border-radius: 6px;
-        }
-        
-        .warning-box {
-            border-left: 6px solid #ff9800;
-        }
-        
-        /* Обновленная нижняя навигация с отступами */
-        .bottom-nav {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            max-width: 460px;
-            margin: 0 auto;
-            background-color: var(--surface);
-            display: flex;
-            justify-content: space-around;
-            padding: 16px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-radius: 10000px;
-            z-index: 100;
-        }
-        
-        .nav-item {
+        .content {
+            flex: 1;
+            padding: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: var(--on-surface-variant);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-            padding: 8px 16px;
-            border-radius: 100px;
-            flex: 1;
-            max-width: 80px;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
         }
         
-        .nav-item.active {
-            color: var(--primary);
-            background-color: var(--primary-container);
-            font-weight: 600;
-        }
-        
-        .nav-icon {
-            font-size: 1.3rem;
-            margin-bottom: 4px;
-        }
-        
-        /* Подвал */
-        .footer {
-            padding: 24px 20px;
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #8B4513, #FF69B4, #4169E1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             text-align: center;
-            font-size: 0.8rem;
-            color: var(--on-surface-variant);
-            border-top: 1px solid var(--surface-variant);
-            margin-top: 20px;
         }
         
-        /* Модальное окно для деталей карты */
-        .modal {
-            display: none;
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+        
+        .test-item {
+            height: 120px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+        
+        .test-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .item-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .item-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .item-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .item-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .item-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .item-6 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        
+        .scroll-text {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            line-height: 1.6;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        /* === СТЕКЛЯННЫЙ НАВБАР С ЭФФЕКТОМ ПРИЗМЫ === */
+        .glass-navbar {
             position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 450px;
+            height: 80px;
+            z-index: 1000;
+            
+            /* Основные свойства стекла */
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 10000px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+            
+            /* Эффект линзы/призмы - создаем выпуклую поверхность */
+            background-image: 
+                radial-gradient(
+                    ellipse at 50% 10%,
+                    rgba(255, 255, 255, 0.4) 0%,
+                    transparent 70%
+                ),
+                radial-gradient(
+                    ellipse at 50% 90%,
+                    rgba(255, 255, 255, 0.2) 0%,
+                    transparent 70%
+                );
+            
+            /* Более сложный эффект стекла с градиентами */
+            background-image: 
+                linear-gradient(
+                    to bottom,
+                    rgba(255, 255, 255, 0.25) 0%,
+                    rgba(255, 255, 255, 0.1) 20%,
+                    rgba(255, 255, 255, 0.05) 60%,
+                    rgba(255, 255, 255, 0.15) 100%
+                );
+            
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 25px;
+        }
+        
+        /* Псевдоэлементы для эффекта искажения краев (как у линзы) */
+        .glass-navbar::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border-radius: 10000px;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 100%
+            );
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Эффект "закругления" краев как у линзы */
+        .glass-navbar::after {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            border-radius: 10000px;
+            background: 
+                radial-gradient(
+                    100px 40px at 20% 50%,
+                    rgba(255, 255, 255, 0.15) 0%,
+                    transparent 100%
+                ),
+                radial-gradient(
+                    100px 40px at 80% 50%,
+                    rgba(255, 255, 255, 0.15) 0%,
+                    transparent 100%
+                );
+            z-index: -1;
+            pointer-events: none;
         }
         
-        .modal-content {
-            background: var(--surface);
-            border-radius: 28px;
-            padding: 32px;
-            max-width: 400px;
-            width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 24px;
-            color: var(--primary);
-        }
-        
-        .close-modal {
+        /* Искажение краев (эффект линзы) */
+        .lens-distortion {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--outline);
-            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 10000px;
+            overflow: hidden;
+            z-index: -2;
+            pointer-events: none;
         }
         
-        @media (max-width: 500px) {
-            body {
-                max-width: 100%;
+        .lens-distortion::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(
+                    circle at 30% 30%,
+                    rgba(255, 255, 255, 0.05) 0%,
+                    transparent 50%
+                ),
+                radial-gradient(
+                    circle at 70% 70%,
+                    rgba(255, 255, 255, 0.05) 0%,
+                    transparent 50%
+                );
+            filter: blur(10px);
+        }
+        
+        /* Элементы навбара */
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            color: rgba(103, 80, 164, 0.9);
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+        
+        .nav-item.active {
+            background: rgba(103, 80, 164, 0.2);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 
+                0 8px 15px rgba(103, 80, 164, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+        
+        .nav-item:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .nav-icon {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+        
+        .nav-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Эффект призмы на активном элементе */
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.8) 0%, 
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 100%);
+            z-index: -1;
+            filter: blur(5px);
+            opacity: 0.5;
+        }
+        
+        /* Индикатор выбора */
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            width: 5px;
+            height: 5px;
+            background: #6750a4;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #6750a4;
+        }
+        
+        /* Медиа-запросы */
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             
-            .bottom-nav {
-                left: 16px;
-                right: 16px;
+            .glass-navbar {
+                width: 95%;
+                height: 70px;
+                padding: 0 15px;
             }
+            
+            .nav-item {
+                width: 55px;
+                height: 55px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .glass-navbar {
+                height: 65px;
+                padding: 0 10px;
+            }
+            
+            .nav-item {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .nav-label {
+                display: none;
+            }
+            
+            .nav-icon {
+                margin-bottom: 0;
+                font-size: 1.6rem;
+            }
+        }
+        
+        /* Анимация для демонстрации эффекта */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .demo-float {
+            animation: float 5s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
-    <!-- Шапка приложения -->
-    <header class="header">
-        <div class="header-content">
-            <div class="header-text">
-                <h1>Пицца-Плекс Компаньон</h1>
-                <p>Мега-пицца-плекс Фредди Фазбера • Киров, ул. Заводская, 11</p>
-            </div>
-            <div class="fazbear-logo"></div>
+    <div class="content">
+        <h1 class="title">Эффект стеклянной призмы</h1>
+        
+        <div class="test-grid">
+            <div class="test-item item-1">Красный</div>
+            <div class="test-item item-2">Розовый</div>
+            <div class="test-item item-3 demo-float">Синий</div>
+            <div class="test-item item-4">Зеленый</div>
+            <div class="test-item item-5">Желтый</div>
+            <div class="test-item item-6">Бирюзовый</div>
         </div>
-    </header>
+        
+        <div class="scroll-text">
+            <p>Это демонстрационный контент для тестирования эффекта стеклянной призмы в навбаре. Прокручивайте страницу вниз и вверх, чтобы увидеть, как навбар искажает и размывает контент под собой, создавая эффект линзы.</p>
+            <p>Обратите внимание на края навбара - там эффект искажения сильнее, что имитирует кривизну линзы. Центр остается более прозрачным, создавая впечатление выпуклой стеклянной поверхности.</p>
+            <p>Эффект достигается комбинацией:</p>
+            <ul>
+                <li>backdrop-filter: blur() для размытия фона</li>
+                <li>Радиальные градиенты для создания эффекта кривизны</li>
+                <li>Полупрозрачные границы и тени</li>
+                <li>Псевдоэлементы для искажения краев</li>
+            </ul>
+        </div>
+        
+        <!-- Дополнительный контент для прокрутки -->
+        <div style="height: 300px; display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 800px;">
+            <div style="background: linear-gradient(90deg, #8B4513, #FFD700); height: 80px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Цвет Фредди</div>
+            <div style="background: linear-gradient(90deg, #FF69B4, #FFD700); height: 80px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Цвет Рокси</div>
+            <div style="background: linear-gradient(90deg, #228B22, #FFD700); height: 80px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Цвет Монти</div>
+        </div>
+    </div>
     
-    <!-- Основное содержимое -->
-    <main class="main-content">
-        <!-- Обновленная карта Faz в стиле Material 3 -->
-        <section>
-            <h2 class="section-title">Ваша карта Faz</h2>
-            <div class="bonus-card" id="bonusCard">
-                <div class="card-header">
-                    <div>
-                        <div class="user-name">Ольга</div>
-                        <div class="user-status">Faz-Superstar участник с 2022</div>
-                    </div>
-                    <div class="card-level">Уровень 5</div>
-                </div>
-                
-                <div class="barcode-container">
-                    <div class="barcode">FAZ•OLGA•VIP•2024</div>
-                    <div class="card-number">№ 0042-1987-0655</div>
-                </div>
-                
-                <div class="card-details">
-                    <div class="detail-item">
-                        <div class="detail-value">1,850</div>
-                        <div class="detail-label">Faz-баллов</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-value">47</div>
-                        <div class="detail-label">Посещений</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-value">12</div>
-                        <div class="detail-label">Наград</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- Стеклянный навбар -->
+    <nav class="glass-navbar">
+        <div class="lens-distortion"></div>
         
-        <!-- Быстрые действия -->
-        <section>
-            <h2 class="section-title">Быстрые действия</h2>
-            <div class="buttons-grid">
-                <button class="btn btn-freddy">
-                    <i class="fas fa-utensils"></i> Заказать пиццу
-                </button>
-                <button class="btn btn-chica" id="viewLocations">
-                    <i class="fas fa-map-marker-alt"></i> Все локации
-                </button>
-                <button class="btn btn-monty">
-                    <i class="fas fa-child"></i> Развлечения с детьми
-                </button>
-                <button class="btn btn-roxy">
-                    <i class="fas fa-calendar-alt"></i> Расписание встреч
-                </button>
-            </div>
-        </section>
-        
-        <!-- Аниматроники -->
-        <section>
-            <h2 class="section-title">Встречи с аниматрониками</h2>
-            <div class="buttons-grid">
-                <button class="btn btn-freddy">
-                    <i class="fas fa-bear"></i> Фредди Фазбер
-                </button>
-                <button class="btn btn-chica">
-                    <i class="fas fa-kiwi-bird"></i> Чика
-                </button>
-                <button class="btn btn-monty">
-                    <i class="fas fa-alligator"></i> Монти
-                </button>
-                <button class="btn btn-roxy">
-                    <i class="fas fa-wolf"></i> Рокси
-                </button>
-                <button class="btn btn-bonnie" disabled>
-                    <i class="fas fa-rabbit"></i> Бонни (скоро)
-                </button>
-            </div>
-        </section>
-        
-        <!-- Локации (первые 5 для примера, остальные в модальном окне) -->
-        <section>
-            <h2 class="section-title">Локации Пицца-Плекса</h2>
-            <div class="locations-container">
-                <!-- Локация 1 -->
-                <div class="location-item">
-                    <div class="location-header">
-                        <div class="location-name">1. Атриум</div>
-                        <span class="location-status status-open">Открыто</span>
-                    </div>
-                    <p class="location-description">Главный зал Пицца-Плекса с гигантским куполом, фонтаном и сценой для выступлений аниматроников. Здесь проводятся главные шоу и мероприятия.</p>
-                    <div class="location-details">
-                        <div class="detail-icon"><i class="fas fa-music"></i> Шоу</div>
-                        <div class="detail-icon"><i class="fas fa-utensils"></i> Еда</div>
-                        <div class="detail-icon"><i class="fas fa-wheelchair"></i> Доступно</div>
-                    </div>
-                </div>
-                
-                <!-- Локация 2 -->
-                <div class="location-item">
-                    <div class="location-header">
-                        <div class="location-name">2. Галерея Призов</div>
-                        <span class="location-status status-open">Открыто</span>
-                    </div>
-                    <p class="location-description">Торговая зона, где можно обменять билеты на эксклюзивные призы Fazbear Entertainment. Более 200 видов призов, от мелких сувениров до коллекционных фигурок.</p>
-                    <div class="location-details">
-                        <div class="detail-icon"><i class="fas fa-gift"></i> Призы</div>
-                        <div class="detail-icon"><i class="fas fa-ticket-alt"></i> Билеты</div>
-                    </div>
-                </div>
-                
-                <!-- Локация 3 -->
-                <div class="location-item">
-                    <div class="location-header">
-                        <div class="location-name">3. Боулинг Бонни</div>
-                        <span class="location-status status-closed">Закрыто</span>
-                    </div>
-                    <p class="location-description">12 дорожек для боулинга в тематике Бонни. Временно закрыто на реконструкцию. Откроется в новом формате к летнему сезону.</p>
-                    <div class="location-details">
-                        <div class="detail-icon"><i class="fas fa-ban"></i> Закрыто</div>
-                        <div class="detail-icon"><i class="fas fa-hammer"></i> Ремонт</div>
-                    </div>
-                </div>
-                
-                <!-- Локация 4 -->
-                <div class="location-item">
-                    <div class="location-header">
-                        <div class="location-name">4. Собери Капкейки!</div>
-                        <span class="location-status status-open">Открыто</span>
-                    </div>
-                    <p class="location-description">Интерактивная кулинарная зона для детей, где можно украшать капкейки под руководством виртуального шеф-повара. Все ингредиенты безопасны для детей.</p>
-                    <div class="location-details">
-                        <div class="detail-icon"><i class="fas fa-birthday-cake"></i> Кулинария</div>
-                        <div class="detail-icon"><i class="fas fa-child"></i> Для детей</div>
-                    </div>
-                </div>
-                
-                <!-- Локация 5 -->
-                <div class="location-item">
-                    <div class="location-header">
-                        <div class="location-name">5. Восточная аркадная зона</div>
-                        <span class="location-status status-open">Открыто</span>
-                    </div>
-                    <p class="location-description">Более 50 современных аркадных автоматов, включая эксклюзивные игры Fazbear. Самые популярные: FNaF VR, Fazbear Racing, Pizza Prep Simulator.</p>
-                    <div class="location-details">
-                        <div class="detail-icon"><i class="fas fa-gamepad"></i> Аркады</div>
-                        <div class="detail-icon"><i class="fas fa-vr-cardboard"></i> VR</div>
-                    </div>
-                </div>
-                
-                <!-- Кнопка показать все локации -->
-                <div class="location-item" style="text-align: center; cursor: pointer;" id="showAllLocations">
-                    <div style="color: var(--primary); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span>Показать все 26 локаций</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Информация для сотрудников -->
-        <section class="employee-section">
-            <div class="employee-title">
-                <i class="fas fa-hard-hat"></i>
-                <span>ИНФОРМАЦИЯ ДЛЯ СОТРУДНИКОВ</span>
-            </div>
-            <p><strong>Технические коридоры Пицца-Плекса</strong></p>
-            <p class="corridor-info">
-                Номенклатура коридоров: уровень-тип-связь-сторона. Пример: П1-ПРП-ФБ-3 (Подвал-1, Перепутье, Фазер-Бласт, 3-й номер). Коды на стенах являются основным ориентиром.
-            </p>
-            
-            <div class="color-legend">
-                <div class="color-item">
-                    <div class="color-box" style="background-color: #9370DB;"></div>
-                    <span>Фазер-Бласт</span>
-                </div>
-                <div class="color-item">
-                    <div class="color-box" style="background-color: #98FB98;"></div>
-                    <span>Гольф Монти</span>
-                </div>
-                <div class="color-item">
-                    <div class="color-box" style="background-color: #FFC0CB;"></div>
-                    <span>Аллея звёзд</span>
-                </div>
-                <div class="color-item">
-                    <div class="color-box" style="background-color: #FF6347;"></div>
-                    <span>Главное фойе</span>
-                </div>
-                <div class="color-item">
-                    <div class="color-box" style="background-color: #87CEEB;"></div>
-                    <span>Детская бухта</span>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Важная информация -->
-        <section class="warning-box">
-            <div class="warning-title">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span>ВАЖНАЯ ИНФОРМАЦИЯ</span>
-            </div>
-            <p><strong>В случае потери ребенка:</strong></p>
-            <p class="corridor-info">1. Немедленно сообщите персоналу в костюмах аниматроников или сотрудникам службы безопасности (значок "Faz-Security").</p>
-            <p class="corridor-info">2. Подойдите к ближайшему информационному стенду и нажмите кнопку "Экстренный вызов".</p>
-            <p class="corridor-info">3. Ребенка доставят в главный офис охраны (B1-MAIN-SEC-N). Все дети получают временные браслеты с GPS.</p>
-        </section>
-    </main>
-    
-    <!-- Обновленная нижняя навигация с отступами -->
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active">
+        <a href="#" class="nav-item active" id="nav-home">
             <i class="fas fa-home nav-icon"></i>
-            <span>Главная</span>
+            <span class="nav-label">Главная</span>
         </a>
-        <a href="#" class="nav-item">
+        
+        <a href="#" class="nav-item" id="nav-delivery">
             <i class="fas fa-shipping-fast nav-icon"></i>
-            <span>Доставка</span>
+            <span class="nav-label">Доставка</span>
         </a>
-        <a href="#" class="nav-item">
+        
+        <a href="#" class="nav-item" id="nav-rest">
             <i class="fas fa-umbrella-beach nav-icon"></i>
-            <span>Отдых</span>
+            <span class="nav-label">Отдых</span>
         </a>
-        <a href="#" class="nav-item">
+        
+        <a href="#" class="nav-item" id="nav-more">
             <i class="fas fa-ellipsis-h nav-icon"></i>
-            <span>Ещё</span>
+            <span class="nav-label">Ещё</span>
         </a>
     </nav>
-    
-    <!-- Подвал -->
-    <footer class="footer">
-        <p>© 2024 Fazbear Entertainment Inc. Все права защищены.</p>
-        <p>Мега-пицца-плекс Фредди Фазбера • Киров, ул. Заводская, 11</p>
-        <p>Круглосуточная поддержка: 8-800-555-FAZBEAR</p>
-    </footer>
-    
-    <!-- Модальное окно с деталями карты -->
-    <div class="modal" id="cardDetailsModal">
-        <div class="modal-content">
-            <button class="close-modal" id="closeCardModal">&times;</button>
-            <h2 class="modal-title">Детали вашей карты Faz</h2>
-            
-            <div style="margin-bottom: 24px;">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                    <div style="width: 60px; height: 60px; background: var(--card-gradient); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem;">F</div>
-                    <div>
-                        <div style="font-weight: 700; font-size: 1.25rem;">Ольга</div>
-                        <div style="color: var(--on-surface-variant);">Уровень 5 • Faz-Superstar</div>
-                    </div>
-                </div>
-                
-                <div style="background: var(--surface-variant); padding: 16px; border-radius: 16px; margin-bottom: 16px;">
-                    <div style="font-weight: 600; margin-bottom: 8px;">Преимущества уровня:</div>
-                    <div style="font-size: 0.9rem; color: var(--on-surface-variant);">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><i class="fas fa-check" style="color: var(--success);"></i> Приоритетная запись на встречи</div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><i class="fas fa-check" style="color: var(--success);"></i> Скидка 15% в ресторанах</div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><i class="fas fa-check" style="color: var(--success);"></i> Бесплатный Faz-напиток при посещении</div>
-                        <div style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-check" style="color: var(--success);"></i> Доступ к эксклюзивным мероприятиям</div>
-                    </div>
-                </div>
-                
-                <div>
-                    <div style="font-weight: 600; margin-bottom: 12px;">Статистика:</div>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                        <div style="background: var(--surface-variant); padding: 12px; border-radius: 12px; text-align: center;">
-                            <div style="font-weight: 700; font-size: 1.25rem;">1,850</div>
-                            <div style="font-size: 0.85rem; color: var(--on-surface-variant);">Faz-баллов</div>
-                        </div>
-                        <div style="background: var(--surface-variant); padding: 12px; border-radius: 12px; text-align: center;">
-                            <div style="font-weight: 700; font-size: 1.25rem;">47</div>
-                            <div style="font-size: 0.85rem; color: var(--on-surface-variant);">Посещений</div>
-                        </div>
-                        <div style="background: var(--surface-variant); padding: 12px; border-radius: 12px; text-align: center;">
-                            <div style="font-weight: 700; font-size: 1.25rem;">12</div>
-                            <div style="font-size: 0.85rem; color: var(--on-surface-variant);">Наград</div>
-                        </div>
-                        <div style="background: var(--surface-variant); padding: 12px; border-radius: 12px; text-align: center;">
-                            <div style="font-weight: 700; font-size: 1.25rem;">2</div>
-                            <div style="font-size: 0.85rem; color: var(--on-surface-variant);">Года с нами</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--surface-variant);">
-                <div style="font-weight: 600; margin-bottom: 8px;">До следующего уровня:</div>
-                <div style="background: var(--surface-variant); height: 8px; border-radius: 4px; overflow: hidden;">
-                    <div style="background: var(--primary); width: 65%; height: 100%;"></div>
-                </div>
-                <div style="font-size: 0.85rem; color: var(--on-surface-variant); margin-top: 8px;">Нужно еще 350 баллов для уровня 6</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Модальное окно со всеми локациями -->
-    <div class="modal" id="allLocationsModal">
-        <div class="modal-content">
-            <button class="close-modal" id="closeLocationsModal">&times;</button>
-            <h2 class="modal-title">Все локации Пицца-Плекса</h2>
-            
-            <div style="max-height: 60vh; overflow-y: auto; padding-right: 8px;">
-                <!-- Здесь будут все 26 локаций -->
-                <div id="allLocationsList"></div>
-            </div>
-        </div>
-    </div>
-    
+
     <script>
-        // Данные всех 26 локаций
-        const allLocations = [
-            {id: 1, name: "Атриум", status: "open", description: "Главный зал Пицца-Плекса с гигантским куполом, фонтаном и сценой для выступлений аниматроников.", tags: ["Шоу", "Еда", "Доступно"]},
-            {id: 2, name: "Галерея Призов Пицца-плекса", status: "open", description: "Торговая зона для обмена билетов на эксклюзивные призы Fazbear Entertainment.", tags: ["Призы", "Билеты"]},
-            {id: 3, name: "Боулинг Бонни", status: "closed", description: "12 дорожек для боулинга в тематике Бонни. Временно закрыто на реконструкцию.", tags: ["Закрыто", "Ремонт"]},
-            {id: 4, name: "Собери Капкейки!", status: "open", description: "Интерактивная кулинарная зона для детей, где можно украшать капкейки.", tags: ["Кулинария", "Для детей"]},
-            {id: 5, name: "Восточная зона аркадных автоматов", status: "open", description: "Более 50 современных аркадных автоматов, включая эксклюзивные игры Fazbear.", tags: ["Аркады", "VR"]},
-            {id: 6, name: "Западная зона аркадных автоматов", status: "open", description: "Классические аркадные автоматы и ретро-игры из 80-90х годов.", tags: ["Аркады", "Ретро"]},
-            {id: 7, name: "Северная зона аркадных автоматов", status: "open", description: "Современные симуляторы и спортивные аркадные автоматы.", tags: ["Симуляторы", "Спорт"]},
-            {id: 8, name: "Южная зона аркадных автоматов", status: "open", description: "Соревновательные аркады и многопользовательские игровые автоматы.", tags: ["Соревнования", "Мультиплеер"]},
-            {id: 9, name: "Центральная зона аркадных автоматов и Faz-VR", status: "open", description: "Главная VR-зона с полным погружением в мир Fazbear Entertainment.", tags: ["VR", "Иммерсивный"]},
-            {id: 10, name: "El Chip's", status: "open", description: "Мексиканский ресторан с тематикой Эль Чипа. Специализируется на фахитас и тако.", tags: ["Еда", "Мексиканская"]},
-            {id: 11, name: "Кофейня Faz-Pad", status: "open", description: "Уютная кофейня с напитками в тематике аниматроников и свежей выпечкой.", tags: ["Кофе", "Выпечка"]},
-            {id: 12, name: "Faz-театр", status: "open", description: "Театр на 200 мест с ежедневными шоу аниматроников и интерактивными представлениями.", tags: ["Шоу", "Театр"]},
-            {id: 13, name: "Fazer Blast", status: "open", description: "Лазертаг арена с тематикой Fazbear. Командные сражения в многоуровневом пространстве.", tags: ["Лазертаг", "Активный"]},
-            {id: 14, name: "Уголок Глэмрок-звёзд", status: "open", description: "Зона для фотосессий с аниматрониками и приобретения эксклюзивных товаров.", tags: ["Фото", "Сувениры"]},
-            {id: 15, name: "Пиратская бухта", status: "open", description: "Детская игровая зона в пиратской тематике с бассейном из шаров и горками.", tags: ["Для детей", "Игровая"]},
-            {id: 16, name: "Лобби", status: "open", description: "Входная зона с билетными кассами, информационным центром и гардеробом.", tags: ["Инфо", "Вход"]},
-            {id: 17, name: "Гольф Монти (14+)", status: "open", description: "Мини-гольф для подростков и взрослых с 18 лунками в тематике аллигатора Монти.", tags: ["Гольф", "Для взрослых"]},
-            {id: 18, name: "Гольф Монти (для детей)", status: "open", description: "Упрощенный мини-гольф для детей с 12 лунками и помощниками-аниматрониками.", tags: ["Гольф", "Для детей"]},
-            {id: 19, name: "Запчасти и обслуживание", status: "closed", description: "Техническая зона для сотрудников. Доступ только персоналу с соответствующим допуском.", tags: ["Персонал", "Техника"]},
-            {id: 20, name: "Гонки Рокси", status: "open", description: "Гоночный трек с картингами в тематике Рокси. Для посетителей от 10 лет.", tags: ["Картинг", "Гонки"]},
-            {id: 21, name: "Аллея Глэмрок-звёзд", status: "open", description: "Променад с восковыми фигурами аниматроников и историей Fazbear Entertainment.", tags: ["Экскурсии", "История"]},
-            {id: 22, name: "Призовой уголок", status: "open", description: "Дополнительная зона для обмена билетов на мелкие призы и сувениры.", tags: ["Призы", "Сувениры"]},
-            {id: 23, name: "Детский сад", status: "open", description: "Специализированная игровая зона для детей до 7 лет с профессиональными аниматорами.", tags: ["Дети", "Анимация"]},
-            {id: 24, name: "Гардероб 1", status: "open", description: "Основная гардеробная зона в восточном крыле комплекса.", tags: ["Гардероб", "Услуги"]},
-            {id: 25, name: "Гардероб 2", status: "open", description: "Дополнительная гардеробная в западном крыле рядом с аркадной зоной.", tags: ["Гардероб", "Услуги"]},
-            {id: 26, name: "Гардероб 3", status: "open", description: "Гардеробная в северном крыле рядом с Faz-театром и ресторанным двориком.", tags: ["Гардероб", "Услуги"]}
-        ];
-        
-        // Заполнение модального окна всеми локациями
-        function populateAllLocations() {
-            const container = document.getElementById('allLocationsList');
-            container.innerHTML = '';
-            
-            allLocations.forEach(location => {
-                const locationElement = document.createElement('div');
-                locationElement.className = 'location-item';
-                locationElement.style.padding = '16px 0';
-                locationElement.style.borderBottom = '1px solid var(--surface-variant)';
-                
-                locationElement.innerHTML = `
-                    <div class="location-header">
-                        <div class="location-name">${location.id}. ${location.name}</div>
-                        <span class="location-status ${location.status === 'open' ? 'status-open' : 'status-closed'}">
-                            ${location.status === 'open' ? 'Открыто' : 'Закрыто'}
-                        </span>
-                    </div>
-                    <p class="location-description">${location.description}</p>
-                    <div class="location-details">
-                        ${location.tags.map(tag => `<div class="detail-icon">${tag}</div>`).join('')}
-                    </div>
-                `;
-                
-                container.appendChild(locationElement);
-            });
-        }
-        
-        // Открытие модального окна с деталями карты
-        document.getElementById('bonusCard').addEventListener('click', function() {
-            document.getElementById('cardDetailsModal').style.display = 'flex';
-        });
-        
-        // Открытие модального окна со всеми локациями
-        document.getElementById('showAllLocations').addEventListener('click', function() {
-            populateAllLocations();
-            document.getElementById('allLocationsModal').style.display = 'flex';
-        });
-        
-        document.getElementById('viewLocations').addEventListener('click', function() {
-            populateAllLocations();
-            document.getElementById('allLocationsModal').style.display = 'flex';
-        });
-        
-        // Закрытие модальных окон
-        document.getElementById('closeCardModal').addEventListener('click', function() {
-            document.getElementById('cardDetailsModal').style.display = 'none';
-        });
-        
-        document.getElementById('closeLocationsModal').addEventListener('click', function() {
-            document.getElementById('allLocationsModal').style.display = 'none';
-        });
-        
-        // Закрытие при клике вне модального окна
-        window.addEventListener('click', function(event) {
-            if (event.target.id === 'cardDetailsModal') {
-                document.getElementById('cardDetailsModal').style.display = 'none';
-            }
-            if (event.target.id === 'allLocationsModal') {
-                document.getElementById('allLocationsModal').style.display = 'none';
-            }
-        });
-        
-        // Интерактивность для кнопок
-        document.querySelectorAll('.btn:not(.btn-bonnie)').forEach(button => {
-            button.addEventListener('click', function() {
-                const buttonText = this.textContent.trim();
-                let message = '';
-                
-                if (buttonText.includes('Заказать пиццу')) {
-                    message = 'Переход к меню заказа пиццы...';
-                } else if (buttonText.includes('Все локации') || buttonText.includes('Локации')) {
-                    return; // Уже обработано выше
-                } else if (buttonText.includes('Развлечения с детьми')) {
-                    message = 'Открывается раздел "Развлечения с детьми"...';
-                } else if (buttonText.includes('Расписание встреч')) {
-                    message = 'Просмотр расписания встреч с аниматрониками...';
-                } else if (buttonText.includes('Фредди')) {
-                    message = 'Запись на встречу с Фредди Фазбером...';
-                } else if (buttonText.includes('Чика')) {
-                    message = 'Запись на встречу с Чикой...';
-                } else if (buttonText.includes('Монти')) {
-                    message = 'Запись на встречу с Монти...';
-                } else if (buttonText.includes('Рокси')) {
-                    message = 'Запись на встречу с Рокси...';
-                }
-                
-                if (message) alert(message);
-            });
-        });
-        
-        // Навигация
+        // Интерактивность навбара
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -933,29 +420,81 @@
                 // Добавляем активный класс к текущему элементу
                 this.classList.add('active');
                 
-                const navText = this.querySelector('span').textContent;
-                let message = '';
+                // Анимация нажатия
+                this.style.transform = 'translateY(-5px) scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-5px) scale(1)';
+                }, 150);
                 
-                switch(navText) {
-                    case 'Главная':
-                        message = 'Вы уже на главной странице';
-                        break;
-                    case 'Доставка':
-                        message = 'Переход к разделу доставки...';
-                        break;
-                    case 'Отдых':
-                        message = 'Переход к разделу отдыха и развлечений...';
-                        break;
-                    case 'Ещё':
-                        message = 'Открытие дополнительных настроек...';
-                        break;
-                }
-                
-                if (navText !== 'Главная') {
-                    alert(message);
-                }
+                // Сообщение о выборе
+                const label = this.querySelector('.nav-label').textContent;
+                console.log(`Выбрана: ${label}`);
             });
         });
+        
+        // Эффект параллакса при прокрутке
+        let lastScrollTop = 0;
+        const navbar = document.querySelector('.glass-navbar');
+        
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Легкое изменение прозрачности при прокрутке
+            if (scrollTop > lastScrollTop) {
+                // Прокрутка вниз
+                navbar.style.opacity = '0.95';
+                navbar.style.transform = `translateX(-50%) translateY(5px)`;
+            } else {
+                // Прокрутка вверх
+                navbar.style.opacity = '1';
+                navbar.style.transform = `translateX(-50%) translateY(0)`;
+            }
+            
+            lastScrollTop = scrollTop;
+            
+            // Изменение эффекта размытия в зависимости от позиции
+            const blurIntensity = Math.min(20, 10 + scrollTop / 50);
+            navbar.style.backdropFilter = `blur(${blurIntensity}px) saturate(180%)`;
+            navbar.style.webkitBackdropFilter = `blur(${blurIntensity}px) saturate(180%)`;
+        });
+        
+        // Имитация эффекта шейдера при движении мыши
+        document.addEventListener('mousemove', function(e) {
+            if (!navbar) return;
+            
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            // Легкое изменение градиента в зависимости от позиции мыши
+            navbar.style.backgroundImage = 
+                `radial-gradient(
+                    ellipse at ${x * 100}% ${y * 100}%,
+                    rgba(255, 255, 255, 0.4) 0%,
+                    transparent 70%
+                ),
+                radial-gradient(
+                    ellipse at ${100 - x * 100}% ${100 - y * 100}%,
+                    rgba(255, 255, 255, 0.2) 0%,
+                    transparent 70%
+                ),
+                linear-gradient(
+                    to bottom,
+                    rgba(255, 255, 255, 0.25) 0%,
+                    rgba(255, 255, 255, 0.1) 20%,
+                    rgba(255, 255, 255, 0.05) 60%,
+                    rgba(255, 255, 255, 0.15) 100%
+                )`;
+        });
+        
+        // Запуск демо-анимации для третьего элемента
+        setInterval(() => {
+            const demoItem = document.querySelector('.demo-float');
+            demoItem.classList.toggle('demo-float');
+            
+            setTimeout(() => {
+                demoItem.classList.add('demo-float');
+            }, 100);
+        }, 10000);
     </script>
 </body>
 </html>

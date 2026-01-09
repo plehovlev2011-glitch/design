@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Эффект стеклянной призмы - Навбар</title>
+    <title>Стеклянный навбар с эффектом рыбьего глаза</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -15,206 +15,228 @@
         }
         
         body {
-            background: linear-gradient(45deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
             overflow-x: hidden;
+            position: relative;
         }
         
+        /* Контент с яркими элементами для демонстрации эффекта */
         .content {
             flex: 1;
-            padding: 30px;
+            padding: 30px 20px 150px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             position: relative;
             z-index: 1;
         }
         
         .title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 30px;
-            background: linear-gradient(90deg, #8B4513, #FF69B4, #4169E1);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 40px;
+            background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-align: center;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
-        .test-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            width: 100%;
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 50px;
+            text-align: center;
             max-width: 800px;
-            margin-bottom: 40px;
+            line-height: 1.6;
         }
         
-        .test-item {
-            height: 120px;
-            border-radius: 20px;
+        /* Сетка ярких элементов для демонстрации искажения */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 60px;
+        }
+        
+        .grid-item {
+            height: 180px;
+            border-radius: 25px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-weight: 700;
             color: white;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            transition: transform 0.3s;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
         }
         
-        .test-item:hover {
-            transform: translateY(-5px);
+        .grid-item:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
         
-        .item-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .item-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-        .item-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-        .item-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-        .item-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-        .item-6 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .grid-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+            z-index: 1;
+        }
         
-        .scroll-text {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
+        .grid-item span {
+            font-size: 1.1rem;
+            margin-top: 10px;
+            z-index: 2;
+        }
+        
+        .grid-item i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            z-index: 2;
+        }
+        
+        /* Цвета элементов */
+        .item-1 { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .item-2 { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+        .item-3 { background: linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%); }
+        .item-4 { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+        .item-5 { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); }
+        .item-6 { background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); }
+        .item-7 { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+        .item-8 { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+        
+        /* Текстовый блок для демонстрации искажения текста */
+        .text-block {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 35px;
             width: 100%;
-            max-width: 800px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 40px;
-            line-height: 1.6;
-            color: #333;
+            max-width: 1200px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            color: white;
+            line-height: 1.8;
             font-size: 1.1rem;
         }
         
-        /* === СТЕКЛЯННЫЙ НАВБАР С ЭФФЕКТОМ ПРИЗМЫ === */
+        /* === ОБНОВЛЕННЫЙ СТЕКЛЯННЫЙ НАВБАР С ЭФФЕКТОМ РЫБЬЕГО ГЛАЗА === */
         .glass-navbar {
             position: fixed;
-            bottom: 30px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90%;
-            max-width: 450px;
-            height: 80px;
+            width: 85%;
+            max-width: 500px;
+            height: 100px; /* Выше чем было */
             z-index: 1000;
             
-            /* Основные свойства стекла */
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border-radius: 10000px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            /* Основные свойства стекла - МЕНЬШЕ матовости */
+            background: rgba(255, 255, 255, 0.15); /* Более прозрачно */
+            backdrop-filter: blur(25px) saturate(200%); /* Усиливаем сатурацию */
+            -webkit-backdrop-filter: blur(25px) saturate(200%);
+            border-radius: 3000px; /* Супер скругление как просили */
+            border: 1px solid rgba(255, 255, 255, 0.4); /* Более яркая граница */
             box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+                0 15px 50px rgba(0, 0, 0, 0.25),
+                inset 0 2px 0 rgba(255, 255, 255, 0.5),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.1);
             
-            /* Эффект линзы/призмы - создаем выпуклую поверхность */
+            /* Эффект выпуклой линзы */
             background-image: 
                 radial-gradient(
-                    ellipse at 50% 10%,
+                    100% 150% at 50% -20%,
                     rgba(255, 255, 255, 0.4) 0%,
-                    transparent 70%
+                    rgba(255, 255, 255, 0.1) 40%,
+                    transparent 80%
                 ),
                 radial-gradient(
-                    ellipse at 50% 90%,
+                    80% 100% at 50% 120%,
                     rgba(255, 255, 255, 0.2) 0%,
-                    transparent 70%
-                );
-            
-            /* Более сложный эффект стекла с градиентами */
-            background-image: 
-                linear-gradient(
-                    to bottom,
-                    rgba(255, 255, 255, 0.25) 0%,
-                    rgba(255, 255, 255, 0.1) 20%,
-                    rgba(255, 255, 255, 0.05) 60%,
-                    rgba(255, 255, 255, 0.15) 100%
+                    transparent 60%
                 );
             
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between; /* Равномерное распределение */
             align-items: center;
-            padding: 0 25px;
+            padding: 0 30px; /* Больше отступов по бокам */
         }
         
-        /* Псевдоэлементы для эффекта искажения краев (как у линзы) */
+        /* Эффект рыбьего глаза - искажение по краям */
         .glass-navbar::before {
             content: '';
             position: absolute;
-            top: 2px;
-            left: 2px;
-            right: 2px;
-            bottom: 2px;
-            border-radius: 10000px;
-            background: linear-gradient(
-                to bottom,
-                transparent 0%,
-                rgba(255, 255, 255, 0.1) 50%,
-                transparent 100%
-            );
-            z-index: -1;
-            pointer-events: none;
-        }
-        
-        /* Эффект "закругления" краев как у линзы */
-        .glass-navbar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 10000px;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 3000px;
             background: 
                 radial-gradient(
-                    100px 40px at 20% 50%,
-                    rgba(255, 255, 255, 0.15) 0%,
-                    transparent 100%
+                    circle at 20% 50%,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    transparent 40%
                 ),
                 radial-gradient(
-                    100px 40px at 80% 50%,
-                    rgba(255, 255, 255, 0.15) 0%,
-                    transparent 100%
+                    circle at 80% 50%,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    transparent 40%
+                ),
+                radial-gradient(
+                    ellipse at 50% 50%,
+                    transparent 30%,
+                    rgba(255, 255, 255, 0.05) 50%,
+                    transparent 70%
                 );
             z-index: -1;
             pointer-events: none;
+            filter: blur(5px);
         }
         
-        /* Искажение краев (эффект линзы) */
-        .lens-distortion {
+        /* Активный эффект искажения */
+        .fish-eye-effect {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            border-radius: 10000px;
+            border-radius: 3000px;
             overflow: hidden;
             z-index: -2;
             pointer-events: none;
-        }
-        
-        .lens-distortion::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
             background: 
                 radial-gradient(
-                    circle at 30% 30%,
-                    rgba(255, 255, 255, 0.05) 0%,
-                    transparent 50%
-                ),
-                radial-gradient(
-                    circle at 70% 70%,
-                    rgba(255, 255, 255, 0.05) 0%,
-                    transparent 50%
+                    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                    rgba(255, 255, 255, 0.15) 0%,
+                    transparent 60%
                 );
-            filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        /* Контейнер для кнопок с отступами */
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            gap: 15px; /* Отступы между кнопками */
         }
         
         /* Элементы навбара */
@@ -223,208 +245,408 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            color: rgba(103, 80, 164, 0.9);
+            flex: 1;
+            min-width: 70px;
+            height: 80px;
+            border-radius: 25px;
+            color: rgba(255, 255, 255, 0.95);
             text-decoration: none;
             position: relative;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 
-                0 4px 6px rgba(0, 0, 0, 0.05),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+                0 5px 15px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            padding: 10px 5px;
         }
         
+        /* Убираем трансформацию при наведении на активный элемент */
         .nav-item.active {
-            background: rgba(103, 80, 164, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             color: white;
-            transform: translateY(-5px);
+            transform: translateY(-15px) scale(1.1); /* Сильнее поднятие */
             box-shadow: 
-                0 8px 15px rgba(103, 80, 164, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+                0 20px 30px rgba(255, 255, 255, 0.3),
+                inset 0 2px 0 rgba(255, 255, 255, 0.6),
+                0 0 30px rgba(255, 255, 255, 0.4); /* Свечение */
+            z-index: 10;
         }
         
         .nav-item:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            color: white;
         }
         
         .nav-icon {
-            font-size: 1.4rem;
-            margin-bottom: 4px;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            transition: transform 0.3s;
         }
         
         .nav-label {
-            font-size: 0.7rem;
+            font-size: 0.85rem;
             font-weight: 600;
             letter-spacing: 0.5px;
+            text-align: center;
+            transition: all 0.3s;
         }
         
-        /* Эффект призмы на активном элементе */
+        /* Эффект линзы на активном элементе */
         .nav-item.active::before {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, 
-                rgba(255, 255, 255, 0.8) 0%, 
-                rgba(255, 255, 255, 0.2) 50%,
-                transparent 100%);
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 30px;
+            background: radial-gradient(
+                ellipse at 50% 30%,
+                rgba(255, 255, 255, 0.6) 0%,
+                rgba(255, 255, 255, 0.2) 40%,
+                transparent 70%
+            );
             z-index: -1;
-            filter: blur(5px);
-            opacity: 0.5;
+            filter: blur(15px);
+            opacity: 0.7;
+        }
+        
+        /* Эффект преломления света (как в призме) */
+        .prism-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 70%
+            );
+            mix-blend-mode: overlay;
+            pointer-events: none;
         }
         
         /* Индикатор выбора */
         .nav-item.active::after {
             content: '';
             position: absolute;
-            bottom: -8px;
-            width: 5px;
-            height: 5px;
-            background: #6750a4;
+            bottom: -20px;
+            width: 8px;
+            height: 8px;
+            background: white;
             border-radius: 50%;
-            box-shadow: 0 0 10px #6750a4;
+            box-shadow: 0 0 15px white, 0 0 30px white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+        
+        /* Эффект искажения контента под навбаром */
+        .content::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 180px;
+            background: radial-gradient(
+                ellipse at 50% 100%,
+                rgba(255, 255, 255, 0.1) 0%,
+                transparent 70%
+            );
+            pointer-events: none;
+            z-index: 2;
+            mix-blend-mode: overlay;
         }
         
         /* Медиа-запросы */
         @media (max-width: 768px) {
-            .test-grid {
+            .grid-container {
                 grid-template-columns: repeat(2, 1fr);
             }
             
             .glass-navbar {
-                width: 95%;
-                height: 70px;
-                padding: 0 15px;
+                width: 90%;
+                height: 95px;
+                padding: 0 20px;
             }
             
             .nav-item {
-                width: 55px;
-                height: 55px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .test-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .glass-navbar {
-                height: 65px;
-                padding: 0 10px;
-            }
-            
-            .nav-item {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .nav-label {
-                display: none;
+                height: 75px;
+                min-width: 65px;
             }
             
             .nav-icon {
-                margin-bottom: 0;
                 font-size: 1.6rem;
             }
         }
         
-        /* Анимация для демонстрации эффекта */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @media (max-width: 480px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .glass-navbar {
+                width: 95%;
+                height: 90px;
+                padding: 0 15px;
+            }
+            
+            .nav-container {
+                gap: 10px;
+            }
+            
+            .nav-item {
+                height: 70px;
+                min-width: 60px;
+            }
+            
+            .nav-label {
+                font-size: 0.75rem;
+            }
+            
+            .nav-icon {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+            }
         }
         
-        .demo-float {
-            animation: float 5s ease-in-out infinite;
+        /* Анимация для демонстрации эффекта */
+        @keyframes colorShift {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        .demo-shift {
+            animation: colorShift 10s linear infinite;
         }
     </style>
 </head>
 <body>
     <div class="content">
-        <h1 class="title">Эффект стеклянной призмы</h1>
+        <h1 class="title">Эффект стеклянной призмы с рыбьим глазом</h1>
         
-        <div class="test-grid">
-            <div class="test-item item-1">Красный</div>
-            <div class="test-item item-2">Розовый</div>
-            <div class="test-item item-3 demo-float">Синий</div>
-            <div class="test-item item-4">Зеленый</div>
-            <div class="test-item item-5">Желтый</div>
-            <div class="test-item item-6">Бирюзовый</div>
+        <p class="subtitle">Навбар внизу создает эффект линзы, искажая контент как рыбий глаз. Обратите внимание, как элементы искажаются при наведении на навбар.</p>
+        
+        <div class="grid-container">
+            <div class="grid-item item-1">
+                <i class="fas fa-star"></i>
+                <span>Яркая звезда</span>
+            </div>
+            <div class="grid-item item-2">
+                <i class="fas fa-heart"></i>
+                <span>Сердечко</span>
+            </div>
+            <div class="grid-item item-3 demo-shift">
+                <i class="fas fa-gem"></i>
+                <span>Драгоценность</span>
+            </div>
+            <div class="grid-item item-4">
+                <i class="fas fa-moon"></i>
+                <span>Луна</span>
+            </div>
+            <div class="grid-item item-5">
+                <i class="fas fa-sun"></i>
+                <span>Солнце</span>
+            </div>
+            <div class="grid-item item-6">
+                <i class="fas fa-cloud"></i>
+                <span>Облако</span>
+            </div>
+            <div class="grid-item item-7">
+                <i class="fas fa-bolt"></i>
+                <span>Молния</span>
+            </div>
+            <div class="grid-item item-8">
+                <i class="fas fa-feather-alt"></i>
+                <span>Перо</span>
+            </div>
         </div>
         
-        <div class="scroll-text">
-            <p>Это демонстрационный контент для тестирования эффекта стеклянной призмы в навбаре. Прокручивайте страницу вниз и вверх, чтобы увидеть, как навбар искажает и размывает контент под собой, создавая эффект линзы.</p>
-            <p>Обратите внимание на края навбара - там эффект искажения сильнее, что имитирует кривизну линзы. Центр остается более прозрачным, создавая впечатление выпуклой стеклянной поверхности.</p>
-            <p>Эффект достигается комбинацией:</p>
-            <ul>
-                <li>backdrop-filter: blur() для размытия фона</li>
-                <li>Радиальные градиенты для создания эффекта кривизны</li>
-                <li>Полупрозрачные границы и тени</li>
-                <li>Псевдоэлементы для искажения краев</li>
+        <div class="text-block">
+            <h3 style="margin-bottom: 15px; color: #ffd700;">Эффект рыбьего глаза в действии</h3>
+            <p>При движении мыши над навбаром создается эффект линзы, который искажает контент под ней. Это имитирует поведение шейдеров из статьи, где применяется функция <code>applyLensDistortion</code>.</p>
+            <p>Эффект достигается с помощью:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Динамического радиального градиента, следующего за курсором</li>
+                <li>Смешивания слоев с помощью <code>mix-blend-mode</code></li>
+                <li>Искажения перспективы через трансформации</li>
+                <li>Размытия с переменной интенсивностью</li>
             </ul>
+            <p style="margin-top: 15px; font-style: italic;">Проведите мышью над разными частями навбара, чтобы увидеть, как меняется искажение.</p>
         </div>
         
-        <!-- Дополнительный контент для прокрутки -->
-        <div style="height: 300px; display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 800px;">
-            <div style="background: linear-gradient(90deg, #8B4513, #FFD700); height: 80px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Цвет Фредди</div>
-            <div style="background: linear-gradient(90deg, #FF69B4, #FFD700); height: 80px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Цвет Рокси</div>
-            <div style="background: linear-gradient(90deg, #228B22, #FFD700); height: 80px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Цвет Монти</div>
+        <!-- Дополнительные элементы для демонстрации -->
+        <div style="display: flex; gap: 20px; width: 100%; max-width: 1200px; margin-top: 30px;">
+            <div style="flex: 1; background: rgba(255,255,255,0.1); padding: 25px; border-radius: 20px; color: white; text-align: center;">
+                <i class="fas fa-eye" style="font-size: 2rem; margin-bottom: 15px; color: #ff9a9e;"></i>
+                <h4 style="margin-bottom: 10px;">Эффект линзы</h4>
+                <p>Искажение сильнее по краям, создавая выпуклую поверхность</p>
+            </div>
+            <div style="flex: 1; background: rgba(255,255,255,0.1); padding: 25px; border-radius: 20px; color: white; text-align: center;">
+                <i class="fas fa-cube" style="font-size: 2rem; margin-bottom: 15px; color: #a18cd1;"></i>
+                <h4 style="margin-bottom: 10px;">3D-глубина</h4>
+                <p>Многослойность создает ощущение объема и толщины стекла</p>
+            </div>
+            <div style="flex: 1; background: rgba(255,255,255,0.1); padding: 25px; border-radius: 20px; color: white; text-align: center;">
+                <i class="fas fa-lightbulb" style="font-size: 2rem; margin-bottom: 15px; color: #ffd166;"></i>
+                <h4 style="margin-bottom: 10px;">Подсветка</h4>
+                <p>Динамическое свечение активных элементов как в статье</p>
+            </div>
         </div>
     </div>
     
-    <!-- Стеклянный навбар -->
-    <nav class="glass-navbar">
-        <div class="lens-distortion"></div>
+    <!-- Стеклянный навбар с эффектом рыбьего глаза -->
+    <nav class="glass-navbar" id="glassNavbar">
+        <div class="fish-eye-effect" id="fishEyeEffect"></div>
+        <div class="prism-effect"></div>
         
-        <a href="#" class="nav-item active" id="nav-home">
-            <i class="fas fa-home nav-icon"></i>
-            <span class="nav-label">Главная</span>
-        </a>
-        
-        <a href="#" class="nav-item" id="nav-delivery">
-            <i class="fas fa-shipping-fast nav-icon"></i>
-            <span class="nav-label">Доставка</span>
-        </a>
-        
-        <a href="#" class="nav-item" id="nav-rest">
-            <i class="fas fa-umbrella-beach nav-icon"></i>
-            <span class="nav-label">Отдых</span>
-        </a>
-        
-        <a href="#" class="nav-item" id="nav-more">
-            <i class="fas fa-ellipsis-h nav-icon"></i>
-            <span class="nav-label">Ещё</span>
-        </a>
+        <div class="nav-container">
+            <a href="#" class="nav-item active" id="nav-home">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="nav-label">Главная</span>
+            </a>
+            
+            <a href="#" class="nav-item" id="nav-delivery">
+                <i class="fas fa-shipping-fast nav-icon"></i>
+                <span class="nav-label">Доставка</span>
+            </a>
+            
+            <a href="#" class="nav-item" id="nav-rest">
+                <i class="fas fa-umbrella-beach nav-icon"></i>
+                <span class="nav-label">Отдых</span>
+            </a>
+            
+            <a href="#" class="nav-item" id="nav-more">
+                <i class="fas fa-ellipsis-h nav-icon"></i>
+                <span class="nav-label">Ещё</span>
+            </a>
+        </div>
     </nav>
 
     <script>
+        // Инициализация эффекта рыбьего глаза
+        const navbar = document.getElementById('glassNavbar');
+        const fishEyeEffect = document.getElementById('fishEyeEffect');
+        const navItems = document.querySelectorAll('.nav-item');
+        const gridItems = document.querySelectorAll('.grid-item');
+        
+        // Эффект рыбьего глаза при движении мыши над навбаром
+        navbar.addEventListener('mousemove', function(e) {
+            const rect = navbar.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            
+            // Обновляем позицию эффекта рыбьего глаза
+            fishEyeEffect.style.setProperty('--mouse-x', `${x}%`);
+            fishEyeEffect.style.setProperty('--mouse-y', `${y}%`);
+            fishEyeEffect.style.opacity = '1';
+            
+            // Искажаем контент под навбаром (эффект линзы)
+            const distortionX = (x - 50) / 10; // Смещение по X
+            const distortionY = (y - 50) / 10; // Смещение по Y
+            const distortionStrength = 0.3; // Сила искажения
+            
+            // Применяем искажение к элементам контента
+            gridItems.forEach(item => {
+                const itemRect = item.getBoundingClientRect();
+                const distanceY = Math.abs(itemRect.bottom - rect.top);
+                
+                // Если элемент близко к навбару, искажаем его
+                if (distanceY < 300) {
+                    const distortion = (300 - distanceY) / 300 * distortionStrength;
+                    const translateX = distortionX * distortion * 20;
+                    const translateY = distortionY * distortion * 20;
+                    const scale = 1 + distortion * 0.1;
+                    
+                    item.style.transform = `
+                        translate(${translateX}px, ${translateY}px) 
+                        scale(${scale})
+                    `;
+                    item.style.filter = `blur(${distortion * 2}px)`;
+                } else {
+                    item.style.transform = '';
+                    item.style.filter = '';
+                }
+            });
+            
+            // Искажаем сам навбар (эффект выпуклости)
+            const curvatureX = (x - 50) / 5;
+            const curvatureY = (y - 50) / 5;
+            
+            navbar.style.transform = `
+                translateX(-50%) 
+                perspective(500px) 
+                rotateX(${curvatureY * -0.1}deg) 
+                rotateY(${curvatureX * 0.1}deg)
+            `;
+        });
+        
+        navbar.addEventListener('mouseleave', function() {
+            fishEyeEffect.style.opacity = '0';
+            
+            // Возвращаем элементы в исходное состояние
+            gridItems.forEach(item => {
+                item.style.transform = '';
+                item.style.filter = '';
+            });
+            
+            // Возвращаем навбар в исходное состояние
+            navbar.style.transform = 'translateX(-50%)';
+        });
+        
         // Интерактивность навбара
-        document.querySelectorAll('.nav-item').forEach(item => {
+        navItems.forEach(item => {
             item.addEventListener('click', function(e) {
                 e.preventDefault();
                 
                 // Удаляем активный класс у всех элементов
-                document.querySelectorAll('.nav-item').forEach(nav => {
+                navItems.forEach(nav => {
                     nav.classList.remove('active');
                 });
                 
                 // Добавляем активный класс к текущему элементу
                 this.classList.add('active');
                 
-                // Анимация нажатия
-                this.style.transform = 'translateY(-5px) scale(0.95)';
+                // Усиленный эффект нажатия с искажением
+                this.style.transform = 'translateY(-20px) scale(1.2)';
+                
+                // Эффект волны от нажатия
+                const ripple = document.createElement('div');
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%)';
+                ripple.style.width = '0';
+                ripple.style.height = '0';
+                ripple.style.top = '50%';
+                ripple.style.left = '50%';
+                ripple.style.transform = 'translate(-50%, -50%)';
+                ripple.style.zIndex = '5';
+                this.appendChild(ripple);
+                
+                // Анимация волны
                 setTimeout(() => {
-                    this.style.transform = 'translateY(-5px) scale(1)';
-                }, 150);
+                    ripple.style.width = '200px';
+                    ripple.style.height = '200px';
+                    ripple.style.opacity = '0';
+                    ripple.style.transition = 'all 0.6s ease-out';
+                }, 10);
+                
+                // Удаляем волну после анимации
+                setTimeout(() => {
+                    ripple.remove();
+                    this.style.transform = 'translateY(-15px) scale(1.1)';
+                }, 600);
                 
                 // Сообщение о выборе
                 const label = this.querySelector('.nav-label').textContent;
@@ -432,69 +654,69 @@
             });
         });
         
-        // Эффект параллакса при прокрутке
+        // Динамическое изменение эффекта призмы при скролле
         let lastScrollTop = 0;
-        const navbar = document.querySelector('.glass-navbar');
         
         window.addEventListener('scroll', function() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             
-            // Легкое изменение прозрачности при прокрутке
+            // Изменение прозрачности и размытия при скролле
+            const scrollRatio = Math.min(scrollTop / 500, 1);
+            const blurIntensity = 15 + scrollRatio * 15;
+            const opacity = 0.85 + scrollRatio * 0.15;
+            
+            navbar.style.backdropFilter = `blur(${blurIntensity}px) saturate(250%)`;
+            navbar.style.webkitBackdropFilter = `blur(${blurIntensity}px) saturate(250%)`;
+            navbar.style.opacity = opacity.toString();
+            
+            // Эффект параллакса
             if (scrollTop > lastScrollTop) {
                 // Прокрутка вниз
-                navbar.style.opacity = '0.95';
-                navbar.style.transform = `translateX(-50%) translateY(5px)`;
+                navbar.style.bottom = `${40 - Math.min(scrollTop / 20, 20)}px`;
             } else {
                 // Прокрутка вверх
-                navbar.style.opacity = '1';
-                navbar.style.transform = `translateX(-50%) translateY(0)`;
+                navbar.style.bottom = '40px';
             }
             
             lastScrollTop = scrollTop;
-            
-            // Изменение эффекта размытия в зависимости от позиции
-            const blurIntensity = Math.min(20, 10 + scrollTop / 50);
-            navbar.style.backdropFilter = `blur(${blurIntensity}px) saturate(180%)`;
-            navbar.style.webkitBackdropFilter = `blur(${blurIntensity}px) saturate(180%)`;
         });
         
-        // Имитация эффекта шейдера при движении мыши
-        document.addEventListener('mousemove', function(e) {
-            if (!navbar) return;
+        // Имитация эффекта из статьи - динамическое искажение
+        function simulateShaderEffect() {
+            const time = Date.now() / 1000;
+            const wave1 = Math.sin(time) * 0.5 + 0.5;
+            const wave2 = Math.sin(time * 1.7) * 0.5 + 0.5;
             
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            // Легкое изменение градиента в зависимости от позиции мыши
-            navbar.style.backgroundImage = 
-                `radial-gradient(
-                    ellipse at ${x * 100}% ${y * 100}%,
-                    rgba(255, 255, 255, 0.4) 0%,
-                    transparent 70%
+            // Динамическое изменение градиента (имитация шейдера)
+            navbar.style.backgroundImage = `
+                radial-gradient(
+                    100% 150% at 50% ${-10 + wave1 * 10}%,
+                    rgba(255, 255, 255, ${0.3 + wave1 * 0.1}) 0%,
+                    rgba(255, 255, 255, ${0.1 + wave2 * 0.05}) 40%,
+                    transparent 80%
                 ),
                 radial-gradient(
-                    ellipse at ${100 - x * 100}% ${100 - y * 100}%,
-                    rgba(255, 255, 255, 0.2) 0%,
-                    transparent 70%
-                ),
-                linear-gradient(
-                    to bottom,
-                    rgba(255, 255, 255, 0.25) 0%,
-                    rgba(255, 255, 255, 0.1) 20%,
-                    rgba(255, 255, 255, 0.05) 60%,
-                    rgba(255, 255, 255, 0.15) 100%
-                )`;
-        });
+                    80% 100% at 50% ${120 + wave2 * 10}%,
+                    rgba(255, 255, 255, ${0.2 + wave1 * 0.1}) 0%,
+                    transparent 60%
+                )
+            `;
+            
+            requestAnimationFrame(simulateShaderEffect);
+        }
+        
+        // Запускаем анимацию эффекта шейдера
+        simulateShaderEffect();
         
         // Запуск демо-анимации для третьего элемента
         setInterval(() => {
-            const demoItem = document.querySelector('.demo-float');
-            demoItem.classList.toggle('demo-float');
+            const demoItem = document.querySelector('.demo-shift');
+            demoItem.classList.toggle('demo-shift');
             
             setTimeout(() => {
-                demoItem.classList.add('demo-float');
+                demoItem.classList.add('demo-shift');
             }, 100);
-        }, 10000);
+        }, 15000);
     </script>
 </body>
 </html>

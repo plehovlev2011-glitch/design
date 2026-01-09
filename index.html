@@ -1,97 +1,612 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-<title>Рабочий инструмент выделения</title>
-<script>
-function generateFixedCode() {
-    // Ваши координаты в пикселях (примерные, нужно уточнить)
-    const areas = [
-        {name: "about", x: 26, y: 316, w: 100, h: 50, link: "about.html"},
-        {name: "contacts", x: 245, y: 315, w: 100, h: 50, link: "contacts.html"},
-        {name: "cases", x: 498, y: 316, w: 100, h: 50, link: "cases.html"},
-        {name: "whyme", x: 664, y: 316, w: 100, h: 50, link: "whyme.html"},
-        {name: "more", x: 873, y: 317, w: 100, h: 50, link: "more.html"},
-        {name: "rightsnlaws", x: 16, y: 595, w: 100, h: 50, link: "rightsnlaws.html"},
-        {name: "designphilosophy", x: 14, y: 25, w: 100, h: 50, link: "designphilosophy.html"}
-    ];
-    
-    const imgWidth = 1920; // Ширина вашего изображения
-    const imgHeight = 1080; // Высота вашего изображения
-    
-    let htmlCode = '<!-- Кликабельные области -->\n\n';
-    
-    areas.forEach(area => {
-        const leftPercent = ((area.x / imgWidth) * 100).toFixed(3);
-        const topPercent = ((area.y / imgHeight) * 100).toFixed(3);
-        const widthPercent = ((area.w / imgWidth) * 100).toFixed(3);
-        const heightPercent = ((area.h / imgHeight) * 100).toFixed(3);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пицца-Плекс Компаньон | Фазбер Энтертейнмент</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
         
-        htmlCode += `<div class="click-area" 
-     style="position: absolute;
-            left: ${leftPercent}%;
-            top: ${topPercent}%;
-            width: ${widthPercent}%;
-            height: ${heightPercent}%;
-            cursor: pointer;"
-     onclick="window.open('${area.link}', '_self')"
-     title="${area.name}">
-</div>\n\n`;
-    });
-    
-    return htmlCode;
-}
-
-function copyCode() {
-    const code = generateFixedCode();
-    const textarea = document.createElement('textarea');
-    textarea.value = code;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-    alert('Код скопирован!\n\nТеперь вставьте его в ваш основной HTML файл.\n\nПРИМЕЧАНИЕ: Возможно потребуется настроить размеры областей (w и h в пикселях).');
-}
-</script>
+        :root {
+            --freddy-brown: #8B4513;
+            --chica-yellow: #FFD700;
+            --monty-green: #228B22;
+            --roxy-pink: #FF69B4;
+            --bonnie-blue: #4169E1;
+            --dark-bg: #1a1a2e;
+            --light-bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --gray-disabled: #cccccc;
+            --warning-red: #d32f2f;
+            --employee-blue: #1976d2;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 70px;
+        }
+        
+        .header {
+            background: linear-gradient(to right, var(--freddy-brown), #a0522d);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .fazbear-logo {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23FFD700" stroke="%238B4513" stroke-width="3"/><text x="50" y="65" text-anchor="middle" font-family="Arial" font-size="40" fill="%238B4513">F</text></svg>') no-repeat center;
+            background-size: contain;
+        }
+        
+        .main-content {
+            padding: 15px;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            margin: 20px 0 10px;
+            color: var(--freddy-brown);
+            border-bottom: 2px solid var(--freddy-brown);
+            padding-bottom: 5px;
+        }
+        
+        .bonus-card {
+            background: linear-gradient(135deg, #ff9a00, #ff5e00);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bonus-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 120px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(30deg);
+        }
+        
+        .user-name {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .user-status {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .barcode-container {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .barcode {
+            font-family: 'Libre Barcode 39', monospace;
+            font-size: 2.5rem;
+            letter-spacing: 5px;
+            color: black;
+        }
+        
+        .card-number {
+            font-family: monospace;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+        
+        .points {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .points span {
+            font-size: 0.9rem;
+        }
+        
+        .points-value {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            color: white;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-freddy {
+            background-color: var(--freddy-brown);
+        }
+        
+        .btn-chica {
+            background-color: var(--chica-yellow);
+            color: var(--text-dark);
+        }
+        
+        .btn-monty {
+            background-color: var(--monty-green);
+        }
+        
+        .btn-roxy {
+            background-color: var(--roxy-pink);
+        }
+        
+        .btn-bonnie {
+            background-color: var(--gray-disabled);
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+        
+        .locations-container {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .location-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .location-item:last-child {
+            border-bottom: none;
+        }
+        
+        .location-status {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        
+        .status-open {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-closed {
+            background-color: #ffebee;
+            color: var(--warning-red);
+        }
+        
+        .employee-section {
+            background-color: #e3f2fd;
+            border-left: 5px solid var(--employee-blue);
+            padding: 15px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .employee-title {
+            color: var(--employee-blue);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .corridor-info {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-top: 10px;
+        }
+        
+        .color-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .color-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+        }
+        
+        .color-box {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+        
+        .warning-box {
+            background-color: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .warning-title {
+            color: #ef6c00;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-item.active {
+            color: var(--freddy-brown);
+        }
+        
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
+        .footer {
+            padding: 15px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 500px) {
+            body {
+                max-width: 100%;
+            }
+            
+            .buttons-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body style="padding: 20px; font-family: Arial;">
-
-<h2>Генератор кода для кликабельных областей</h2>
-
-<p>Ваше изображение: 1920x1080 пикселей</p>
-
-<p>Координаты областей (примерные):</p>
-<pre style="background: #f5f5f5; padding: 10px;">
-1. about: X=26, Y=316 (1.354%, 29.259%)
-2. contacts: X=245, Y=315 (12.760%, 29.167%)
-3. cases: X=498, Y=316 (25.938%, 29.259%)
-4. whyme: X=664, Y=316 (34.583%, 29.259%)
-5. more: X=873, Y=317 (45.469%, 29.352%)
-6. rightsnlaws: X=16, Y=595 (0.833%, 55.093%)
-7. designphilosophy: X=14, Y=25 (0.729%, 2.315%)
-</pre>
-
-<p><strong>Проблема:</strong> Все области имеют ширину и высоту 0px.</p>
-<p><strong>Решение:</strong> Нужно указать правильные размеры для каждой области.</p>
-
-<button onclick="copyCode()" style="padding: 10px 20px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
-    Скопировать исправленный код
-</button>
-
-<div style="margin-top: 20px; padding: 15px; background: #e9f7fe; border-left: 4px solid #007bff;">
-    <h4>Как настроить размеры:</h4>
-    <ol>
-        <li>Откройте ваш файл hello.png в любом графическом редакторе</li>
-        <li>Измерьте размер каждой кнопки в пикселях (ширина и высота)</li>
-        <li>Обновите значения w (ширина) и h (высота) в массиве areas в коде выше</li>
-        <li>Еще раз нажмите "Скопировать исправленный код"</li>
-    </ol>
+<body>
+    <!-- Шапка приложения -->
+    <header class="header">
+        <div class="fazbear-logo"></div>
+        <h1>Пицца-Плекс Компаньон</h1>
+        <p>Мега-пицца-плекс Фредди Фазбера • Киров, ул. Заводская, 11</p>
+    </header>
     
-    <p><strong>Пример правильной области:</strong></p>
-    <pre style="background: white; padding: 10px;">
-{name: "about", x: 26, y: 316, w: 150, h: 60, link: "about.html"}
-// где w=150px (ширина кнопки), h=60px (высота кнопки)
-    </pre>
-</div>
-
+    <!-- Основное содержимое -->
+    <main class="main-content">
+        <!-- Бонусная карта -->
+        <section>
+            <h2 class="section-title">Ваша карта Faz</h2>
+            <div class="bonus-card">
+                <div class="user-name">Ольга</div>
+                <div class="user-status">Уровень: Faz-Superstar</div>
+                
+                <div class="barcode-container">
+                    <div class="barcode">FAZ•OLGA•VIP•2024</div>
+                    <div class="card-number">№ 0042-1987-0655</div>
+                </div>
+                
+                <div class="points">
+                    <span>Накоплено Faz-баллов:</span>
+                    <span class="points-value">1,850</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Быстрые действия -->
+        <section>
+            <h2 class="section-title">Быстрые действия</h2>
+            <div class="buttons-grid">
+                <button class="btn btn-freddy">
+                    <i class="fas fa-utensils"></i> Заказать пиццу
+                </button>
+                <button class="btn btn-chica">
+                    <i class="fas fa-map-marker-alt"></i> Локации
+                </button>
+                <button class="btn btn-monty">
+                    <i class="fas fa-child"></i> С детьми
+                </button>
+                <button class="btn btn-roxy">
+                    <i class="fas fa-calendar-alt"></i> Встречи
+                </button>
+            </div>
+        </section>
+        
+        <!-- Аниматроники -->
+        <section>
+            <h2 class="section-title">Встречи с аниматрониками</h2>
+            <div class="buttons-grid">
+                <button class="btn btn-freddy">
+                    <i class="fas fa-bear"></i> Фредди
+                </button>
+                <button class="btn btn-chica">
+                    <i class="fas fa-kiwi-bird"></i> Чика
+                </button>
+                <button class="btn btn-monty">
+                    <i class="fas fa-alligator"></i> Монти
+                </button>
+                <button class="btn btn-roxy">
+                    <i class="fas fa-wolf"></i> Рокси
+                </button>
+                <button class="btn btn-bonnie" disabled>
+                    <i class="fas fa-rabbit"></i> Бонни
+                </button>
+            </div>
+        </section>
+        
+        <!-- Локации -->
+        <section>
+            <h2 class="section-title">Локации Пицца-Плекса</h2>
+            <div class="locations-container">
+                <div class="location-item">
+                    <span>1. Атриум</span>
+                    <span class="location-status status-open">Открыто</span>
+                </div>
+                <div class="location-item">
+                    <span>2. Галерея Призов Пицца-плекса</span>
+                    <span class="location-status status-open">Открыто</span>
+                </div>
+                <div class="location-item">
+                    <span>3. Боулинг Бонни</span>
+                    <span class="location-status status-closed">Временно закрыто</span>
+                </div>
+                <div class="location-item">
+                    <span>4. Собери Капкейки!</span>
+                    <span class="location-status status-open">Открыто</span>
+                </div>
+                <div class="location-item">
+                    <span>17. Гольф Монти (14+)</span>
+                    <span class="location-status status-open">Открыто</span>
+                </div>
+                <div class="location-item">
+                    <span>20. Гонки Рокси</span>
+                    <span class="location-status status-open">Открыто</span>
+                </div>
+                <div class="location-item">
+                    <span>23. Детский сад</span>
+                    <span class="location-status status-open">Открыто</span>
+                </div>
+                <div class="location-item">
+                    <span>Показать все локации (26)</span>
+                    <span><i class="fas fa-chevron-right"></i></span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Информация для сотрудников -->
+        <section class="employee-section">
+            <div class="employee-title">
+                <i class="fas fa-hard-hat"></i>
+                <span>ИНФОРМАЦИЯ ДЛЯ СОТРУДНИКОВ</span>
+            </div>
+            <p><strong>Технические коридоры Пицца-Плекса</strong></p>
+            <p class="corridor-info">
+                Номенклатура коридоров: уровень-тип-связь-сторона. Пример: П1-ПРП-ФБ-3 (Подвал-1, Перепутье, Фазер-Бласт, 3-й номер).
+            </p>
+            
+            <div class="color-legend">
+                <div class="color-item">
+                    <div class="color-box" style="background-color: #9370DB;"></div>
+                    <span>Фазер-Бласт</span>
+                </div>
+                <div class="color-item">
+                    <div class="color-box" style="background-color: #98FB98;"></div>
+                    <span>Гольф Монти</span>
+                </div>
+                <div class="color-item">
+                    <div class="color-box" style="background-color: #FFC0CB;"></div>
+                    <span>Аллея звёзд</span>
+                </div>
+                <div class="color-item">
+                    <div class="color-box" style="background-color: #FF6347;"></div>
+                    <span>Главное фойе</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Важная информация -->
+        <section class="warning-box">
+            <div class="warning-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>ВАЖНАЯ ИНФОРМАЦИЯ</span>
+            </div>
+            <p><strong>В случае потери ребенка:</strong></p>
+            <p>1. Немедленно сообщите персоналу в костюмах аниматроников или сотрудникам службы безопасности.</p>
+            <p>2. Подойдите к ближайшему информационному стенду и нажмите кнопку "Экстренный вызов".</p>
+            <p>3. Ребенка доставят в главный офис охраны (локация: B1-MAIN-SEC-N).</p>
+        </section>
+    </main>
+    
+    <!-- Нижняя навигация -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <i class="fas fa-home nav-icon"></i>
+            <span>Главная</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-shipping-fast nav-icon"></i>
+            <span>Доставка</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-umbrella-beach nav-icon"></i>
+            <span>Отдых</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-ellipsis-h nav-icon"></i>
+            <span>Ещё</span>
+        </a>
+    </nav>
+    
+    <!-- Подвал -->
+    <footer class="footer">
+        <p>© 2024 Fazbear Entertainment Inc. Все права защищены.</p>
+        <p>Мега-пицца-плекс Фредди Фазбера • Киров, ул. Заводская, 11</p>
+        <p>Круглосуточная поддержка: 8-800-555-FAZBEAR</p>
+    </footer>
+    
+    <script>
+        // Интерактивность для кнопок
+        document.querySelectorAll('.btn:not(.btn-bonnie)').forEach(button => {
+            button.addEventListener('click', function() {
+                const buttonText = this.textContent.trim();
+                let message = '';
+                
+                if (buttonText.includes('Заказать пиццу')) {
+                    message = 'Переход к меню заказа пиццы...';
+                } else if (buttonText.includes('Локации')) {
+                    message = 'Загрузка карты Пицца-Плекса...';
+                } else if (buttonText.includes('С детьми')) {
+                    message = 'Открывается раздел "Развлечения с детьми"...';
+                } else if (buttonText.includes('Встречи')) {
+                    message = 'Просмотр расписания встреч с аниматрониками...';
+                } else if (buttonText.includes('Фредди')) {
+                    message = 'Запись на встречу с Фредди...';
+                } else if (buttonText.includes('Чика')) {
+                    message = 'Запись на встречу с Чикой...';
+                } else if (buttonText.includes('Монти')) {
+                    message = 'Запись на встречу с Монти...';
+                } else if (buttonText.includes('Рокси')) {
+                    message = 'Запись на встречу с Рокси...';
+                }
+                
+                alert(message);
+            });
+        });
+        
+        // Навигация
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Удаляем активный класс у всех элементов
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                
+                // Добавляем активный класс к текущему элементу
+                this.classList.add('active');
+                
+                const navText = this.querySelector('span').textContent;
+                let message = '';
+                
+                switch(navText) {
+                    case 'Главная':
+                        message = 'Вы уже на главной странице';
+                        break;
+                    case 'Доставка':
+                        message = 'Переход к разделу доставки...';
+                        break;
+                    case 'Отдых':
+                        message = 'Переход к разделу отдыха и развлечений...';
+                        break;
+                    case 'Ещё':
+                        message = 'Открытие дополнительных настроек...';
+                        break;
+                }
+                
+                if (navText !== 'Главная') {
+                    alert(message);
+                }
+            });
+        });
+        
+        // Показ всех локаций
+        document.querySelector('.location-item:last-child').addEventListener('click', function() {
+            alert('Загрузка полного списка из 26 локаций Пицца-Плекса...');
+        });
+    </script>
 </body>
 </html>

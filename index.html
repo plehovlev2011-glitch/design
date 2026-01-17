@@ -1,561 +1,1028 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control4 Core 1 Controller Boot Sequence</title>
+    <title>Control4 OS2 - Качалова 18</title>
     <style>
-        @font-face {
-            font-family: 'TerminalFont';
-            src: url('1010.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
         }
         
         body {
-            background-color: #000;
-            font-family: 'TerminalFont', 'Courier New', monospace;
-            color: #fff;
-            line-height: 1.1;
-            overflow: hidden;
-            height: 100vh;
+            background: radial-gradient(ellipse at center, #0a0a1a 0%, #000000 100%);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 12px;
+            min-height: 100vh;
+            font-family: 'Arial Narrow', 'Franklin Gothic Medium', sans-serif;
+            color: #e0e0e0;
+            overflow: hidden;
+            perspective: 1000px;
         }
         
-        .terminal-container {
+        /* Контейнер интерфейса */
+        .mercedes-ui {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+        
+        /* Статус бар в стиле Mercedes COMAND */
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: linear-gradient(to bottom, 
+                rgba(20, 30, 48, 0.95) 0%,
+                rgba(10, 15, 30, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 1000;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.7);
+        }
+        
+        .back-btn {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, rgba(0, 100, 200, 0.8), rgba(0, 60, 120, 0.9));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 4px 8px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform-style: preserve-3d;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:active {
+            transform: translateY(2px) scale(0.95);
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .home-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .home-icon {
+            width: 45px;
+            height: 45px;
+            background: radial-gradient(circle, rgba(0, 150, 255, 0.9), rgba(0, 80, 160, 0.9));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 4px 10px rgba(0, 100, 255, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        .home-icon i {
+            font-size: 22px;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .address {
+            font-size: 22px;
+            font-weight: 600;
+            color: #a0d2ff;
+            text-shadow: 0 0 15px rgba(0, 150, 255, 0.7);
+            letter-spacing: 1px;
+        }
+        
+        .datetime {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .time {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            letter-spacing: 2px;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .date {
+            font-size: 18px;
+            color: #88bbff;
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+        
+        /* Основной контент с 3D иконками */
+        .content-3d {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+        }
+        
+        /* Круговые 3D кнопки */
+        .orbital-menu {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            max-width: 900px;
+            transform-style: preserve-3d;
+        }
+        
+        .orb-btn {
+            width: 160px;
+            height: 160px;
+            position: relative;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .orb-btn:hover {
+            transform: scale(1.1) rotateY(10deg);
+        }
+        
+        .orb-btn:active {
+            transform: scale(0.95) rotateY(5deg);
+            transition: transform 0.1s;
+        }
+        
+        .orb-front, .orb-back {
+            position: absolute;
             width: 100%;
             height: 100%;
+            border-radius: 50%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+        }
+        
+        .orb-front {
+            background: radial-gradient(circle at 30% 30%,
+                rgba(40, 60, 100, 0.9) 0%,
+                rgba(20, 30, 60, 0.9) 50%,
+                rgba(10, 15, 40, 0.9) 100%);
+            border: 4px solid rgba(0, 150, 255, 0.5);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 30px rgba(0, 100, 255, 0.4);
+            transform: translateZ(20px);
+        }
+        
+        .orb-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+            transition: all 0.5s;
+        }
+        
+        .orb-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #a0d2ff;
+            text-shadow: 0 0 10px rgba(0, 150, 255, 0.7);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        /* Анимации для иконок */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); }
+            50% { filter: drop-shadow(0 0 20px rgba(0, 200, 255, 0.7)); }
+        }
+        
+        .orb-icon {
+            animation: float 3s ease-in-out infinite, pulse 2s ease-in-out infinite;
+        }
+        
+        /* Разные цвета для кнопок */
+        .orb-btn:nth-child(1) .orb-front {
+            border-color: rgba(255, 200, 0, 0.6);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 30px rgba(255, 200, 0, 0.4);
+        }
+        
+        .orb-btn:nth-child(2) .orb-front {
+            border-color: rgba(0, 255, 200, 0.6);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 30px rgba(0, 255, 200, 0.4);
+        }
+        
+        .orb-btn:nth-child(3) .orb-front {
+            border-color: rgba(255, 100, 0, 0.6);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 30px rgba(255, 100, 0, 0.4);
+        }
+        
+        .orb-btn:nth-child(4) .orb-front {
+            border-color: rgba(200, 0, 255, 0.6);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 30px rgba(200, 0, 255, 0.4);
+        }
+        
+        .orb-btn:nth-child(5) .orb-front {
+            border-color: rgba(0, 255, 100, 0.6);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 30px rgba(0, 255, 100, 0.4);
+        }
+        
+        .orb-btn:nth-child(6) .orb-front {
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 30px rgba(255, 255, 255, 0.4);
+        }
+        
+        .orb-btn:nth-child(7) .orb-front {
+            border-color: rgba(100, 150, 255, 0.6);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 30px rgba(100, 150, 255, 0.4);
+        }
+        
+        .orb-btn:nth-child(8) .orb-front {
+            border-color: rgba(255, 150, 0, 0.6);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 30px rgba(255, 150, 0, 0.4);
+        }
+        
+        /* Экраны контента */
+        .content-screen {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg,
+                rgba(10, 20, 40, 0.95) 0%,
+                rgba(5, 10, 25, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            transform: translateX(100%);
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            opacity: 0;
+        }
+        
+        .content-screen.active {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .screen-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+        }
+        
+        .screen-icon {
+            width: 70px;
+            height: 70px;
+            margin-right: 25px;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+        }
+        
+        .screen-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(0, 150, 255, 0.7);
+            letter-spacing: 2px;
+        }
+        
+        .screen-subtitle {
+            font-size: 18px;
+            color: #88bbff;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+        
+        /* Грид комнат */
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .room-card {
+            background: linear-gradient(145deg,
+                rgba(30, 45, 70, 0.8) 0%,
+                rgba(15, 25, 50, 0.8) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(0, 150, 255, 0.4);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+            transition: all 0.4s;
+            cursor: pointer;
             position: relative;
+            overflow: hidden;
+        }
+        
+        .room-card:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0) 70%);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+        
+        .room-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 40px rgba(0, 150, 255, 0.5);
+            border-color: rgba(0, 200, 255, 0.6);
+        }
+        
+        .room-card:hover:before {
+            transform: rotate(45deg) translate(10%, 10%);
+        }
+        
+        .room-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+        
+        .room-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        
+        .room-status {
+            font-size: 16px;
+            color: #88ddff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        /* Элементы управления */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .control-item {
+            background: linear-gradient(145deg,
+                rgba(30, 45, 70, 0.8) 0%,
+                rgba(15, 25, 50, 0.8) 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid rgba(0, 150, 255, 0.3);
+            transform-style: preserve-3d;
+        }
+        
+        .control-title {
+            font-size: 20px;
+            color: #a0d2ff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* Мерцающие звезды на фоне */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Эффект загрузки */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 2000;
+            animation: fadeOut 1s 2s forwards;
         }
         
-        .terminal {
-            width: 100%;
-            max-width: 1000px;
-            height: 100%;
-            background-color: #000;
-            padding: 15px;
-            position: relative;
-            overflow: hidden;
-            white-space: pre;
-            text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
         }
         
-        .scanline {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.15);
-            z-index: 10;
-            pointer-events: none;
-            animation: scanline 8s linear infinite;
+        .loading-text {
+            font-size: 36px;
+            color: #00aaff;
+            text-shadow: 0 0 20px #00aaff;
+            letter-spacing: 3px;
+            animation: pulseText 1.5s infinite;
         }
         
-        
-        .content {
-            position: relative;
-            z-index: 2;
-            opacity: 0;
-            animation: fadeIn 0.1s linear forwards;
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
         
-        
-        .status-ok {
-            color: #0f0;
-        }
-        
-        .status-warning {
-            color: #ff0;
-        }
-        
-        .status-error {
-            color: #f00;
-        }
-        
-        .status-info {
-            color: #0ff;
-        }
-        
-        .blink {
-            animation: blink 1s infinite;
-        }
-        
-        .white-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #fff;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .progress {
-            display: inline-block;
-            width: 10px;
-            animation: progressBlink 0.5s infinite;
-        }
-        
-        @keyframes lineAppear {
-            from {
-                opacity: 0;
+        /* Адаптивность */
+        @media (max-width: 1200px) {
+            .orbital-menu {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
             }
-            to {
-                opacity: 1;
+            
+            .rooms-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
         
-        @keyframes scanline {
-            0% {
-                top: 0%;
+        @media (max-width: 768px) {
+            .orbital-menu {
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
-            100% {
-                top: 100%;
+            
+            .rooms-grid {
+                grid-template-columns: 1fr;
             }
-        }
-        
-        @keyframes blink {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0;
+            
+            .control-panel {
+                grid-template-columns: 1fr;
             }
         }
-        
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
-        }
-        
-        @keyframes progressBlink {
-            0%, 100% {
-                background-color: #fff;
-            }
-            50% {
-                background-color: transparent;
-            }
-        }
-        
-        @keyframes whiteScreen {
-            0% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
-        
-        /* Динамические задержки для каждой строки */
-        .line:nth-child(1) { animation-delay: 0.2s; }
-        .line:nth-child(2) { animation-delay: 0.4s; }
-        .line:nth-child(3) { animation-delay: 0.6s; }
-        .line:nth-child(4) { animation-delay: 0.8s; }
-        .line:nth-child(5) { animation-delay: 1.0s; }
-        .line:nth-child(6) { animation-delay: 1.2s; }
-        .line:nth-child(7) { animation-delay: 1.4s; }
-        .line:nth-child(8) { animation-delay: 1.6s; }
-        .line:nth-child(9) { animation-delay: 1.8s; }
-        .line:nth-child(10) { animation-delay: 2.0s; }
-        .line:nth-child(11) { animation-delay: 2.2s; }
-        .line:nth-child(12) { animation-delay: 2.4s; }
-        .line:nth-child(13) { animation-delay: 2.6s; }
-        .line:nth-child(14) { animation-delay: 2.8s; }
-        .line:nth-child(15) { animation-delay: 3.0s; }
-        .line:nth-child(16) { animation-delay: 3.2s; }
-        .line:nth-child(17) { animation-delay: 3.4s; }
-        .line:nth-child(18) { animation-delay: 3.6s; }
-        .line:nth-child(19) { animation-delay: 3.8s; }
-        .line:nth-child(20) { animation-delay: 4.0s; }
-        .line:nth-child(21) { animation-delay: 4.2s; }
-        .line:nth-child(22) { animation-delay: 4.4s; }
-        .line:nth-child(23) { animation-delay: 4.6s; }
-        .line:nth-child(24) { animation-delay: 4.8s; }
-        .line:nth-child(25) { animation-delay: 5.0s; }
-        .line:nth-child(26) { animation-delay: 5.2s; }
-        .line:nth-child(27) { animation-delay: 5.4s; }
-        .line:nth-child(28) { animation-delay: 5.6s; }
-        .line:nth-child(29) { animation-delay: 5.8s; }
-        .line:nth-child(30) { animation-delay: 6.0s; }
-        .line:nth-child(31) { animation-delay: 6.2s; }
-        .line:nth-child(32) { animation-delay: 6.4s; }
-        .line:nth-child(33) { animation-delay: 6.6s; }
-        .line:nth-child(34) { animation-delay: 6.8s; }
-        .line:nth-child(35) { animation-delay: 7.0s; }
-        .line:nth-child(36) { animation-delay: 7.2s; }
-        .line:nth-child(37) { animation-delay: 7.4s; }
-        .line:nth-child(38) { animation-delay: 7.6s; }
-        .line:nth-child(39) { animation-delay: 7.8s; }
-        .line:nth-child(40) { animation-delay: 8.0s; }
-        .line:nth-child(41) { animation-delay: 8.2s; }
-        .line:nth-child(42) { animation-delay: 8.4s; }
-        .line:nth-child(43) { animation-delay: 8.6s; }
-        .line:nth-child(44) { animation-delay: 8.8s; }
-        .line:nth-child(45) { animation-delay: 9.0s; }
-        .line:nth-child(46) { animation-delay: 9.2s; }
-        .line:nth-child(47) { animation-delay: 9.4s; }
-        .line:nth-child(48) { animation-delay: 9.6s; }
-        .line:nth-child(49) { animation-delay: 9.8s; }
-        .line:nth-child(50) { animation-delay: 10.0s; }
-        .line:nth-child(51) { animation-delay: 10.2s; }
-        .line:nth-child(52) { animation-delay: 10.4s; }
-        .line:nth-child(53) { animation-delay: 10.6s; }
-        .line:nth-child(54) { animation-delay: 10.8s; }
-        .line:nth-child(55) { animation-delay: 11.0s; }
-        .line:nth-child(56) { animation-delay: 11.2s; }
-        .line:nth-child(57) { animation-delay: 11.4s; }
-        .line:nth-child(58) { animation-delay: 11.6s; }
-        .line:nth-child(59) { animation-delay: 11.8s; }
-        .line:nth-child(60) { animation-delay: 12.0s; }
-        .line:nth-child(61) { animation-delay: 12.2s; }
-        .line:nth-child(62) { animation-delay: 12.4s; }
-        .line:nth-child(63) { animation-delay: 12.6s; }
-        .line:nth-child(64) { animation-delay: 12.8s; }
-        .line:nth-child(65) { animation-delay: 13.0s; }
-        .line:nth-child(66) { animation-delay: 13.2s; }
-        .line:nth-child(67) { animation-delay: 13.4s; }
-        .line:nth-child(68) { animation-delay: 13.6s; }
-        .line:nth-child(69) { animation-delay: 13.8s; }
-        .line:nth-child(70) { animation-delay: 14.0s; }
-        .line:nth-child(71) { animation-delay: 14.2s; }
-        .line:nth-child(72) { animation-delay: 14.4s; }
-        .line:nth-child(73) { animation-delay: 14.6s; }
-        .line:nth-child(74) { animation-delay: 14.8s; }
-        .line:nth-child(75) { animation-delay: 15.0s; }
     </style>
 </head>
 <body>
-    <div class="terminal-container">
-        <div class="glitch-effect"></div>
-        <div class="scanline"></div>
-        <div class="terminal" id="terminal">
-            <div class="content" id="content">
-<span class="line">Control4 Core 1 Controller (C4-HC250-BL) - Boot ROM Version 2.1.4</span>
-<span class="line">Copyright (C) 2005-2015 Control4 Corporation. All rights reserved.</span>
-<span class="line">Initializing hardware...</span>
-<span class="line"></span>
-<span class="line">Detected CPU: ARM Cortex-A9 MPCore @ 1.0GHz</span>
-<span class="line">CPU ID: 0x413fc090</span>
-<span class="line">L1 Cache: 32KB I-Cache, 32KB D-Cache</span>
-<span class="line">L2 Cache: 512KB</span>
-<span class="line"></span>
-<span class="line">Initializing DDR3 RAM... <span class="status-ok">OK</span> (512MB)</span>
-<span class="line">Testing RAM... <span class="status-ok">OK</span></span>
-<span class="line"></span>
-<span class="line">Initializing Flash memory...</span>
-<span class="line">Detected SPI Flash: Macronix MX25L12835F</span>
-<span class="line">Flash Size: 128MB (1024Mbit)</span>
-<span class="line">Flash Read: <span class="status-ok">OK</span></span>
-<span class="line">Flash ID: 0xC22018</span>
-<span class="line"></span>
-<span class="line">Checking boot signature... <span class="status-ok">VALID</span></span>
-<span class="line">Loading primary bootloader from flash... <span class="status-ok">OK</span></span>
-<span class="line"></span>
-<span class="line">Control4 U-Boot 2013.03 (Jun 15 2015 - 14:22:17)</span>
-<span class="line"></span>
-<span class="line">DRAM:  512 MiB</span>
-<span class="line">Flash: 128 MiB</span>
-<span class="line">MMC:   FSL_SDHC: 0, FSL_SDHC: 1</span>
-<span class="line">In:    serial</span>
-<span class="line">Out:   serial</span>
-<span class="line">Err:   serial</span>
-<span class="line">Net:   FEC</span>
-<span class="line">MAC: 00:21:9B:XX:XX:XX</span>
-<span class="line"></span>
-<span class="line">Initializing network...</span>
-<span class="line">PHY: RTL8211E-VL-CG at addr 1</span>
-<span class="line">Link is Up - 1000/Full</span>
-<span class="line"></span>
-<span class="line">Hit any key to stop autoboot:  0</span>
-<span class="line"></span>
-<span class="line">Loading kernel from flash...</span>
-<span class="line">## Booting kernel from Legacy Image at 14000000 ...</span>
-<span class="line">   Image Name:   Linux-3.0.35-control4</span>
-<span class="line">   Image Type:   ARM Linux Kernel Image (uncompressed)</span>
-<span class="line">   Data Size:    3185664 Bytes = 3 MiB</span>
-<span class="line">   Load Address: 10008000</span>
-<span class="line">   Entry Point:  10008000</span>
-<span class="line">   Verifying Checksum ... <span class="status-ok">OK</span></span>
-<span class="line"></span>
-<span class="line">Loading initramfs...</span>
-<span class="line">## Loading init Ramdisk from Legacy Image at 18000000 ...</span>
-<span class="line">   Image Name:   initramfs</span>
-<span class="line">   Image Type:   ARM Linux RAMDisk Image (gzip compressed)</span>
-<span class="line">   Data Size:    8280640 Bytes = 7.9 MiB</span>
-<span class="line">   Load Address: 00000000</span>
-<span class="line">   Entry Point:  00000000</span>
-<span class="line">   Verifying Checksum ... <span class="status-ok">OK</span></span>
-<span class="line"></span>
-<span class="line">Starting kernel...</span>
-<span class="line"></span>
-<span class="line">[    0.000000] Linux version 3.0.35-control4 (build@control4.com) (gcc version 4.7.2 20120920 (prerelease) (Linaro GCC 4.7-2012.09) ) #1 SMP PREEMPT Thu Jun 18 10:22:17 MDT 2015</span>
-<span class="line">[    0.000000] CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c53c7d</span>
-<span class="line">[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache</span>
-<span class="line">[    0.000000] Machine: Freescale i.MX6 Quad/DualLite (Device Tree)</span>
-<span class="line">[    0.000000] Memory policy: ECC disabled, Data cache writealloc</span>
-<span class="line">[    0.000000] CPU: All CPU(s) started in SVC mode.</span>
-<span class="line">[    0.000000] Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 130048</span>
-<span class="line">[    0.000000] Kernel command line: console=ttymxc0,115200 init=/linuxrc root=/dev/ram0 rw rootfstype=ext4 video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32</span>
-<span class="line">[    0.000000] PID hash table entries: 2048 (order: 1, 8192 bytes)</span>
-<span class="line">[    0.000000] Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)</span>
-<span class="line">[    0.000000] Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)</span>
-<span class="line">[    0.000000] Memory: 512MB = 512MB total</span>
-<span class="line">[    0.000000] Memory: 506588k/506588k available, 28516k reserved, 0K highmem</span>
-<span class="line">[    0.000000] Virtual kernel memory layout:</span>
-<span class="line">[    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)</span>
-<span class="line">[    0.000000]     fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)</span>
-<span class="line">[    0.000000]     DMA     : 0xf4600000 - 0xffe00000   ( 184 MB)</span>
-<span class="line">[    0.000000]     vmalloc : 0xa0800000 - 0xf4000000   (1336 MB)</span>
-<span class="line">[    0.000000]     lowmem  : 0x80000000 - 0xa0000000   ( 512 MB)</span>
-<span class="line">[    0.000000]     modules : 0x7f000000 - 0x80000000   (  16 MB)</span>
-<span class="line">[    0.000000]       .init : 0x80008000 - 0x8003e000   ( 216 kB)</span>
-<span class="line">[    0.000000]       .text : 0x8003e000 - 0x80710000   (7096 kB)</span>
-<span class="line">[    0.000000]       .data : 0x80710000 - 0x807c6a00   ( 731 kB)</span>
-<span class="line">[    0.000000] Mount-cache hash table entries: 512</span>
-<span class="line">[    0.500000] Initializing cgroup subsys cpuacct</span>
-<span class="line">[    0.500000] Initializing cgroup subsys memory</span>
-<span class="line">[    0.500000] Initializing cgroup subsys devices</span>
-<span class="line">[    0.500000] Initializing cgroup subsys freezer</span>
-<span class="line">[    0.500000] CPU: Testing write buffer coherency: ok</span>
-<span class="line">[    0.500000] ftrace: allocating 22289 entries in 66 pages</span>
-<span class="line">[    0.600000] Calibrating delay loop... 1581.05 BogoMIPS (lpj=7905280)</span>
-<span class="line">[    0.600000] pid_max: default: 32768 minimum: 301</span>
-<span class="line">[    0.600000] Security Framework initialized</span>
-<span class="line">[    0.600000] Mount-cache hash table entries: 512</span>
-<span class="line">[    0.600000] Initializing cgroup subsys debug</span>
-<span class="line">[    0.600000] CPU1: Booted secondary processor</span>
-<span class="line">[    0.600000] CPU2: Booted secondary processor</span>
-<span class="line">[    0.600000] CPU3: Booted secondary processor</span>
-<span class="line">[    0.600000] Brought up 4 CPUs</span>
-<span class="line">[    0.600000] SMP: Total of 4 processors activated (6324.20 BogoMIPS).</span>
-<span class="line">[    0.600000] devtmpfs: initialized</span>
-<span class="line">[    0.600000] regulator-dummy: no parameters</span>
-<span class="line">[    0.600000] NET: Registered protocol family 16</span>
-<span class="line">[    0.600000] DMA: preallocated 256 KiB pool for atomic coherent allocations</span>
-<span class="line">[    0.600000] FEC Ethernet Driver</span>
-<span class="line">[    0.600000] FEC: Invalid MAC address: 00:00:00:00:00:00</span>
-<span class="line">[    0.600000] FEC: Using random MAC address: 4a:30:9c:7f:6e:4f</span>
-<span class="line">[    0.600000] bio: create slab &lt;bio-0&gt; at 0</span>
-<span class="line">[    0.600000] SCSI subsystem initialized</span>
-<span class="line">[    0.600000] usbcore: registered new interface driver usbfs</span>
-<span class="line">[    0.600000] usbcore: registered new interface driver hub</span>
-<span class="line">[    0.600000] usbcore: registered new device driver usb</span>
-<span class="line">[    0.600000] Switching to clocksource mxc_timer1</span>
-<span class="line">[    0.600000] NET: Registered protocol family 2</span>
-<span class="line">[    0.600000] IP route cache hash table entries: 4096 (order: 2, 16384 bytes)</span>
-<span class="line">[    0.600000] TCP established hash table entries: 16384 (order: 5, 131072 bytes)</span>
-<span class="line">[    0.600000] TCP bind hash table entries: 16384 (order: 5, 131072 bytes)</span>
-<span class="line">[    0.600000] TCP: Hash tables configured (established 16384 bind 16384)</span>
-<span class="line">[    0.600000] TCP reno registered</span>
-<span class="line">[    0.600000] UDP hash table entries: 256 (order: 1, 8192 bytes)</span>
-<span class="line">[    0.600000] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes)</span>
-<span class="line">[    0.600000] NET: Registered protocol family 1</span>
-<span class="line">[    0.600000] RPC: Registered named UNIX socket transport module.</span>
-<span class="line">[    0.600000] RPC: Registered udp transport module.</span>
-<span class="line">[    0.600000] RPC: Registered tcp transport module.</span>
-<span class="line">[    0.600000] RPC: Registered tcp NFSv4.1 backchannel transport module.</span>
-<span class="line">[    0.600000] Trying to unpack rootfs image as initramfs...</span>
-<span class="line">[    0.600000] Freeing initrd memory: 8280K</span>
-<span class="line">[    0.600000] audit: initializing netlink socket (disabled)</span>
-<span class="line">[    0.600000] type=2000 audit(0.600:1): initialized</span>
-<span class="line">[    0.600000] bounce pool size: 64 pages</span>
-<span class="line">[    0.600000] NFS: Registering the id_resolver key type</span>
-<span class="line">[    0.600000] jffs2: version 2.2. (NAND) © 2001-2006 Red Hat, Inc.</span>
-<span class="line">[    0.600000] fuse init (API version 7.18)</span>
-<span class="line">[    0.600000] msgmni has been set to 993</span>
-<span class="line">[    0.600000] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 253)</span>
-<span class="line">[    0.600000] io scheduler noop registered</span>
-<span class="line">[    0.600000] io scheduler deadline registered</span>
-<span class="line">[    0.600000] io scheduler cfq registered (default)</span>
-<span class="line">[    0.600000] mxc_sdc_fb fb.27: register mxc display driver hdmi</span>
-<span class="line">[    0.600000] Console: switching to colour frame buffer device 240x67</span>
-<span class="line">[    0.600000] mxc_sdc_fb fb.27: initialized</span>
-<span class="line">[    0.600000] Serial: IMX driver</span>
-<span class="line">[    0.600000] IMX serial driver initialized</span>
-<span class="line">[    0.600000] mxs-auart 2020000.serial: could not find pctldev for node /soc/aips-bus@02000000/pinctrl@020e0000/uart1grp, deferring probe</span>
-<span class="line">[    0.600000] loop: module loaded</span>
-<span class="line">[    0.600000] FEC: Driver loaded.</span>
-<span class="line">[    0.600000] FEC: Using MII controller</span>
-<span class="line">[    0.600000] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver</span>
-<span class="line">[    0.600000] usbcore: registered new interface driver cdc_acm</span>
-<span class="line">[    0.600000] cdc_acm: USB Abstract Control Model driver for USB modems and ISDN adapters</span>
-<span class="line">[    0.600000] Initializing USB Mass Storage driver...</span>
-<span class="line">[    0.600000] usbcore: registered new interface driver usb-storage</span>
-<span class="line">[    0.600000] USB Mass Storage support registered.</span>
-<span class="line">[    0.600000] mice: PS/2 mouse device common for all mice</span>
-<span class="line">[    0.600000] input: TSC2007 Touchscreen as /devices/platform/tsc2007/input/input0</span>
-<span class="line">[    0.600000] i2c /dev entries driver</span>
-<span class="line">[    0.600000] IR NEC protocol handler initialized</span>
-<span class="line">[    0.600000] IR RC5 protocol handler initialized</span>
-<span class="line">[    0.600000] IR RC6 protocol handler initialized</span>
-<span class="line">[    0.600000] IR JVC protocol handler initialized</span>
-<span class="line">[    0.600000] IR Sony protocol handler initialized</span>
-<span class="line">[    0.600000] IR SANYO protocol handler initialized</span>
-<span class="line">[    0.600000] IR Sharp protocol handler initialized</span>
-<span class="line">[    0.600000] IR MCE Keyboard/mouse protocol handler initialized</span>
-<span class="line">[    0.600000] IR XMP protocol handler initialized</span>
-<span class="line">[    0.600000] usbcore: registered new interface driver usbhid</span>
-<span class="line">[    0.600000] usbhid: USB HID core driver</span>
-<span class="line">[    0.600000] logger: created 64K log 'log_main'</span>
-<span class="line">[    0.600000] logger: created 256K log 'log_events'</span>
-<span class="line">[    0.600000] logger: created 64K log 'log_radio'</span>
-<span class="line">[    0.600000] logger: created 64K log 'log_system'</span>
-<span class="line">[    0.600000] TCP cubic registered</span>
-<span class="line">[    0.600000] NET: Registered protocol family 10</span>
-<span class="line">[    0.600000] NET: Registered protocol family 17</span>
-<span class="line">[    0.600000] Registering the dns_resolver key type</span>
-<span class="line">[    0.600000] ThumbEE CPU extension supported.</span>
-<span class="line">[    0.600000] Registering SWP/SWPB emulation handler</span>
-<span class="line">[    0.600000] registered taskstats version 1</span>
-<span class="line">[    0.600000] zram: Created 1 device(s) ...</span>
-<span class="line">[    0.600000] VFP support v0.3: implementor 41 architecture 3 part 30 variant 9 rev 4</span>
-<span class="line">[    0.600000] Bus freq driver module loaded</span>
-<span class="line">[    0.600000] Bus freq driver Enabled</span>
-<span class="line">[    0.600000] mxc_dvfs_core_probe</span>
-<span class="line">[    0.600000] DVFS driver module loaded</span>
-<span class="line">[    0.600000] input: gpio-keys as /devices/platform/gpio-keys/input/input1</span>
-<span class="line">[    0.600000] ALSA device list:</span>
-<span class="line">[    0.600000]   #0: IMX-HDMI-SOC</span>
-<span class="line">[    0.600000] EXT4-fs (ram0): mounted filesystem with ordered data mode. Opts: (null)</span>
-<span class="line">[    0.600000] Freeing init memory: 216K</span>
-<span class="line">[    0.600000] init: /dev/hw_random not found</span>
-<span class="line">[    0.600000] init: cannot open '/initlogo.rle'</span>
-<span class="line">[    0.600000] init: /dev/hw_random not found</span>
-<span class="line">[    0.600000] yaffs: dev is 32505857 name is "mtdblock1" rw</span>
-<span class="line">[    0.600000] yaffs: passed flags ""</span>
-<span class="line">[    0.600000] yaffs: Attempting MTD mount on 31.1, "mtdblock1"</span>
-<span class="line">[    0.600000] yaffs: auto selecting yaffs2</span>
-<span class="line">[    0.600000] yaffs_read_super: isCheckpointed 0</span>
-<span class="line">[    0.600000] NET: Registered protocol family 1</span>
-<span class="line">[    0.600000] yaffs: dev is 32505858 name is "mtdblock2" rw</span>
-<span class="line">[    0.600000] yaffs: passed flags ""</span>
-<span class="line">[    0.600000] yaffs: Attempting MTD mount on 31.2, "mtdblock2"</span>
-<span class="line">[    0.600000] yaffs: auto selecting yaffs2</span>
-<span class="line">[    0.600000] yaffs_read_super: isCheckpointed 1</span>
-<span class="line">[    0.600000] VFS: Mounted root (ext4 filesystem) on device 1:0.</span>
-<span class="line">[    0.600000] devtmpfs: mounted</span>
-<span class="line">[    0.600000] Freeing unused kernel memory: 216K (80008000 - 8003e000)</span>
-<span class="line">Starting Control4 Director...</span>
-<span class="line">Initializing Control4 services...</span>
-<span class="line">Starting Zigbee coordinator... <span class="status-ok">OK</span></span>
-<span class="line">Initializing audio subsystem... <span class="status-ok">OK</span></span>
-<span class="line">Loading device database... <span class="status-ok">OK</span></span>
-<span class="line">Starting network services... <span class="status-ok">OK</span></span>
-<span class="line">Initializing security subsystem... <span class="status-ok">OK</span></span>
-<span class="line">Starting system watchdog... <span class="status-ok">OK</span></span>
-<span class="line">Control4 Director started successfully.</span>
-<span class="line">System ready.</span>
-<span class="line"></span>
-<span class="line">Control4 OS Version: 2.10.0.587469</span>
-<span class="line">Director Version: 2.10.0.587469</span>
-<span class="line">System Uptime: 0 days 00:00:25</span>
-<span class="line"></span>
-<span class="line">Boot complete. Switching to display output...<span class="progress">█</span></span>
+    <!-- Эффект загрузки -->
+    <div class="loading-overlay">
+        <div class="loading-text">CONTROL4 OS2</div>
+    </div>
+    
+    <!-- Мерцающие звезды -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- Основной интерфейс -->
+    <div class="mercedes-ui">
+        <!-- Статус бар Mercedes-стиль -->
+        <div class="status-bar">
+            <button class="back-btn" id="backBtn" style="opacity: 0; pointer-events: none;">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            
+            <div class="home-info">
+                <div class="home-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="address">КАЧАЛОВА 18</div>
+            </div>
+            
+            <div class="datetime">
+                <div class="time" id="currentTime">19:45</div>
+                <div class="date" id="currentDate">Суббота, 17 Января</div>
             </div>
         </div>
-        <div class="white-screen" id="white-screen"></div>
+        
+        <!-- Главное меню с 3D иконками -->
+        <div class="content-3d" id="mainMenu">
+            <div class="orbital-menu">
+                <!-- Освещение -->
+                <div class="orb-btn" data-screen="lighting">
+                    <div class="orb-front">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/light-bulb.svg" class="orb-icon" alt="Освещение">
+                        <div class="orb-name">Освещение</div>
+                    </div>
+                </div>
+                
+                <!-- Климат -->
+                <div class="orb-btn" data-screen="climate">
+                    <div class="orb-front">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/cloud.svg" class="orb-icon" alt="Климат">
+                        <div class="orb-name">Климат</div>
+                    </div>
+                </div>
+                
+                <!-- Безопасность -->
+                <div class="orb-btn" data-screen="security">
+                    <div class="orb-front">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/lock-closed.svg" class="orb-icon" alt="Безопасность">
+                        <div class="orb-name">Безопасность</div>
+                    </div>
+                </div>
+                
+                <!-- Аудио -->
+                <div class="orb-btn" data-screen="audio">
+                    <div class="orb-front">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/speaker-wave.svg" class="orb-icon" alt="Аудио">
+                        <div class="orb-name">Аудио</div>
+                    </div>
+                </div>
+                
+                <!-- Сцены -->
+                <div class="orb-btn" data-screen="scenes">
+                    <div class="orb-front">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/sparkles.svg" class="orb-icon" alt="Сцены">
+                        <div class="orb-name">Сцены</div>
+                    </div>
+                </div>
+                
+                <!-- Пользователи -->
+                <div class="orb-btn" data-screen="users">
+                    <div class="orb-front">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/users.svg" class="orb-icon" alt="Пользователи">
+                        <div class="orb-name">Жильцы</div>
+                    </div>
+                </div>
+                
+                <!-- Комнаты -->
+                <div class="orb-btn" data-screen="rooms">
+                    <div class="orb-front">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/home-modern.svg" class="orb-icon" alt="Комнаты">
+                        <div class="orb-name">Комнаты</div>
+                    </div>
+                </div>
+                
+                <!-- Настройки -->
+                <div class="orb-btn" data-screen="settings">
+                    <div class="orb-front">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/cog.svg" class="orb-icon" alt="Настройки">
+                        <div class="orb-name">Настройки</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Экран Освещение -->
+        <div class="content-screen" id="lightingScreen">
+            <div class="screen-header">
+                <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/light-bulb.svg" class="screen-icon" alt="Освещение">
+                <div>
+                    <div class="screen-title">ОСВЕЩЕНИЕ</div>
+                    <div class="screen-subtitle">Управление освещением в доме</div>
+                </div>
+            </div>
+            
+            <div class="rooms-grid">
+                <div class="room-card">
+                    <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/home-modern.svg" class="room-icon" alt="Гостевая">
+                    <div class="room-name">Гостевая + Кухня</div>
+                    <div class="room-status">
+                        <div class="status-dot"></div>
+                        Свет: 75% • 3 источника
+                    </div>
+                </div>
+                
+                <div class="room-card">
+                    <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/home-modern.svg" class="room-icon" alt="Лобби">
+                    <div class="room-name">Лобби</div>
+                    <div class="room-status">
+                        <div class="status-dot" style="background: #ff9900; box-shadow: 0 0 10px #ff9900;"></div>
+                        Свет: 40% • Движение
+                    </div>
+                </div>
+                
+                <div class="room-card">
+                    <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/home-modern.svg" class="room-icon" alt="Детская">
+                    <div class="room-name">Детская</div>
+                    <div class="room-status">
+                        <div class="status-dot"></div>
+                        Свет: 90% • Ночник: 30%
+                    </div>
+                </div>
+                
+                <div class="room-card">
+                    <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/home-modern.svg" class="room-icon" alt="Спальня">
+                    <div class="room-name">Спальня</div>
+                    <div class="room-status">
+                        <div class="status-dot" style="background: #ff0000; box-shadow: 0 0 10px #ff0000;"></div>
+                        Свет: 0% • Выключено
+                    </div>
+                </div>
+                
+                <div class="room-card">
+                    <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/home-modern.svg" class="room-icon" alt="Комната">
+                    <div class="room-name">Комната</div>
+                    <div class="room-status">
+                        <div class="status-dot"></div>
+                        Свет: 60% • ТВ подсветка
+                    </div>
+                </div>
+                
+                <div class="room-card">
+                    <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/home-modern.svg" class="room-icon" alt="Весь дом">
+                    <div class="room-name">Весь дом</div>
+                    <div class="room-status">
+                        <div class="status-dot"></div>
+                        12 источников • Авторежим
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Экран Комнаты -->
+        <div class="content-screen" id="roomsScreen">
+            <div class="screen-header">
+                <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/home-modern.svg" class="screen-icon" alt="Комнаты">
+                <div>
+                    <div class="screen-title">КОМНАТЫ</div>
+                    <div class="screen-subtitle">Управление комнатами дома</div>
+                </div>
+            </div>
+            
+            <div class="control-panel">
+                <div class="control-item">
+                    <div class="control-title">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/light-bulb.svg" style="width: 30px; height: 30px;">
+                        Управление освещением
+                    </div>
+                    <div style="color: #88bbff;">Индивидуальный контроль каждого источника</div>
+                </div>
+                
+                <div class="control-item">
+                    <div class="control-title">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/thermometer.svg" style="width: 30px; height: 30px;">
+                        Контроль климата
+                    </div>
+                    <div style="color: #88bbff;">Температура, влажность, вентиляция</div>
+                </div>
+                
+                <div class="control-item">
+                    <div class="control-title">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/musical-note.svg" style="width: 30px; height: 30px;">
+                        Аудиосистемы
+                    </div>
+                    <div style="color: #88bbff;">Мультирумное аудио по комнатам</div>
+                </div>
+                
+                <div class="control-item">
+                    <div class="control-title">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/eye.svg" style="width: 30px; height: 30px;">
+                        Наблюдение
+                    </div>
+                    <div style="color: #88bbff;">Камеры и датчики в каждой комнате</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Экран Жильцы -->
+        <div class="content-screen" id="usersScreen">
+            <div class="screen-header">
+                <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/users.svg" class="screen-icon" alt="Жильцы">
+                <div>
+                    <div class="screen-title">ЖИЛЬЦЫ</div>
+                    <div class="screen-subtitle">Качалова 18</div>
+                </div>
+            </div>
+            
+            <div class="rooms-grid">
+                <div class="room-card">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #0066ff, #00aaff); border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; color: white;">К</div>
+                    <div class="room-name">Ксения</div>
+                    <div class="room-status">
+                        <div class="status-dot"></div>
+                        Дома • Гостевая комната
+                    </div>
+                    <div style="margin-top: 15px; color: #00aaff; font-size: 14px;">Владелец</div>
+                </div>
+                
+                <div class="room-card">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #ff6600, #ff9900); border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; color: white;">Л</div>
+                    <div class="room-name">Лев</div>
+                    <div class="room-status">
+                        <div class="status-dot"></div>
+                        Дома • Детская комната
+                    </div>
+                    <div style="margin-top: 15px; color: #00aaff; font-size: 14px;">Пользователь</div>
+                </div>
+                
+                <div class="room-card">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #00cc66, #00ff99); border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; color: white;">А</div>
+                    <div class="room-name">Александр</div>
+                    <div class="room-status">
+                        <div class="status-dot" style="background: #ff9900; box-shadow: 0 0 10px #ff9900;"></div>
+                        Вне дома • 2 часа назад
+                    </div>
+                    <div style="margin-top: 15px; color: #00aaff; font-size: 14px;">Пользователь</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Другие экраны (упрощенные) -->
+        <div class="content-screen" id="climateScreen">
+            <div class="screen-header">
+                <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/cloud.svg" class="screen-icon" alt="Климат">
+                <div>
+                    <div class="screen-title">КЛИМАТ</div>
+                    <div class="screen-subtitle">Температура, влажность, вентиляция</div>
+                </div>
+            </div>
+            <div style="color: #88bbff; font-size: 24px; text-align: center; margin-top: 100px;">Текущая температура: 22.5°C</div>
+        </div>
+        
+        <div class="content-screen" id="securityScreen">
+            <div class="screen-header">
+                <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/lock-closed.svg" class="screen-icon" alt="Безопасность">
+                <div>
+                    <div class="screen-title">БЕЗОПАСНОСТЬ</div>
+                    <div class="screen-subtitle">Охрана и видеонаблюдение</div>
+                </div>
+            </div>
+            <div style="color: #00ff00; font-size: 24px; text-align: center; margin-top: 100px;">СИСТЕМА АКТИВИРОВАНА</div>
+        </div>
+        
+        <div class="content-screen" id="audioScreen">
+            <div class="screen-header">
+                <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/speaker-wave.svg" class="screen-icon" alt="Аудио">
+                <div>
+                    <div class="screen-title">АУДИО</div>
+                    <div class="screen-subtitle">Мультирумное аудио</div>
+                </div>
+            </div>
+            <div style="color: #88bbff; font-size: 24px; text-align: center; margin-top: 100px;">Сейчас играет: R.E.M. - Losing My Religion</div>
+        </div>
+        
+        <div class="content-screen" id="scenesScreen">
+            <div class="screen-header">
+                <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/sparkles.svg" class="screen-icon" alt="Сцены">
+                <div>
+                    <div class="screen-title">СЦЕНЫ</div>
+                    <div class="screen-subtitle">Автоматизация умного дома</div>
+                </div>
+            </div>
+            <div style="color: #88bbff; font-size: 24px; text-align: center; margin-top: 100px;">Доступно 8 сценариев</div>
+        </div>
+        
+        <div class="content-screen" id="settingsScreen">
+            <div class="screen-header">
+                <img src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/outline/cog.svg" class="screen-icon" alt="Настройки">
+                <div>
+                    <div class="screen-title">НАСТРОЙКИ</div>
+                    <div class="screen-subtitle">Системные настройки Control4</div>
+                </div>
+            </div>
+            <div style="color: #88bbff; font-size: 24px; text-align: center; margin-top: 100px;">Версия OS 2.10.6</div>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const terminal = document.getElementById('terminal');
-            const whiteScreen = document.getElementById('white-screen');
-            
-            // Автопрокрутка по мере появления строк
-            let scrollInterval = setInterval(() => {
-                terminal.scrollTop = terminal.scrollHeight;
-            }, 100);
-            
-            // Добавляем мерцание текста для реалистичности
-            setInterval(() => {
-                if (Math.random() < 0.05) {
-                    const lines = document.querySelectorAll('.line');
-                    if (lines.length > 0) {
-                        const randomLine = lines[Math.floor(Math.random() * lines.length)];
-                        randomLine.style.opacity = '0.7';
-                        setTimeout(() => {
-                            randomLine.style.opacity = '1';
-                        }, 50);
-                    }
-                }
-            }, 500);
-            
-            // Добавляем случайное вертикальное смещение
-            setInterval(() => {
-                if (Math.random() < 0.03) {
-                    terminal.style.transform = 'translateY(1px)';
-                    setTimeout(() => {
-                        terminal.style.transform = 'translateY(0)';
-                    }, 100);
-                }
-            }, 300);
-            
+        // Создание звездного фона
+        function createStars() {
+            const stars = document.getElementById('stars');
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 5 + 's';
+                stars.appendChild(star);
+            }
+        }
         
+        // Обновление времени
+        function updateTime() {
+            const now = new Date();
+            const timeOptions = { hour: '2-digit', minute: '2-digit' };
+            const dateOptions = { weekday: 'long', day: 'numeric', month: 'long' };
             
-            // Добавляем звуковые эффекты (опционально)
-            const addSoundEffect = () => {
-                if (Math.random() < 0.01) {
-                    // Имитация тихого шума монитора
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.frequency.value = 100 + Math.random() * 200;
-                    oscillator.type = 'sine';
-                    gainNode.gain.value = 0.001; // Очень тихо
-                    
-                    oscillator.start();
-                    setTimeout(() => {
-                        oscillator.stop();
-                    }, 100);
-                }
-            };
+            const timeStr = now.toLocaleTimeString('ru-RU', timeOptions);
+            const dateStr = now.toLocaleDateString('ru-RU', dateOptions);
             
-            // Запускаем звуковые эффекты (можно закомментировать)
-            // setInterval(addSoundEffect, 2000);
-            
-            // Имитация загрузки с помощью посимвольного появления
-            const lines = document.querySelectorAll('.line');
-            lines.forEach((line, index) => {
-                const originalText = line.textContent;
-                line.textContent = '';
+            document.getElementById('currentTime').textContent = timeStr;
+            document.getElementById('currentDate').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+        }
+        
+        // Навигация
+        let currentScreen = 'main';
+        const screens = {
+            main: document.getElementById('mainMenu'),
+            lighting: document.getElementById('lightingScreen'),
+            rooms: document.getElementById('roomsScreen'),
+            climate: document.getElementById('climateScreen'),
+            security: document.getElementById('securityScreen'),
+            audio: document.getElementById('audioScreen'),
+            scenes: document.getElementById('scenesScreen'),
+            users: document.getElementById('usersScreen'),
+            settings: document.getElementById('settingsScreen')
+        };
+        
+        const backBtn = document.getElementById('backBtn');
+        
+        // Анимация нажатия кнопок
+        document.querySelectorAll('.orb-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const screenId = this.getAttribute('data-screen');
                 
+                // Анимация кнопки
+                this.style.transform = 'scale(0.9) rotateY(20deg)';
                 setTimeout(() => {
-                    let i = 0;
-                    const typeInterval = setInterval(() => {
-                        if (i < originalText.length) {
-                            // Добавляем случайные задержки для реалистичности
-                            if (Math.random() > 0.1) {
-                                line.textContent += originalText[i];
-                                i++;
-                            }
-                        } else {
-                            clearInterval(typeInterval);
-                        }
-                    }, 2); // Скорость печати символов
-                }, index * 80); // Задержка между строками
+                    this.style.transform = '';
+                }, 300);
+                
+                // Переход на экран
+                setTimeout(() => {
+                    showScreen(screenId);
+                }, 400);
+            });
+        });
+        
+        // Показ экрана
+        function showScreen(screenId) {
+            // Скрываем текущий экран
+            screens[currentScreen].style.display = 'none';
+            
+            // Показываем новый экран
+            screens[screenId].style.display = 'flex';
+            setTimeout(() => {
+                screens[screenId].classList.add('active');
+            }, 50);
+            
+            // Показываем кнопку назад
+            backBtn.style.opacity = '1';
+            backBtn.style.pointerEvents = 'auto';
+            
+            // Скрываем главное меню
+            if (screenId !== 'main') {
+                screens.main.style.opacity = '0';
+                setTimeout(() => {
+                    screens.main.style.display = 'none';
+                }, 300);
+            }
+            
+            currentScreen = screenId;
+        }
+        
+        // Кнопка назад
+        backBtn.addEventListener('click', function() {
+            // Анимация кнопки
+            this.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 200);
+            
+            // Скрываем текущий экран
+            screens[currentScreen].classList.remove('active');
+            setTimeout(() => {
+                screens[currentScreen].style.display = 'none';
+                
+                // Показываем главное меню
+                screens.main.style.display = 'flex';
+                setTimeout(() => {
+                    screens.main.style.opacity = '1';
+                }, 50);
+                
+                // Скрываем кнопку назад
+                this.style.opacity = '0';
+                this.style.pointerEvents = 'none';
+                
+                currentScreen = 'main';
+            }, 800);
+        });
+        
+        // Клик по карточкам комнат
+        document.querySelectorAll('.room-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Изначально показываем только главное меню
+            Object.keys(screens).forEach(key => {
+                if (key !== 'main') {
+                    screens[key].style.display = 'none';
+                }
+            });
+            
+            // Имитация загрузки системы
+            setTimeout(() => {
+                document.querySelector('.loading-overlay').style.animation = 'fadeOut 0.5s forwards';
+            }, 2000);
+            
+            // Системное сообщение
+            console.log('%cCONTROL4 OS2 v2.10.6', 'color: #00aaff; font-size: 18px; font-weight: bold;');
+            console.log('%cАдрес: Качалова 18', 'color: #88bbff;');
+            console.log('%cЖители: Ксения, Лев, Александр', 'color: #88bbff;');
+            console.log('%cСистема загружена успешно', 'color: #00ff00;');
+        });
+        
+        // Эффект параллакса при движении мыши
+        document.addEventListener('mousemove', function(e) {
+            const x = (e.clientX - window.innerWidth / 2) / 50;
+            const y = (e.clientY - window.innerHeight / 2) / 50;
+            
+            document.querySelector('.orbital-menu').style.transform = 
+                `rotateX(${y}deg) rotateY(${-x}deg)`;
+                
+            document.querySelectorAll('.room-card').forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const cardX = (e.clientX - rect.left - rect.width / 2) / 30;
+                const cardY = (e.clientY - rect.top - rect.height / 2) / 30;
+                
+                card.style.transform = `perspective(1000px) rotateX(${-cardY}deg) rotateY(${cardX}deg) translateZ(10px)`;
             });
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 </body>
 </html>

@@ -1,722 +1,468 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Стеклянный навбар с эффектом рыбьего глаза</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Control4 Core 1 Controller Boot Sequence</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            min-height: 100vh;
+            background-color: #000;
+            font-family: 'Courier New', monospace;
+            color: #33ff33;
+            line-height: 1.2;
+            overflow: hidden;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        /* Контент с яркими элементами для демонстрации эффекта */
-        .content {
-            flex: 1;
-            padding: 30px 20px 150px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .title {
-            font-size: 2.8rem;
-            font-weight: 800;
-            margin-bottom: 40px;
-            background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.9);
-            margin-bottom: 50px;
-            text-align: center;
-            max-width: 800px;
-            line-height: 1.6;
-        }
-        
-        /* Сетка ярких элементов для демонстрации искажения */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 25px;
-            width: 100%;
-            max-width: 1200px;
-            margin-bottom: 60px;
-        }
-        
-        .grid-item {
-            height: 180px;
-            border-radius: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            font-weight: 700;
-            color: white;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            align-items: center;
+        }
+        
+        .terminal {
+            width: 100%;
+            max-width: 900px;
+            height: 100%;
+            background-color: #000;
             padding: 20px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             position: relative;
             overflow: hidden;
         }
         
-        .grid-item:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-        
-        .grid-item::before {
-            content: '';
+        .scanline {
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%);
-            z-index: 1;
-        }
-        
-        .grid-item span {
-            font-size: 1.1rem;
-            margin-top: 10px;
-            z-index: 2;
-        }
-        
-        .grid-item i {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            z-index: 2;
-        }
-        
-        /* Цвета элементов */
-        .item-1 { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
-        .item-2 { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
-        .item-3 { background: linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%); }
-        .item-4 { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
-        .item-5 { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); }
-        .item-6 { background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); }
-        .item-7 { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
-        .item-8 { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
-        
-        /* Текстовый блок для демонстрации искажения текста */
-        .text-block {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            padding: 35px;
             width: 100%;
-            max-width: 1200px;
-            margin-bottom: 50px;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            color: white;
-            line-height: 1.8;
-            font-size: 1.1rem;
-        }
-        
-        /* === ОБНОВЛЕННЫЙ СТЕКЛЯННЫЙ НАВБАР С ЭФФЕКТОМ РЫБЬЕГО ГЛАЗА === */
-        .glass-navbar {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 85%;
-            max-width: 500px;
-            height: 100px; /* Выше чем было */
-            z-index: 1000;
-            
-            /* Основные свойства стекла - МЕНЬШЕ матовости */
-            background: rgba(255, 255, 255, 0.15); /* Более прозрачно */
-            backdrop-filter: blur(25px) saturate(200%); /* Усиливаем сатурацию */
-            -webkit-backdrop-filter: blur(25px) saturate(200%);
-            border-radius: 3000px; /* Супер скругление как просили */
-            border: 1px solid rgba(255, 255, 255, 0.4); /* Более яркая граница */
-            box-shadow: 
-                0 15px 50px rgba(0, 0, 0, 0.25),
-                inset 0 2px 0 rgba(255, 255, 255, 0.5),
-                inset 0 -2px 0 rgba(0, 0, 0, 0.1);
-            
-            /* Эффект выпуклой линзы */
-            background-image: 
-                radial-gradient(
-                    100% 150% at 50% -20%,
-                    rgba(255, 255, 255, 0.4) 0%,
-                    rgba(255, 255, 255, 0.1) 40%,
-                    transparent 80%
-                ),
-                radial-gradient(
-                    80% 100% at 50% 120%,
-                    rgba(255, 255, 255, 0.2) 0%,
-                    transparent 60%
-                );
-            
-            display: flex;
-            justify-content: space-between; /* Равномерное распределение */
-            align-items: center;
-            padding: 0 30px; /* Больше отступов по бокам */
-        }
-        
-        /* Эффект рыбьего глаза - искажение по краям */
-        .glass-navbar::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border-radius: 3000px;
-            background: 
-                radial-gradient(
-                    circle at 20% 50%,
-                    rgba(255, 255, 255, 0.1) 0%,
-                    transparent 40%
-                ),
-                radial-gradient(
-                    circle at 80% 50%,
-                    rgba(255, 255, 255, 0.1) 0%,
-                    transparent 40%
-                ),
-                radial-gradient(
-                    ellipse at 50% 50%,
-                    transparent 30%,
-                    rgba(255, 255, 255, 0.05) 50%,
-                    transparent 70%
-                );
-            z-index: -1;
-            pointer-events: none;
-            filter: blur(5px);
-        }
-        
-        /* Активный эффект искажения */
-        .fish-eye-effect {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 3000px;
-            overflow: hidden;
-            z-index: -2;
-            pointer-events: none;
-            background: 
-                radial-gradient(
-                    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-                    rgba(255, 255, 255, 0.15) 0%,
-                    transparent 60%
-                );
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        /* Контейнер для кнопок с отступами */
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            gap: 15px; /* Отступы между кнопками */
-        }
-        
-        /* Элементы навбара */
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            min-width: 70px;
-            height: 80px;
-            border-radius: 25px;
-            color: rgba(255, 255, 255, 0.95);
-            text-decoration: none;
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 
-                0 5px 15px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            padding: 10px 5px;
-        }
-        
-        /* Убираем трансформацию при наведении на активный элемент */
-        .nav-item.active {
-            background: rgba(255, 255, 255, 0.25);
-            color: white;
-            transform: translateY(-15px) scale(1.1); /* Сильнее поднятие */
-            box-shadow: 
-                0 20px 30px rgba(255, 255, 255, 0.3),
-                inset 0 2px 0 rgba(255, 255, 255, 0.6),
-                0 0 30px rgba(255, 255, 255, 0.4); /* Свечение */
+            height: 2px;
+            background: rgba(51, 255, 51, 0.1);
             z-index: 10;
+            pointer-events: none;
+            animation: scanline 10s linear infinite;
         }
         
-        .nav-item:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-5px);
-            color: white;
+        .boot-line {
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            opacity: 0;
+            animation: typewriter 0.05s linear forwards;
         }
         
-        .nav-icon {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-            transition: transform 0.3s;
+        .boot-line:nth-child(1) { animation-delay: 0.2s; }
+        .boot-line:nth-child(2) { animation-delay: 0.4s; }
+        .boot-line:nth-child(3) { animation-delay: 0.6s; }
+        .boot-line:nth-child(4) { animation-delay: 0.8s; }
+        .boot-line:nth-child(5) { animation-delay: 1.0s; }
+        .boot-line:nth-child(6) { animation-delay: 1.2s; }
+        .boot-line:nth-child(7) { animation-delay: 1.4s; }
+        .boot-line:nth-child(8) { animation-delay: 1.6s; }
+        .boot-line:nth-child(9) { animation-delay: 1.8s; }
+        .boot-line:nth-child(10) { animation-delay: 2.0s; }
+        .boot-line:nth-child(11) { animation-delay: 2.2s; }
+        .boot-line:nth-child(12) { animation-delay: 2.4s; }
+        .boot-line:nth-child(13) { animation-delay: 2.6s; }
+        .boot-line:nth-child(14) { animation-delay: 2.8s; }
+        .boot-line:nth-child(15) { animation-delay: 3.0s; }
+        .boot-line:nth-child(16) { animation-delay: 3.2s; }
+        .boot-line:nth-child(17) { animation-delay: 3.4s; }
+        .boot-line:nth-child(18) { animation-delay: 3.6s; }
+        .boot-line:nth-child(19) { animation-delay: 3.8s; }
+        .boot-line:nth-child(20) { animation-delay: 4.0s; }
+        .boot-line:nth-child(21) { animation-delay: 4.2s; }
+        .boot-line:nth-child(22) { animation-delay: 4.4s; }
+        .boot-line:nth-child(23) { animation-delay: 4.6s; }
+        .boot-line:nth-child(24) { animation-delay: 4.8s; }
+        .boot-line:nth-child(25) { animation-delay: 5.0s; }
+        .boot-line:nth-child(26) { animation-delay: 5.2s; }
+        .boot-line:nth-child(27) { animation-delay: 5.4s; }
+        .boot-line:nth-child(28) { animation-delay: 5.6s; }
+        .boot-line:nth-child(29) { animation-delay: 5.8s; }
+        .boot-line:nth-child(30) { animation-delay: 6.0s; }
+        .boot-line:nth-child(31) { animation-delay: 6.2s; }
+        .boot-line:nth-child(32) { animation-delay: 6.4s; }
+        .boot-line:nth-child(33) { animation-delay: 6.6s; }
+        .boot-line:nth-child(34) { animation-delay: 6.8s; }
+        .boot-line:nth-child(35) { animation-delay: 7.0s; }
+        .boot-line:nth-child(36) { animation-delay: 7.2s; }
+        .boot-line:nth-child(37) { animation-delay: 7.4s; }
+        .boot-line:nth-child(38) { animation-delay: 7.6s; }
+        .boot-line:nth-child(39) { animation-delay: 7.8s; }
+        .boot-line:nth-child(40) { animation-delay: 8.0s; }
+        .boot-line:nth-child(41) { animation-delay: 8.2s; }
+        .boot-line:nth-child(42) { animation-delay: 8.4s; }
+        .boot-line:nth-child(43) { animation-delay: 8.6s; }
+        .boot-line:nth-child(44) { animation-delay: 8.8s; }
+        .boot-line:nth-child(45) { animation-delay: 9.0s; }
+        .boot-line:nth-child(46) { animation-delay: 9.2s; }
+        .boot-line:nth-child(47) { animation-delay: 9.4s; }
+        .boot-line:nth-child(48) { animation-delay: 9.6s; }
+        .boot-line:nth-child(49) { animation-delay: 9.8s; }
+        .boot-line:nth-child(50) { animation-delay: 10.0s; }
+        
+        .status-ok {
+            color: #33ff33;
         }
         
-        .nav-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-align: center;
-            transition: all 0.3s;
+        .status-warning {
+            color: #ffff33;
         }
         
-        /* Эффект линзы на активном элементе */
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            border-radius: 30px;
-            background: radial-gradient(
-                ellipse at 50% 30%,
-                rgba(255, 255, 255, 0.6) 0%,
-                rgba(255, 255, 255, 0.2) 40%,
-                transparent 70%
-            );
-            z-index: -1;
-            filter: blur(15px);
-            opacity: 0.7;
+        .status-error {
+            color: #ff3333;
         }
         
-        /* Эффект преломления света (как в призме) */
-        .prism-effect {
+        .status-info {
+            color: #3399ff;
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        .white-screen {
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: inherit;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(255, 255, 255, 0.1) 50%,
-                transparent 70%
-            );
-            mix-blend-mode: overlay;
-            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 20;
+            opacity: 0;
+            animation: white-screen 0.5s linear forwards;
+            animation-delay: 11s;
         }
         
-        /* Индикатор выбора */
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -20px;
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 15px white, 0 0 30px white;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.2); }
-        }
-        
-        /* Эффект искажения контента под навбаром */
-        .content::after {
-            content: '';
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 180px;
-            background: radial-gradient(
-                ellipse at 50% 100%,
-                rgba(255, 255, 255, 0.1) 0%,
-                transparent 70%
-            );
-            pointer-events: none;
-            z-index: 2;
-            mix-blend-mode: overlay;
-        }
-        
-        /* Медиа-запросы */
-        @media (max-width: 768px) {
-            .grid-container {
-                grid-template-columns: repeat(2, 1fr);
+        @keyframes typewriter {
+            from {
+                opacity: 0;
             }
-            
-            .glass-navbar {
-                width: 90%;
-                height: 95px;
-                padding: 0 20px;
-            }
-            
-            .nav-item {
-                height: 75px;
-                min-width: 65px;
-            }
-            
-            .nav-icon {
-                font-size: 1.6rem;
+            to {
+                opacity: 1;
             }
         }
         
-        @media (max-width: 480px) {
-            .grid-container {
-                grid-template-columns: 1fr;
+        @keyframes scanline {
+            0% {
+                top: 0%;
             }
-            
-            .glass-navbar {
-                width: 95%;
-                height: 90px;
-                padding: 0 15px;
-            }
-            
-            .nav-container {
-                gap: 10px;
-            }
-            
-            .nav-item {
-                height: 70px;
-                min-width: 60px;
-            }
-            
-            .nav-label {
-                font-size: 0.75rem;
-            }
-            
-            .nav-icon {
-                font-size: 1.5rem;
-                margin-bottom: 5px;
+            100% {
+                top: 100%;
             }
         }
         
-        /* Анимация для демонстрации эффекта */
-        @keyframes colorShift {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
         }
         
-        .demo-shift {
-            animation: colorShift 10s linear infinite;
+        @keyframes white-screen {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        
+        .progress-bar {
+            display: inline-block;
+            width: 20px;
+            height: 1px;
+            background-color: #33ff33;
+            animation: progress-blink 0.5s infinite;
+        }
+        
+        @keyframes progress-blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+        
+        .header {
+            color: #3399ff;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="content">
-        <h1 class="title">Эффект стеклянной призмы с рыбьим глазом</h1>
+    <div class="terminal" id="terminal">
+        <div class="scanline"></div>
         
-        <p class="subtitle">Навбар внизу создает эффект линзы, искажая контент как рыбий глаз. Обратите внимание, как элементы искажаются при наведении на навбар.</p>
+        <!-- Boot Lines -->
+        <div class="boot-line">Control4 Core 1 Controller (C4-HC250-BL) - Boot ROM Version 2.1.4</div>
+        <div class="boot-line">Copyright (C) 2005-2015 Control4 Corporation. All rights reserved.</div>
+        <div class="boot-line">Initializing hardware...</div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Detected CPU: ARM Cortex-A9 MPCore @ 1.0GHz</div>
+        <div class="boot-line">CPU ID: 0x413fc090</div>
+        <div class="boot-line">L1 Cache: 32KB I-Cache, 32KB D-Cache</div>
+        <div class="boot-line">L2 Cache: 512KB</div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Initializing DDR3 RAM... <span class="status-ok">OK</span> (512MB)</div>
+        <div class="boot-line">Testing RAM... <span class="status-ok">OK</span></div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Initializing Flash memory...</div>
+        <div class="boot-line">Detected SPI Flash: Macronix MX25L12835F</div>
+        <div class="boot-line">Flash Size: 128MB (1024Mbit)</div>
+        <div class="boot-line">Flash Read: <span class="status-ok">OK</span></div>
+        <div class="boot-line">Flash ID: 0xC22018</div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Checking boot signature... <span class="status-ok">VALID</span></div>
+        <div class="boot-line">Loading primary bootloader from flash... <span class="status-ok">OK</span></div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Control4 U-Boot 2013.03 (Jun 15 2015 - 14:22:17)</div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">DRAM:  512 MiB</div>
+        <div class="boot-line">Flash: 128 MiB</div>
+        <div class="boot-line">MMC:   FSL_SDHC: 0, FSL_SDHC: 1</div>
+        <div class="boot-line">In:    serial</div>
+        <div class="boot-line">Out:   serial</div>
+        <div class="boot-line">Err:   serial</div>
+        <div class="boot-line">Net:   FEC</div>
+        <div class="boot-line">MAC: 00:21:9B:XX:XX:XX</div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Initializing network...</div>
+        <div class="boot-line">PHY: RTL8211E-VL-CG at addr 1</div>
+        <div class="boot-line">Link is Up - 1000/Full</div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Hit any key to stop autoboot:  0</div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Loading kernel from flash...</div>
+        <div class="boot-line">## Booting kernel from Legacy Image at 14000000 ...</div>
+        <div class="boot-line">   Image Name:   Linux-3.0.35-control4</div>
+        <div class="boot-line">   Image Type:   ARM Linux Kernel Image (uncompressed)</div>
+        <div class="boot-line">   Data Size:    3185664 Bytes = 3 MiB</div>
+        <div class="boot-line">   Load Address: 10008000</div>
+        <div class="boot-line">   Entry Point:  10008000</div>
+        <div class="boot-line">   Verifying Checksum ... <span class="status-ok">OK</span></div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Loading initramfs...</div>
+        <div class="boot-line">## Loading init Ramdisk from Legacy Image at 18000000 ...</div>
+        <div class="boot-line">   Image Name:   initramfs</div>
+        <div class="boot-line">   Image Type:   ARM Linux RAMDisk Image (gzip compressed)</div>
+        <div class="boot-line">   Data Size:    8280640 Bytes = 7.9 MiB</div>
+        <div class="boot-line">   Load Address: 00000000</div>
+        <div class="boot-line">   Entry Point:  00000000</div>
+        <div class="boot-line">   Verifying Checksum ... <span class="status-ok">OK</span></div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Starting kernel...</div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">[    0.000000] Linux version 3.0.35-control4 (build@control4.com) (gcc version 4.7.2 20120920 (prerelease) (Linaro GCC 4.7-2012.09) ) #1 SMP PREEMPT Thu Jun 18 10:22:17 MDT 2015</div>
+        <div class="boot-line">[    0.000000] CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c53c7d</div>
+        <div class="boot-line">[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache</div>
+        <div class="boot-line">[    0.000000] Machine: Freescale i.MX6 Quad/DualLite (Device Tree)</div>
+        <div class="boot-line">[    0.000000] Memory policy: ECC disabled, Data cache writealloc</div>
+        <div class="boot-line">[    0.000000] CPU: All CPU(s) started in SVC mode.</div>
+        <div class="boot-line">[    0.000000] Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 130048</div>
+        <div class="boot-line">[    0.000000] Kernel command line: console=ttymxc0,115200 init=/linuxrc root=/dev/ram0 rw rootfstype=ext4 video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32</div>
+        <div class="boot-line">[    0.000000] PID hash table entries: 2048 (order: 1, 8192 bytes)</div>
+        <div class="boot-line">[    0.000000] Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)</div>
+        <div class="boot-line">[    0.000000] Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)</div>
+        <div class="boot-line">[    0.000000] Memory: 512MB = 512MB total</div>
+        <div class="boot-line">[    0.000000] Memory: 506588k/506588k available, 28516k reserved, 0K highmem</div>
+        <div class="boot-line">[    0.000000] Virtual kernel memory layout:</div>
+        <div class="boot-line">[    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)</div>
+        <div class="boot-line">[    0.000000]     fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)</div>
+        <div class="boot-line">[    0.000000]     DMA     : 0xf4600000 - 0xffe00000   ( 184 MB)</div>
+        <div class="boot-line">[    0.000000]     vmalloc : 0xa0800000 - 0xf4000000   (1336 MB)</div>
+        <div class="boot-line">[    0.000000]     lowmem  : 0x80000000 - 0xa0000000   ( 512 MB)</div>
+        <div class="boot-line">[    0.000000]     modules : 0x7f000000 - 0x80000000   (  16 MB)</div>
+        <div class="boot-line">[    0.000000]       .init : 0x80008000 - 0x8003e000   ( 216 kB)</div>
+        <div class="boot-line">[    0.000000]       .text : 0x8003e000 - 0x80710000   (7096 kB)</div>
+        <div class="boot-line">[    0.000000]       .data : 0x80710000 - 0x807c6a00   ( 731 kB)</div>
+        <div class="boot-line">[    0.000000] Mount-cache hash table entries: 512</div>
+        <div class="boot-line">[    0.500000] Initializing cgroup subsys cpuacct</div>
+        <div class="boot-line">[    0.500000] Initializing cgroup subsys memory</div>
+        <div class="boot-line">[    0.500000] Initializing cgroup subsys devices</div>
+        <div class="boot-line">[    0.500000] Initializing cgroup subsys freezer</div>
+        <div class="boot-line">[    0.500000] CPU: Testing write buffer coherency: ok</div>
+        <div class="boot-line">[    0.500000] ftrace: allocating 22289 entries in 66 pages</div>
+        <div class="boot-line">[    0.600000] Calibrating delay loop... 1581.05 BogoMIPS (lpj=7905280)</div>
+        <div class="boot-line">[    0.600000] pid_max: default: 32768 minimum: 301</div>
+        <div class="boot-line">[    0.600000] Security Framework initialized</div>
+        <div class="boot-line">[    0.600000] Mount-cache hash table entries: 512</div>
+        <div class="boot-line">[    0.600000] Initializing cgroup subsys debug</div>
+        <div class="boot-line">[    0.600000] CPU1: Booted secondary processor</div>
+        <div class="boot-line">[    0.600000] CPU2: Booted secondary processor</div>
+        <div class="boot-line">[    0.600000] CPU3: Booted secondary processor</div>
+        <div class="boot-line">[    0.600000] Brought up 4 CPUs</div>
+        <div class="boot-line">[    0.600000] SMP: Total of 4 processors activated (6324.20 BogoMIPS).</div>
+        <div class="boot-line">[    0.600000] devtmpfs: initialized</div>
+        <div class="boot-line">[    0.600000] regulator-dummy: no parameters</div>
+        <div class="boot-line">[    0.600000] NET: Registered protocol family 16</div>
+        <div class="boot-line">[    0.600000] DMA: preallocated 256 KiB pool for atomic coherent allocations</div>
+        <div class="boot-line">[    0.600000] FEC Ethernet Driver</div>
+        <div class="boot-line">[    0.600000] FEC: Invalid MAC address: 00:00:00:00:00:00</div>
+        <div class="boot-line">[    0.600000] FEC: Using random MAC address: 4a:30:9c:7f:6e:4f</div>
+        <div class="boot-line">[    0.600000] bio: create slab &lt;bio-0&gt; at 0</div>
+        <div class="boot-line">[    0.600000] SCSI subsystem initialized</div>
+        <div class="boot-line">[    0.600000] usbcore: registered new interface driver usbfs</div>
+        <div class="boot-line">[    0.600000] usbcore: registered new interface driver hub</div>
+        <div class="boot-line">[    0.600000] usbcore: registered new device driver usb</div>
+        <div class="boot-line">[    0.600000] Switching to clocksource mxc_timer1</div>
+        <div class="boot-line">[    0.600000] NET: Registered protocol family 2</div>
+        <div class="boot-line">[    0.600000] IP route cache hash table entries: 4096 (order: 2, 16384 bytes)</div>
+        <div class="boot-line">[    0.600000] TCP established hash table entries: 16384 (order: 5, 131072 bytes)</div>
+        <div class="boot-line">[    0.600000] TCP bind hash table entries: 16384 (order: 5, 131072 bytes)</div>
+        <div class="boot-line">[    0.600000] TCP: Hash tables configured (established 16384 bind 16384)</div>
+        <div class="boot-line">[    0.600000] TCP reno registered</div>
+        <div class="boot-line">[    0.600000] UDP hash table entries: 256 (order: 1, 8192 bytes)</div>
+        <div class="boot-line">[    0.600000] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes)</div>
+        <div class="boot-line">[    0.600000] NET: Registered protocol family 1</div>
+        <div class="boot-line">[    0.600000] RPC: Registered named UNIX socket transport module.</div>
+        <div class="boot-line">[    0.600000] RPC: Registered udp transport module.</div>
+        <div class="boot-line">[    0.600000] RPC: Registered tcp transport module.</div>
+        <div class="boot-line">[    0.600000] RPC: Registered tcp NFSv4.1 backchannel transport module.</div>
+        <div class="boot-line">[    0.600000] Trying to unpack rootfs image as initramfs...</div>
+        <div class="boot-line">[    0.600000] Freeing initrd memory: 8280K</div>
+        <div class="boot-line">[    0.600000] audit: initializing netlink socket (disabled)</div>
+        <div class="boot-line">[    0.600000] type=2000 audit(0.600:1): initialized</div>
+        <div class="boot-line">[    0.600000] bounce pool size: 64 pages</div>
+        <div class="boot-line">[    0.600000] NFS: Registering the id_resolver key type</div>
+        <div class="boot-line">[    0.600000] jffs2: version 2.2. (NAND) © 2001-2006 Red Hat, Inc.</div>
+        <div class="boot-line">[    0.600000] fuse init (API version 7.18)</div>
+        <div class="boot-line">[    0.600000] msgmni has been set to 993</div>
+        <div class="boot-line">[    0.600000] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 253)</div>
+        <div class="boot-line">[    0.600000] io scheduler noop registered</div>
+        <div class="boot-line">[    0.600000] io scheduler deadline registered</div>
+        <div class="boot-line">[    0.600000] io scheduler cfq registered (default)</div>
+        <div class="boot-line">[    0.600000] mxc_sdc_fb fb.27: register mxc display driver hdmi</div>
+        <div class="boot-line">[    0.600000] Console: switching to colour frame buffer device 240x67</div>
+        <div class="boot-line">[    0.600000] mxc_sdc_fb fb.27: initialized</div>
+        <div class="boot-line">[    0.600000] Serial: IMX driver</div>
+        <div class="boot-line">[    0.600000] IMX serial driver initialized</div>
+        <div class="boot-line">[    0.600000] mxs-auart 2020000.serial: could not find pctldev for node /soc/aips-bus@02000000/pinctrl@020e0000/uart1grp, deferring probe</div>
+        <div class="boot-line">[    0.600000] loop: module loaded</div>
+        <div class="boot-line">[    0.600000] FEC: Driver loaded.</div>
+        <div class="boot-line">[    0.600000] FEC: Using MII controller</div>
+        <div class="boot-line">[    0.600000] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver</div>
+        <div class="boot-line">[    0.600000] usbcore: registered new interface driver cdc_acm</div>
+        <div class="boot-line">[    0.600000] cdc_acm: USB Abstract Control Model driver for USB modems and ISDN adapters</div>
+        <div class="boot-line">[    0.600000] Initializing USB Mass Storage driver...</div>
+        <div class="boot-line">[    0.600000] usbcore: registered new interface driver usb-storage</div>
+        <div class="boot-line">[    0.600000] USB Mass Storage support registered.</div>
+        <div class="boot-line">[    0.600000] mice: PS/2 mouse device common for all mice</div>
+        <div class="boot-line">[    0.600000] input: TSC2007 Touchscreen as /devices/platform/tsc2007/input/input0</div>
+        <div class="boot-line">[    0.600000] i2c /dev entries driver</div>
+        <div class="boot-line">[    0.600000] IR NEC protocol handler initialized</div>
+        <div class="boot-line">[    0.600000] IR RC5 protocol handler initialized</div>
+        <div class="boot-line">[    0.600000] IR RC6 protocol handler initialized</div>
+        <div class="boot-line">[    0.600000] IR JVC protocol handler initialized</div>
+        <div class="boot-line">[    0.600000] IR Sony protocol handler initialized</div>
+        <div class="boot-line">[    0.600000] IR SANYO protocol handler initialized</div>
+        <div class="boot-line">[    0.600000] IR Sharp protocol handler initialized</div>
+        <div class="boot-line">[    0.600000] IR MCE Keyboard/mouse protocol handler initialized</div>
+        <div class="boot-line">[    0.600000] IR XMP protocol handler initialized</div>
+        <div class="boot-line">[    0.600000] usbcore: registered new interface driver usbhid</div>
+        <div class="boot-line">[    0.600000] usbhid: USB HID core driver</div>
+        <div class="boot-line">[    0.600000] logger: created 64K log 'log_main'</div>
+        <div class="boot-line">[    0.600000] logger: created 256K log 'log_events'</div>
+        <div class="boot-line">[    0.600000] logger: created 64K log 'log_radio'</div>
+        <div class="boot-line">[    0.600000] logger: created 64K log 'log_system'</div>
+        <div class="boot-line">[    0.600000] TCP cubic registered</div>
+        <div class="boot-line">[    0.600000] NET: Registered protocol family 10</div>
+        <div class="boot-line">[    0.600000] NET: Registered protocol family 17</div>
+        <div class="boot-line">[    0.600000] Registering the dns_resolver key type</div>
+        <div class="boot-line">[    0.600000] ThumbEE CPU extension supported.</div>
+        <div class="boot-line">[    0.600000] Registering SWP/SWPB emulation handler</div>
+        <div class="boot-line">[    0.600000] registered taskstats version 1</div>
+        <div class="boot-line">[    0.600000] zram: Created 1 device(s) ...</div>
+        <div class="boot-line">[    0.600000] VFP support v0.3: implementor 41 architecture 3 part 30 variant 9 rev 4</div>
+        <div class="boot-line">[    0.600000] Bus freq driver module loaded</div>
+        <div class="boot-line">[    0.600000] Bus freq driver Enabled</div>
+        <div class="boot-line">[    0.600000] mxc_dvfs_core_probe</div>
+        <div class="boot-line">[    0.600000] DVFS driver module loaded</div>
+        <div class="boot-line">[    0.600000] input: gpio-keys as /devices/platform/gpio-keys/input/input1</div>
+        <div class="boot-line">[    0.600000] ALSA device list:</div>
+        <div class="boot-line">[    0.600000]   #0: IMX-HDMI-SOC</div>
+        <div class="boot-line">[    0.600000] EXT4-fs (ram0): mounted filesystem with ordered data mode. Opts: (null)</div>
+        <div class="boot-line">[    0.600000] Freeing init memory: 216K</div>
+        <div class="boot-line">[    0.600000] init: /dev/hw_random not found</div>
+        <div class="boot-line">[    0.600000] init: cannot open '/initlogo.rle'</div>
+        <div class="boot-line">[    0.600000] init: /dev/hw_random not found</div>
+        <div class="boot-line">[    0.600000] yaffs: dev is 32505857 name is "mtdblock1" rw</div>
+        <div class="boot-line">[    0.600000] yaffs: passed flags ""</div>
+        <div class="boot-line">[    0.600000] yaffs: Attempting MTD mount on 31.1, "mtdblock1"</div>
+        <div class="boot-line">[    0.600000] yaffs: auto selecting yaffs2</div>
+        <div class="boot-line">[    0.600000] yaffs_read_super: isCheckpointed 0</div>
+        <div class="boot-line">[    0.600000] NET: Registered protocol family 1</div>
+        <div class="boot-line">[    0.600000] yaffs: dev is 32505858 name is "mtdblock2" rw</div>
+        <div class="boot-line">[    0.600000] yaffs: passed flags ""</div>
+        <div class="boot-line">[    0.600000] yaffs: Attempting MTD mount on 31.2, "mtdblock2"</div>
+        <div class="boot-line">[    0.600000] yaffs: auto selecting yaffs2</div>
+        <div class="boot-line">[    0.600000] yaffs_read_super: isCheckpointed 1</div>
+        <div class="boot-line">[    0.600000] VFS: Mounted root (ext4 filesystem) on device 1:0.</div>
+        <div class="boot-line">[    0.600000] devtmpfs: mounted</div>
+        <div class="boot-line">[    0.600000] Freeing unused kernel memory: 216K (80008000 - 8003e000)</div>
+        <div class="boot-line">Starting Control4 Director...</div>
+        <div class="boot-line">Initializing Control4 services...</div>
+        <div class="boot-line">Starting Zigbee coordinator... <span class="status-ok">OK</span></div>
+        <div class="boot-line">Initializing audio subsystem... <span class="status-ok">OK</span></div>
+        <div class="boot-line">Loading device database... <span class="status-ok">OK</span></div>
+        <div class="boot-line">Starting network services... <span class="status-ok">OK</span></div>
+        <div class="boot-line">Initializing security subsystem... <span class="status-ok">OK</span></div>
+        <div class="boot-line">Starting system watchdog... <span class="status-ok">OK</span></div>
+        <div class="boot-line">Control4 Director started successfully.</div>
+        <div class="boot-line">System ready.</div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Control4 OS Version: 2.10.0.587469</div>
+        <div class="boot-line">Director Version: 2.10.0.587469</div>
+        <div class="boot-line">System Uptime: 0 days 00:00:25</div>
+        <div class="boot-line">&nbsp;</div>
+        <div class="boot-line">Boot complete. Switching to display output...</div>
         
-        <div class="grid-container">
-            <div class="grid-item item-1">
-                <i class="fas fa-star"></i>
-                <span>Яркая звезда</span>
-            </div>
-            <div class="grid-item item-2">
-                <i class="fas fa-heart"></i>
-                <span>Сердечко</span>
-            </div>
-            <div class="grid-item item-3 demo-shift">
-                <i class="fas fa-gem"></i>
-                <span>Драгоценность</span>
-            </div>
-            <div class="grid-item item-4">
-                <i class="fas fa-moon"></i>
-                <span>Луна</span>
-            </div>
-            <div class="grid-item item-5">
-                <i class="fas fa-sun"></i>
-                <span>Солнце</span>
-            </div>
-            <div class="grid-item item-6">
-                <i class="fas fa-cloud"></i>
-                <span>Облако</span>
-            </div>
-            <div class="grid-item item-7">
-                <i class="fas fa-bolt"></i>
-                <span>Молния</span>
-            </div>
-            <div class="grid-item item-8">
-                <i class="fas fa-feather-alt"></i>
-                <span>Перо</span>
-            </div>
-        </div>
-        
-        <div class="text-block">
-            <h3 style="margin-bottom: 15px; color: #ffd700;">Эффект рыбьего глаза в действии</h3>
-            <p>При движении мыши над навбаром создается эффект линзы, который искажает контент под ней. Это имитирует поведение шейдеров из статьи, где применяется функция <code>applyLensDistortion</code>.</p>
-            <p>Эффект достигается с помощью:</p>
-            <ul style="margin-left: 20px; margin-top: 10px;">
-                <li>Динамического радиального градиента, следующего за курсором</li>
-                <li>Смешивания слоев с помощью <code>mix-blend-mode</code></li>
-                <li>Искажения перспективы через трансформации</li>
-                <li>Размытия с переменной интенсивностью</li>
-            </ul>
-            <p style="margin-top: 15px; font-style: italic;">Проведите мышью над разными частями навбара, чтобы увидеть, как меняется искажение.</p>
-        </div>
-        
-        <!-- Дополнительные элементы для демонстрации -->
-        <div style="display: flex; gap: 20px; width: 100%; max-width: 1200px; margin-top: 30px;">
-            <div style="flex: 1; background: rgba(255,255,255,0.1); padding: 25px; border-radius: 20px; color: white; text-align: center;">
-                <i class="fas fa-eye" style="font-size: 2rem; margin-bottom: 15px; color: #ff9a9e;"></i>
-                <h4 style="margin-bottom: 10px;">Эффект линзы</h4>
-                <p>Искажение сильнее по краям, создавая выпуклую поверхность</p>
-            </div>
-            <div style="flex: 1; background: rgba(255,255,255,0.1); padding: 25px; border-radius: 20px; color: white; text-align: center;">
-                <i class="fas fa-cube" style="font-size: 2rem; margin-bottom: 15px; color: #a18cd1;"></i>
-                <h4 style="margin-bottom: 10px;">3D-глубина</h4>
-                <p>Многослойность создает ощущение объема и толщины стекла</p>
-            </div>
-            <div style="flex: 1; background: rgba(255,255,255,0.1); padding: 25px; border-radius: 20px; color: white; text-align: center;">
-                <i class="fas fa-lightbulb" style="font-size: 2rem; margin-bottom: 15px; color: #ffd166;"></i>
-                <h4 style="margin-bottom: 10px;">Подсветка</h4>
-                <p>Динамическое свечение активных элементов как в статье</p>
-            </div>
-        </div>
+        <!-- White screen after boot -->
+        <div class="white-screen"></div>
     </div>
-    
-    <!-- Стеклянный навбар с эффектом рыбьего глаза -->
-    <nav class="glass-navbar" id="glassNavbar">
-        <div class="fish-eye-effect" id="fishEyeEffect"></div>
-        <div class="prism-effect"></div>
-        
-        <div class="nav-container">
-            <a href="#" class="nav-item active" id="nav-home">
-                <i class="fas fa-home nav-icon"></i>
-                <span class="nav-label">Главная</span>
-            </a>
-            
-            <a href="#" class="nav-item" id="nav-delivery">
-                <i class="fas fa-shipping-fast nav-icon"></i>
-                <span class="nav-label">Доставка</span>
-            </a>
-            
-            <a href="#" class="nav-item" id="nav-rest">
-                <i class="fas fa-umbrella-beach nav-icon"></i>
-                <span class="nav-label">Отдых</span>
-            </a>
-            
-            <a href="#" class="nav-item" id="nav-more">
-                <i class="fas fa-ellipsis-h nav-icon"></i>
-                <span class="nav-label">Ещё</span>
-            </a>
-        </div>
-    </nav>
 
     <script>
-        // Инициализация эффекта рыбьего глаза
-        const navbar = document.getElementById('glassNavbar');
-        const fishEyeEffect = document.getElementById('fishEyeEffect');
-        const navItems = document.querySelectorAll('.nav-item');
-        const gridItems = document.querySelectorAll('.grid-item');
-        
-        // Эффект рыбьего глаза при движении мыши над навбаром
-        navbar.addEventListener('mousemove', function(e) {
-            const rect = navbar.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
+        // Add some random flicker effect to the terminal
+        document.addEventListener('DOMContentLoaded', function() {
+            const terminal = document.getElementById('terminal');
             
-            // Обновляем позицию эффекта рыбьего глаза
-            fishEyeEffect.style.setProperty('--mouse-x', `${x}%`);
-            fishEyeEffect.style.setProperty('--mouse-y', `${y}%`);
-            fishEyeEffect.style.opacity = '1';
-            
-            // Искажаем контент под навбаром (эффект линзы)
-            const distortionX = (x - 50) / 10; // Смещение по X
-            const distortionY = (y - 50) / 10; // Смещение по Y
-            const distortionStrength = 0.3; // Сила искажения
-            
-            // Применяем искажение к элементам контента
-            gridItems.forEach(item => {
-                const itemRect = item.getBoundingClientRect();
-                const distanceY = Math.abs(itemRect.bottom - rect.top);
-                
-                // Если элемент близко к навбару, искажаем его
-                if (distanceY < 300) {
-                    const distortion = (300 - distanceY) / 300 * distortionStrength;
-                    const translateX = distortionX * distortion * 20;
-                    const translateY = distortionY * distortion * 20;
-                    const scale = 1 + distortion * 0.1;
-                    
-                    item.style.transform = `
-                        translate(${translateX}px, ${translateY}px) 
-                        scale(${scale})
-                    `;
-                    item.style.filter = `blur(${distortion * 2}px)`;
-                } else {
-                    item.style.transform = '';
-                    item.style.filter = '';
+            // Add occasional random flicker
+            setInterval(() => {
+                if (Math.random() < 0.02) { // 2% chance every second
+                    terminal.style.opacity = '0.95';
+                    setTimeout(() => {
+                        terminal.style.opacity = '1';
+                    }, 50);
                 }
-            });
+            }, 1000);
             
-            // Искажаем сам навбар (эффект выпуклости)
-            const curvatureX = (x - 50) / 5;
-            const curvatureY = (y - 50) / 5;
+            // Add blinking cursor at the end
+            const cursor = document.createElement('div');
+            cursor.className = 'boot-line blink';
+            cursor.innerHTML = '_';
+            cursor.style.animationDelay = '10.5s';
+            terminal.appendChild(cursor);
             
-            navbar.style.transform = `
-                translateX(-50%) 
-                perspective(500px) 
-                rotateX(${curvatureY * -0.1}deg) 
-                rotateY(${curvatureX * 0.1}deg)
-            `;
-        });
-        
-        navbar.addEventListener('mouseleave', function() {
-            fishEyeEffect.style.opacity = '0';
-            
-            // Возвращаем элементы в исходное состояние
-            gridItems.forEach(item => {
-                item.style.transform = '';
-                item.style.filter = '';
-            });
-            
-            // Возвращаем навбар в исходное состояние
-            navbar.style.transform = 'translateX(-50%)';
-        });
-        
-        // Интерактивность навбара
-        navItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
+            // Auto scroll to bottom as content loads
+            let scrollPosition = 0;
+            const scrollInterval = setInterval(() => {
+                terminal.scrollTop = terminal.scrollHeight;
+                scrollPosition++;
                 
-                // Удаляем активный класс у всех элементов
-                navItems.forEach(nav => {
-                    nav.classList.remove('active');
-                });
-                
-                // Добавляем активный класс к текущему элементу
-                this.classList.add('active');
-                
-                // Усиленный эффект нажатия с искажением
-                this.style.transform = 'translateY(-20px) scale(1.2)';
-                
-                // Эффект волны от нажатия
-                const ripple = document.createElement('div');
-                ripple.style.position = 'absolute';
-                ripple.style.borderRadius = '50%';
-                ripple.style.background = 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%)';
-                ripple.style.width = '0';
-                ripple.style.height = '0';
-                ripple.style.top = '50%';
-                ripple.style.left = '50%';
-                ripple.style.transform = 'translate(-50%, -50%)';
-                ripple.style.zIndex = '5';
-                this.appendChild(ripple);
-                
-                // Анимация волны
-                setTimeout(() => {
-                    ripple.style.width = '200px';
-                    ripple.style.height = '200px';
-                    ripple.style.opacity = '0';
-                    ripple.style.transition = 'all 0.6s ease-out';
-                }, 10);
-                
-                // Удаляем волну после анимации
-                setTimeout(() => {
-                    ripple.remove();
-                    this.style.transform = 'translateY(-15px) scale(1.1)';
-                }, 600);
-                
-                // Сообщение о выборе
-                const label = this.querySelector('.nav-label').textContent;
-                console.log(`Выбрана: ${label}`);
-            });
-        });
-        
-        // Динамическое изменение эффекта призмы при скролле
-        let lastScrollTop = 0;
-        
-        window.addEventListener('scroll', function() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            // Изменение прозрачности и размытия при скролле
-            const scrollRatio = Math.min(scrollTop / 500, 1);
-            const blurIntensity = 15 + scrollRatio * 15;
-            const opacity = 0.85 + scrollRatio * 0.15;
-            
-            navbar.style.backdropFilter = `blur(${blurIntensity}px) saturate(250%)`;
-            navbar.style.webkitBackdropFilter = `blur(${blurIntensity}px) saturate(250%)`;
-            navbar.style.opacity = opacity.toString();
-            
-            // Эффект параллакса
-            if (scrollTop > lastScrollTop) {
-                // Прокрутка вниз
-                navbar.style.bottom = `${40 - Math.min(scrollTop / 20, 20)}px`;
-            } else {
-                // Прокрутка вверх
-                navbar.style.bottom = '40px';
-            }
-            
-            lastScrollTop = scrollTop;
-        });
-        
-        // Имитация эффекта из статьи - динамическое искажение
-        function simulateShaderEffect() {
-            const time = Date.now() / 1000;
-            const wave1 = Math.sin(time) * 0.5 + 0.5;
-            const wave2 = Math.sin(time * 1.7) * 0.5 + 0.5;
-            
-            // Динамическое изменение градиента (имитация шейдера)
-            navbar.style.backgroundImage = `
-                radial-gradient(
-                    100% 150% at 50% ${-10 + wave1 * 10}%,
-                    rgba(255, 255, 255, ${0.3 + wave1 * 0.1}) 0%,
-                    rgba(255, 255, 255, ${0.1 + wave2 * 0.05}) 40%,
-                    transparent 80%
-                ),
-                radial-gradient(
-                    80% 100% at 50% ${120 + wave2 * 10}%,
-                    rgba(255, 255, 255, ${0.2 + wave1 * 0.1}) 0%,
-                    transparent 60%
-                )
-            `;
-            
-            requestAnimationFrame(simulateShaderEffect);
-        }
-        
-        // Запускаем анимацию эффекта шейдера
-        simulateShaderEffect();
-        
-        // Запуск демо-анимации для третьего элемента
-        setInterval(() => {
-            const demoItem = document.querySelector('.demo-shift');
-            demoItem.classList.toggle('demo-shift');
-            
-            setTimeout(() => {
-                demoItem.classList.add('demo-shift');
+                // Stop scrolling after white screen appears
+                if (scrollPosition > 120) {
+                    clearInterval(scrollInterval);
+                }
             }, 100);
-        }, 15000);
+        });
     </script>
 </body>
 </html>

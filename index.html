@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control4 Core 1 Controller Boot Sequence</title>
     <style>
+        @font-face {
+            font-family: 'TerminalFont';
+            src: url('1010.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -13,11 +20,22 @@
         
         body {
             background-color: #000;
-            font-family: 'Courier New', monospace;
-            color: #33ff33;
-            line-height: 1.2;
+            font-family: 'TerminalFont', 'Courier New', monospace;
+            color: #fff;
+            line-height: 1.1;
             overflow: hidden;
             height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .terminal-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,12 +43,14 @@
         
         .terminal {
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px;
             height: 100%;
             background-color: #000;
-            padding: 20px;
+            padding: 15px;
             position: relative;
             overflow: hidden;
+            white-space: pre;
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
         }
         
         .scanline {
@@ -38,86 +58,54 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 2px;
-            background: rgba(51, 255, 51, 0.1);
+            height: 1px;
+            background: rgba(255, 255, 255, 0.15);
             z-index: 10;
             pointer-events: none;
-            animation: scanline 10s linear infinite;
+            animation: scanline 8s linear infinite;
         }
         
-        .boot-line {
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
+        .glitch-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 2px;
+            z-index: 1;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 2;
             opacity: 0;
-            animation: typewriter 0.05s linear forwards;
+            animation: fadeIn 0.1s linear forwards;
         }
         
-        .boot-line:nth-child(1) { animation-delay: 0.2s; }
-        .boot-line:nth-child(2) { animation-delay: 0.4s; }
-        .boot-line:nth-child(3) { animation-delay: 0.6s; }
-        .boot-line:nth-child(4) { animation-delay: 0.8s; }
-        .boot-line:nth-child(5) { animation-delay: 1.0s; }
-        .boot-line:nth-child(6) { animation-delay: 1.2s; }
-        .boot-line:nth-child(7) { animation-delay: 1.4s; }
-        .boot-line:nth-child(8) { animation-delay: 1.6s; }
-        .boot-line:nth-child(9) { animation-delay: 1.8s; }
-        .boot-line:nth-child(10) { animation-delay: 2.0s; }
-        .boot-line:nth-child(11) { animation-delay: 2.2s; }
-        .boot-line:nth-child(12) { animation-delay: 2.4s; }
-        .boot-line:nth-child(13) { animation-delay: 2.6s; }
-        .boot-line:nth-child(14) { animation-delay: 2.8s; }
-        .boot-line:nth-child(15) { animation-delay: 3.0s; }
-        .boot-line:nth-child(16) { animation-delay: 3.2s; }
-        .boot-line:nth-child(17) { animation-delay: 3.4s; }
-        .boot-line:nth-child(18) { animation-delay: 3.6s; }
-        .boot-line:nth-child(19) { animation-delay: 3.8s; }
-        .boot-line:nth-child(20) { animation-delay: 4.0s; }
-        .boot-line:nth-child(21) { animation-delay: 4.2s; }
-        .boot-line:nth-child(22) { animation-delay: 4.4s; }
-        .boot-line:nth-child(23) { animation-delay: 4.6s; }
-        .boot-line:nth-child(24) { animation-delay: 4.8s; }
-        .boot-line:nth-child(25) { animation-delay: 5.0s; }
-        .boot-line:nth-child(26) { animation-delay: 5.2s; }
-        .boot-line:nth-child(27) { animation-delay: 5.4s; }
-        .boot-line:nth-child(28) { animation-delay: 5.6s; }
-        .boot-line:nth-child(29) { animation-delay: 5.8s; }
-        .boot-line:nth-child(30) { animation-delay: 6.0s; }
-        .boot-line:nth-child(31) { animation-delay: 6.2s; }
-        .boot-line:nth-child(32) { animation-delay: 6.4s; }
-        .boot-line:nth-child(33) { animation-delay: 6.6s; }
-        .boot-line:nth-child(34) { animation-delay: 6.8s; }
-        .boot-line:nth-child(35) { animation-delay: 7.0s; }
-        .boot-line:nth-child(36) { animation-delay: 7.2s; }
-        .boot-line:nth-child(37) { animation-delay: 7.4s; }
-        .boot-line:nth-child(38) { animation-delay: 7.6s; }
-        .boot-line:nth-child(39) { animation-delay: 7.8s; }
-        .boot-line:nth-child(40) { animation-delay: 8.0s; }
-        .boot-line:nth-child(41) { animation-delay: 8.2s; }
-        .boot-line:nth-child(42) { animation-delay: 8.4s; }
-        .boot-line:nth-child(43) { animation-delay: 8.6s; }
-        .boot-line:nth-child(44) { animation-delay: 8.8s; }
-        .boot-line:nth-child(45) { animation-delay: 9.0s; }
-        .boot-line:nth-child(46) { animation-delay: 9.2s; }
-        .boot-line:nth-child(47) { animation-delay: 9.4s; }
-        .boot-line:nth-child(48) { animation-delay: 9.6s; }
-        .boot-line:nth-child(49) { animation-delay: 9.8s; }
-        .boot-line:nth-child(50) { animation-delay: 10.0s; }
+        .line {
+            margin-bottom: 0;
+            opacity: 0;
+            animation: lineAppear 0.05s linear forwards;
+            white-space: nowrap;
+        }
         
         .status-ok {
-            color: #33ff33;
+            color: #0f0;
         }
         
         .status-warning {
-            color: #ffff33;
+            color: #ff0;
         }
         
         .status-error {
-            color: #ff3333;
+            color: #f00;
         }
         
         .status-info {
-            color: #3399ff;
+            color: #0ff;
         }
         
         .blink {
@@ -131,13 +119,18 @@
             width: 100%;
             height: 100%;
             background-color: #fff;
-            z-index: 20;
+            z-index: 100;
             opacity: 0;
-            animation: white-screen 0.5s linear forwards;
-            animation-delay: 11s;
+            pointer-events: none;
         }
         
-        @keyframes typewriter {
+        .progress {
+            display: inline-block;
+            width: 10px;
+            animation: progressBlink 0.5s infinite;
+        }
+        
+        @keyframes lineAppear {
             from {
                 opacity: 0;
             }
@@ -164,7 +157,22 @@
             }
         }
         
-        @keyframes white-screen {
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes progressBlink {
+            0%, 100% {
+                background-color: #fff;
+            }
+            50% {
+                background-color: transparent;
+            }
+        }
+        
+        @keyframes whiteScreen {
             0% {
                 opacity: 0;
             }
@@ -173,295 +181,402 @@
             }
         }
         
-        .progress-bar {
-            display: inline-block;
-            width: 20px;
-            height: 1px;
-            background-color: #33ff33;
-            animation: progress-blink 0.5s infinite;
-        }
-        
-        @keyframes progress-blink {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.3;
-            }
-        }
-        
-        .header {
-            color: #3399ff;
-            font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
+        /* Динамические задержки для каждой строки */
+        .line:nth-child(1) { animation-delay: 0.2s; }
+        .line:nth-child(2) { animation-delay: 0.4s; }
+        .line:nth-child(3) { animation-delay: 0.6s; }
+        .line:nth-child(4) { animation-delay: 0.8s; }
+        .line:nth-child(5) { animation-delay: 1.0s; }
+        .line:nth-child(6) { animation-delay: 1.2s; }
+        .line:nth-child(7) { animation-delay: 1.4s; }
+        .line:nth-child(8) { animation-delay: 1.6s; }
+        .line:nth-child(9) { animation-delay: 1.8s; }
+        .line:nth-child(10) { animation-delay: 2.0s; }
+        .line:nth-child(11) { animation-delay: 2.2s; }
+        .line:nth-child(12) { animation-delay: 2.4s; }
+        .line:nth-child(13) { animation-delay: 2.6s; }
+        .line:nth-child(14) { animation-delay: 2.8s; }
+        .line:nth-child(15) { animation-delay: 3.0s; }
+        .line:nth-child(16) { animation-delay: 3.2s; }
+        .line:nth-child(17) { animation-delay: 3.4s; }
+        .line:nth-child(18) { animation-delay: 3.6s; }
+        .line:nth-child(19) { animation-delay: 3.8s; }
+        .line:nth-child(20) { animation-delay: 4.0s; }
+        .line:nth-child(21) { animation-delay: 4.2s; }
+        .line:nth-child(22) { animation-delay: 4.4s; }
+        .line:nth-child(23) { animation-delay: 4.6s; }
+        .line:nth-child(24) { animation-delay: 4.8s; }
+        .line:nth-child(25) { animation-delay: 5.0s; }
+        .line:nth-child(26) { animation-delay: 5.2s; }
+        .line:nth-child(27) { animation-delay: 5.4s; }
+        .line:nth-child(28) { animation-delay: 5.6s; }
+        .line:nth-child(29) { animation-delay: 5.8s; }
+        .line:nth-child(30) { animation-delay: 6.0s; }
+        .line:nth-child(31) { animation-delay: 6.2s; }
+        .line:nth-child(32) { animation-delay: 6.4s; }
+        .line:nth-child(33) { animation-delay: 6.6s; }
+        .line:nth-child(34) { animation-delay: 6.8s; }
+        .line:nth-child(35) { animation-delay: 7.0s; }
+        .line:nth-child(36) { animation-delay: 7.2s; }
+        .line:nth-child(37) { animation-delay: 7.4s; }
+        .line:nth-child(38) { animation-delay: 7.6s; }
+        .line:nth-child(39) { animation-delay: 7.8s; }
+        .line:nth-child(40) { animation-delay: 8.0s; }
+        .line:nth-child(41) { animation-delay: 8.2s; }
+        .line:nth-child(42) { animation-delay: 8.4s; }
+        .line:nth-child(43) { animation-delay: 8.6s; }
+        .line:nth-child(44) { animation-delay: 8.8s; }
+        .line:nth-child(45) { animation-delay: 9.0s; }
+        .line:nth-child(46) { animation-delay: 9.2s; }
+        .line:nth-child(47) { animation-delay: 9.4s; }
+        .line:nth-child(48) { animation-delay: 9.6s; }
+        .line:nth-child(49) { animation-delay: 9.8s; }
+        .line:nth-child(50) { animation-delay: 10.0s; }
+        .line:nth-child(51) { animation-delay: 10.2s; }
+        .line:nth-child(52) { animation-delay: 10.4s; }
+        .line:nth-child(53) { animation-delay: 10.6s; }
+        .line:nth-child(54) { animation-delay: 10.8s; }
+        .line:nth-child(55) { animation-delay: 11.0s; }
+        .line:nth-child(56) { animation-delay: 11.2s; }
+        .line:nth-child(57) { animation-delay: 11.4s; }
+        .line:nth-child(58) { animation-delay: 11.6s; }
+        .line:nth-child(59) { animation-delay: 11.8s; }
+        .line:nth-child(60) { animation-delay: 12.0s; }
+        .line:nth-child(61) { animation-delay: 12.2s; }
+        .line:nth-child(62) { animation-delay: 12.4s; }
+        .line:nth-child(63) { animation-delay: 12.6s; }
+        .line:nth-child(64) { animation-delay: 12.8s; }
+        .line:nth-child(65) { animation-delay: 13.0s; }
+        .line:nth-child(66) { animation-delay: 13.2s; }
+        .line:nth-child(67) { animation-delay: 13.4s; }
+        .line:nth-child(68) { animation-delay: 13.6s; }
+        .line:nth-child(69) { animation-delay: 13.8s; }
+        .line:nth-child(70) { animation-delay: 14.0s; }
+        .line:nth-child(71) { animation-delay: 14.2s; }
+        .line:nth-child(72) { animation-delay: 14.4s; }
+        .line:nth-child(73) { animation-delay: 14.6s; }
+        .line:nth-child(74) { animation-delay: 14.8s; }
+        .line:nth-child(75) { animation-delay: 15.0s; }
     </style>
 </head>
 <body>
-    <div class="terminal" id="terminal">
+    <div class="terminal-container">
+        <div class="glitch-effect"></div>
         <div class="scanline"></div>
-        
-        <!-- Boot Lines -->
-        <div class="boot-line">Control4 Core 1 Controller (C4-HC250-BL) - Boot ROM Version 2.1.4</div>
-        <div class="boot-line">Copyright (C) 2005-2015 Control4 Corporation. All rights reserved.</div>
-        <div class="boot-line">Initializing hardware...</div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Detected CPU: ARM Cortex-A9 MPCore @ 1.0GHz</div>
-        <div class="boot-line">CPU ID: 0x413fc090</div>
-        <div class="boot-line">L1 Cache: 32KB I-Cache, 32KB D-Cache</div>
-        <div class="boot-line">L2 Cache: 512KB</div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Initializing DDR3 RAM... <span class="status-ok">OK</span> (512MB)</div>
-        <div class="boot-line">Testing RAM... <span class="status-ok">OK</span></div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Initializing Flash memory...</div>
-        <div class="boot-line">Detected SPI Flash: Macronix MX25L12835F</div>
-        <div class="boot-line">Flash Size: 128MB (1024Mbit)</div>
-        <div class="boot-line">Flash Read: <span class="status-ok">OK</span></div>
-        <div class="boot-line">Flash ID: 0xC22018</div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Checking boot signature... <span class="status-ok">VALID</span></div>
-        <div class="boot-line">Loading primary bootloader from flash... <span class="status-ok">OK</span></div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Control4 U-Boot 2013.03 (Jun 15 2015 - 14:22:17)</div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">DRAM:  512 MiB</div>
-        <div class="boot-line">Flash: 128 MiB</div>
-        <div class="boot-line">MMC:   FSL_SDHC: 0, FSL_SDHC: 1</div>
-        <div class="boot-line">In:    serial</div>
-        <div class="boot-line">Out:   serial</div>
-        <div class="boot-line">Err:   serial</div>
-        <div class="boot-line">Net:   FEC</div>
-        <div class="boot-line">MAC: 00:21:9B:XX:XX:XX</div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Initializing network...</div>
-        <div class="boot-line">PHY: RTL8211E-VL-CG at addr 1</div>
-        <div class="boot-line">Link is Up - 1000/Full</div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Hit any key to stop autoboot:  0</div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Loading kernel from flash...</div>
-        <div class="boot-line">## Booting kernel from Legacy Image at 14000000 ...</div>
-        <div class="boot-line">   Image Name:   Linux-3.0.35-control4</div>
-        <div class="boot-line">   Image Type:   ARM Linux Kernel Image (uncompressed)</div>
-        <div class="boot-line">   Data Size:    3185664 Bytes = 3 MiB</div>
-        <div class="boot-line">   Load Address: 10008000</div>
-        <div class="boot-line">   Entry Point:  10008000</div>
-        <div class="boot-line">   Verifying Checksum ... <span class="status-ok">OK</span></div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Loading initramfs...</div>
-        <div class="boot-line">## Loading init Ramdisk from Legacy Image at 18000000 ...</div>
-        <div class="boot-line">   Image Name:   initramfs</div>
-        <div class="boot-line">   Image Type:   ARM Linux RAMDisk Image (gzip compressed)</div>
-        <div class="boot-line">   Data Size:    8280640 Bytes = 7.9 MiB</div>
-        <div class="boot-line">   Load Address: 00000000</div>
-        <div class="boot-line">   Entry Point:  00000000</div>
-        <div class="boot-line">   Verifying Checksum ... <span class="status-ok">OK</span></div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Starting kernel...</div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">[    0.000000] Linux version 3.0.35-control4 (build@control4.com) (gcc version 4.7.2 20120920 (prerelease) (Linaro GCC 4.7-2012.09) ) #1 SMP PREEMPT Thu Jun 18 10:22:17 MDT 2015</div>
-        <div class="boot-line">[    0.000000] CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c53c7d</div>
-        <div class="boot-line">[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache</div>
-        <div class="boot-line">[    0.000000] Machine: Freescale i.MX6 Quad/DualLite (Device Tree)</div>
-        <div class="boot-line">[    0.000000] Memory policy: ECC disabled, Data cache writealloc</div>
-        <div class="boot-line">[    0.000000] CPU: All CPU(s) started in SVC mode.</div>
-        <div class="boot-line">[    0.000000] Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 130048</div>
-        <div class="boot-line">[    0.000000] Kernel command line: console=ttymxc0,115200 init=/linuxrc root=/dev/ram0 rw rootfstype=ext4 video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32</div>
-        <div class="boot-line">[    0.000000] PID hash table entries: 2048 (order: 1, 8192 bytes)</div>
-        <div class="boot-line">[    0.000000] Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)</div>
-        <div class="boot-line">[    0.000000] Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)</div>
-        <div class="boot-line">[    0.000000] Memory: 512MB = 512MB total</div>
-        <div class="boot-line">[    0.000000] Memory: 506588k/506588k available, 28516k reserved, 0K highmem</div>
-        <div class="boot-line">[    0.000000] Virtual kernel memory layout:</div>
-        <div class="boot-line">[    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)</div>
-        <div class="boot-line">[    0.000000]     fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)</div>
-        <div class="boot-line">[    0.000000]     DMA     : 0xf4600000 - 0xffe00000   ( 184 MB)</div>
-        <div class="boot-line">[    0.000000]     vmalloc : 0xa0800000 - 0xf4000000   (1336 MB)</div>
-        <div class="boot-line">[    0.000000]     lowmem  : 0x80000000 - 0xa0000000   ( 512 MB)</div>
-        <div class="boot-line">[    0.000000]     modules : 0x7f000000 - 0x80000000   (  16 MB)</div>
-        <div class="boot-line">[    0.000000]       .init : 0x80008000 - 0x8003e000   ( 216 kB)</div>
-        <div class="boot-line">[    0.000000]       .text : 0x8003e000 - 0x80710000   (7096 kB)</div>
-        <div class="boot-line">[    0.000000]       .data : 0x80710000 - 0x807c6a00   ( 731 kB)</div>
-        <div class="boot-line">[    0.000000] Mount-cache hash table entries: 512</div>
-        <div class="boot-line">[    0.500000] Initializing cgroup subsys cpuacct</div>
-        <div class="boot-line">[    0.500000] Initializing cgroup subsys memory</div>
-        <div class="boot-line">[    0.500000] Initializing cgroup subsys devices</div>
-        <div class="boot-line">[    0.500000] Initializing cgroup subsys freezer</div>
-        <div class="boot-line">[    0.500000] CPU: Testing write buffer coherency: ok</div>
-        <div class="boot-line">[    0.500000] ftrace: allocating 22289 entries in 66 pages</div>
-        <div class="boot-line">[    0.600000] Calibrating delay loop... 1581.05 BogoMIPS (lpj=7905280)</div>
-        <div class="boot-line">[    0.600000] pid_max: default: 32768 minimum: 301</div>
-        <div class="boot-line">[    0.600000] Security Framework initialized</div>
-        <div class="boot-line">[    0.600000] Mount-cache hash table entries: 512</div>
-        <div class="boot-line">[    0.600000] Initializing cgroup subsys debug</div>
-        <div class="boot-line">[    0.600000] CPU1: Booted secondary processor</div>
-        <div class="boot-line">[    0.600000] CPU2: Booted secondary processor</div>
-        <div class="boot-line">[    0.600000] CPU3: Booted secondary processor</div>
-        <div class="boot-line">[    0.600000] Brought up 4 CPUs</div>
-        <div class="boot-line">[    0.600000] SMP: Total of 4 processors activated (6324.20 BogoMIPS).</div>
-        <div class="boot-line">[    0.600000] devtmpfs: initialized</div>
-        <div class="boot-line">[    0.600000] regulator-dummy: no parameters</div>
-        <div class="boot-line">[    0.600000] NET: Registered protocol family 16</div>
-        <div class="boot-line">[    0.600000] DMA: preallocated 256 KiB pool for atomic coherent allocations</div>
-        <div class="boot-line">[    0.600000] FEC Ethernet Driver</div>
-        <div class="boot-line">[    0.600000] FEC: Invalid MAC address: 00:00:00:00:00:00</div>
-        <div class="boot-line">[    0.600000] FEC: Using random MAC address: 4a:30:9c:7f:6e:4f</div>
-        <div class="boot-line">[    0.600000] bio: create slab &lt;bio-0&gt; at 0</div>
-        <div class="boot-line">[    0.600000] SCSI subsystem initialized</div>
-        <div class="boot-line">[    0.600000] usbcore: registered new interface driver usbfs</div>
-        <div class="boot-line">[    0.600000] usbcore: registered new interface driver hub</div>
-        <div class="boot-line">[    0.600000] usbcore: registered new device driver usb</div>
-        <div class="boot-line">[    0.600000] Switching to clocksource mxc_timer1</div>
-        <div class="boot-line">[    0.600000] NET: Registered protocol family 2</div>
-        <div class="boot-line">[    0.600000] IP route cache hash table entries: 4096 (order: 2, 16384 bytes)</div>
-        <div class="boot-line">[    0.600000] TCP established hash table entries: 16384 (order: 5, 131072 bytes)</div>
-        <div class="boot-line">[    0.600000] TCP bind hash table entries: 16384 (order: 5, 131072 bytes)</div>
-        <div class="boot-line">[    0.600000] TCP: Hash tables configured (established 16384 bind 16384)</div>
-        <div class="boot-line">[    0.600000] TCP reno registered</div>
-        <div class="boot-line">[    0.600000] UDP hash table entries: 256 (order: 1, 8192 bytes)</div>
-        <div class="boot-line">[    0.600000] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes)</div>
-        <div class="boot-line">[    0.600000] NET: Registered protocol family 1</div>
-        <div class="boot-line">[    0.600000] RPC: Registered named UNIX socket transport module.</div>
-        <div class="boot-line">[    0.600000] RPC: Registered udp transport module.</div>
-        <div class="boot-line">[    0.600000] RPC: Registered tcp transport module.</div>
-        <div class="boot-line">[    0.600000] RPC: Registered tcp NFSv4.1 backchannel transport module.</div>
-        <div class="boot-line">[    0.600000] Trying to unpack rootfs image as initramfs...</div>
-        <div class="boot-line">[    0.600000] Freeing initrd memory: 8280K</div>
-        <div class="boot-line">[    0.600000] audit: initializing netlink socket (disabled)</div>
-        <div class="boot-line">[    0.600000] type=2000 audit(0.600:1): initialized</div>
-        <div class="boot-line">[    0.600000] bounce pool size: 64 pages</div>
-        <div class="boot-line">[    0.600000] NFS: Registering the id_resolver key type</div>
-        <div class="boot-line">[    0.600000] jffs2: version 2.2. (NAND) © 2001-2006 Red Hat, Inc.</div>
-        <div class="boot-line">[    0.600000] fuse init (API version 7.18)</div>
-        <div class="boot-line">[    0.600000] msgmni has been set to 993</div>
-        <div class="boot-line">[    0.600000] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 253)</div>
-        <div class="boot-line">[    0.600000] io scheduler noop registered</div>
-        <div class="boot-line">[    0.600000] io scheduler deadline registered</div>
-        <div class="boot-line">[    0.600000] io scheduler cfq registered (default)</div>
-        <div class="boot-line">[    0.600000] mxc_sdc_fb fb.27: register mxc display driver hdmi</div>
-        <div class="boot-line">[    0.600000] Console: switching to colour frame buffer device 240x67</div>
-        <div class="boot-line">[    0.600000] mxc_sdc_fb fb.27: initialized</div>
-        <div class="boot-line">[    0.600000] Serial: IMX driver</div>
-        <div class="boot-line">[    0.600000] IMX serial driver initialized</div>
-        <div class="boot-line">[    0.600000] mxs-auart 2020000.serial: could not find pctldev for node /soc/aips-bus@02000000/pinctrl@020e0000/uart1grp, deferring probe</div>
-        <div class="boot-line">[    0.600000] loop: module loaded</div>
-        <div class="boot-line">[    0.600000] FEC: Driver loaded.</div>
-        <div class="boot-line">[    0.600000] FEC: Using MII controller</div>
-        <div class="boot-line">[    0.600000] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver</div>
-        <div class="boot-line">[    0.600000] usbcore: registered new interface driver cdc_acm</div>
-        <div class="boot-line">[    0.600000] cdc_acm: USB Abstract Control Model driver for USB modems and ISDN adapters</div>
-        <div class="boot-line">[    0.600000] Initializing USB Mass Storage driver...</div>
-        <div class="boot-line">[    0.600000] usbcore: registered new interface driver usb-storage</div>
-        <div class="boot-line">[    0.600000] USB Mass Storage support registered.</div>
-        <div class="boot-line">[    0.600000] mice: PS/2 mouse device common for all mice</div>
-        <div class="boot-line">[    0.600000] input: TSC2007 Touchscreen as /devices/platform/tsc2007/input/input0</div>
-        <div class="boot-line">[    0.600000] i2c /dev entries driver</div>
-        <div class="boot-line">[    0.600000] IR NEC protocol handler initialized</div>
-        <div class="boot-line">[    0.600000] IR RC5 protocol handler initialized</div>
-        <div class="boot-line">[    0.600000] IR RC6 protocol handler initialized</div>
-        <div class="boot-line">[    0.600000] IR JVC protocol handler initialized</div>
-        <div class="boot-line">[    0.600000] IR Sony protocol handler initialized</div>
-        <div class="boot-line">[    0.600000] IR SANYO protocol handler initialized</div>
-        <div class="boot-line">[    0.600000] IR Sharp protocol handler initialized</div>
-        <div class="boot-line">[    0.600000] IR MCE Keyboard/mouse protocol handler initialized</div>
-        <div class="boot-line">[    0.600000] IR XMP protocol handler initialized</div>
-        <div class="boot-line">[    0.600000] usbcore: registered new interface driver usbhid</div>
-        <div class="boot-line">[    0.600000] usbhid: USB HID core driver</div>
-        <div class="boot-line">[    0.600000] logger: created 64K log 'log_main'</div>
-        <div class="boot-line">[    0.600000] logger: created 256K log 'log_events'</div>
-        <div class="boot-line">[    0.600000] logger: created 64K log 'log_radio'</div>
-        <div class="boot-line">[    0.600000] logger: created 64K log 'log_system'</div>
-        <div class="boot-line">[    0.600000] TCP cubic registered</div>
-        <div class="boot-line">[    0.600000] NET: Registered protocol family 10</div>
-        <div class="boot-line">[    0.600000] NET: Registered protocol family 17</div>
-        <div class="boot-line">[    0.600000] Registering the dns_resolver key type</div>
-        <div class="boot-line">[    0.600000] ThumbEE CPU extension supported.</div>
-        <div class="boot-line">[    0.600000] Registering SWP/SWPB emulation handler</div>
-        <div class="boot-line">[    0.600000] registered taskstats version 1</div>
-        <div class="boot-line">[    0.600000] zram: Created 1 device(s) ...</div>
-        <div class="boot-line">[    0.600000] VFP support v0.3: implementor 41 architecture 3 part 30 variant 9 rev 4</div>
-        <div class="boot-line">[    0.600000] Bus freq driver module loaded</div>
-        <div class="boot-line">[    0.600000] Bus freq driver Enabled</div>
-        <div class="boot-line">[    0.600000] mxc_dvfs_core_probe</div>
-        <div class="boot-line">[    0.600000] DVFS driver module loaded</div>
-        <div class="boot-line">[    0.600000] input: gpio-keys as /devices/platform/gpio-keys/input/input1</div>
-        <div class="boot-line">[    0.600000] ALSA device list:</div>
-        <div class="boot-line">[    0.600000]   #0: IMX-HDMI-SOC</div>
-        <div class="boot-line">[    0.600000] EXT4-fs (ram0): mounted filesystem with ordered data mode. Opts: (null)</div>
-        <div class="boot-line">[    0.600000] Freeing init memory: 216K</div>
-        <div class="boot-line">[    0.600000] init: /dev/hw_random not found</div>
-        <div class="boot-line">[    0.600000] init: cannot open '/initlogo.rle'</div>
-        <div class="boot-line">[    0.600000] init: /dev/hw_random not found</div>
-        <div class="boot-line">[    0.600000] yaffs: dev is 32505857 name is "mtdblock1" rw</div>
-        <div class="boot-line">[    0.600000] yaffs: passed flags ""</div>
-        <div class="boot-line">[    0.600000] yaffs: Attempting MTD mount on 31.1, "mtdblock1"</div>
-        <div class="boot-line">[    0.600000] yaffs: auto selecting yaffs2</div>
-        <div class="boot-line">[    0.600000] yaffs_read_super: isCheckpointed 0</div>
-        <div class="boot-line">[    0.600000] NET: Registered protocol family 1</div>
-        <div class="boot-line">[    0.600000] yaffs: dev is 32505858 name is "mtdblock2" rw</div>
-        <div class="boot-line">[    0.600000] yaffs: passed flags ""</div>
-        <div class="boot-line">[    0.600000] yaffs: Attempting MTD mount on 31.2, "mtdblock2"</div>
-        <div class="boot-line">[    0.600000] yaffs: auto selecting yaffs2</div>
-        <div class="boot-line">[    0.600000] yaffs_read_super: isCheckpointed 1</div>
-        <div class="boot-line">[    0.600000] VFS: Mounted root (ext4 filesystem) on device 1:0.</div>
-        <div class="boot-line">[    0.600000] devtmpfs: mounted</div>
-        <div class="boot-line">[    0.600000] Freeing unused kernel memory: 216K (80008000 - 8003e000)</div>
-        <div class="boot-line">Starting Control4 Director...</div>
-        <div class="boot-line">Initializing Control4 services...</div>
-        <div class="boot-line">Starting Zigbee coordinator... <span class="status-ok">OK</span></div>
-        <div class="boot-line">Initializing audio subsystem... <span class="status-ok">OK</span></div>
-        <div class="boot-line">Loading device database... <span class="status-ok">OK</span></div>
-        <div class="boot-line">Starting network services... <span class="status-ok">OK</span></div>
-        <div class="boot-line">Initializing security subsystem... <span class="status-ok">OK</span></div>
-        <div class="boot-line">Starting system watchdog... <span class="status-ok">OK</span></div>
-        <div class="boot-line">Control4 Director started successfully.</div>
-        <div class="boot-line">System ready.</div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Control4 OS Version: 2.10.0.587469</div>
-        <div class="boot-line">Director Version: 2.10.0.587469</div>
-        <div class="boot-line">System Uptime: 0 days 00:00:25</div>
-        <div class="boot-line">&nbsp;</div>
-        <div class="boot-line">Boot complete. Switching to display output...</div>
-        
-        <!-- White screen after boot -->
-        <div class="white-screen"></div>
+        <div class="terminal" id="terminal">
+            <div class="content" id="content">
+<span class="line">Control4 Core 1 Controller (C4-HC250-BL) - Boot ROM Version 2.1.4</span>
+<span class="line">Copyright (C) 2005-2015 Control4 Corporation. All rights reserved.</span>
+<span class="line">Initializing hardware...</span>
+<span class="line"></span>
+<span class="line">Detected CPU: ARM Cortex-A9 MPCore @ 1.0GHz</span>
+<span class="line">CPU ID: 0x413fc090</span>
+<span class="line">L1 Cache: 32KB I-Cache, 32KB D-Cache</span>
+<span class="line">L2 Cache: 512KB</span>
+<span class="line"></span>
+<span class="line">Initializing DDR3 RAM... <span class="status-ok">OK</span> (512MB)</span>
+<span class="line">Testing RAM... <span class="status-ok">OK</span></span>
+<span class="line"></span>
+<span class="line">Initializing Flash memory...</span>
+<span class="line">Detected SPI Flash: Macronix MX25L12835F</span>
+<span class="line">Flash Size: 128MB (1024Mbit)</span>
+<span class="line">Flash Read: <span class="status-ok">OK</span></span>
+<span class="line">Flash ID: 0xC22018</span>
+<span class="line"></span>
+<span class="line">Checking boot signature... <span class="status-ok">VALID</span></span>
+<span class="line">Loading primary bootloader from flash... <span class="status-ok">OK</span></span>
+<span class="line"></span>
+<span class="line">Control4 U-Boot 2013.03 (Jun 15 2015 - 14:22:17)</span>
+<span class="line"></span>
+<span class="line">DRAM:  512 MiB</span>
+<span class="line">Flash: 128 MiB</span>
+<span class="line">MMC:   FSL_SDHC: 0, FSL_SDHC: 1</span>
+<span class="line">In:    serial</span>
+<span class="line">Out:   serial</span>
+<span class="line">Err:   serial</span>
+<span class="line">Net:   FEC</span>
+<span class="line">MAC: 00:21:9B:XX:XX:XX</span>
+<span class="line"></span>
+<span class="line">Initializing network...</span>
+<span class="line">PHY: RTL8211E-VL-CG at addr 1</span>
+<span class="line">Link is Up - 1000/Full</span>
+<span class="line"></span>
+<span class="line">Hit any key to stop autoboot:  0</span>
+<span class="line"></span>
+<span class="line">Loading kernel from flash...</span>
+<span class="line">## Booting kernel from Legacy Image at 14000000 ...</span>
+<span class="line">   Image Name:   Linux-3.0.35-control4</span>
+<span class="line">   Image Type:   ARM Linux Kernel Image (uncompressed)</span>
+<span class="line">   Data Size:    3185664 Bytes = 3 MiB</span>
+<span class="line">   Load Address: 10008000</span>
+<span class="line">   Entry Point:  10008000</span>
+<span class="line">   Verifying Checksum ... <span class="status-ok">OK</span></span>
+<span class="line"></span>
+<span class="line">Loading initramfs...</span>
+<span class="line">## Loading init Ramdisk from Legacy Image at 18000000 ...</span>
+<span class="line">   Image Name:   initramfs</span>
+<span class="line">   Image Type:   ARM Linux RAMDisk Image (gzip compressed)</span>
+<span class="line">   Data Size:    8280640 Bytes = 7.9 MiB</span>
+<span class="line">   Load Address: 00000000</span>
+<span class="line">   Entry Point:  00000000</span>
+<span class="line">   Verifying Checksum ... <span class="status-ok">OK</span></span>
+<span class="line"></span>
+<span class="line">Starting kernel...</span>
+<span class="line"></span>
+<span class="line">[    0.000000] Linux version 3.0.35-control4 (build@control4.com) (gcc version 4.7.2 20120920 (prerelease) (Linaro GCC 4.7-2012.09) ) #1 SMP PREEMPT Thu Jun 18 10:22:17 MDT 2015</span>
+<span class="line">[    0.000000] CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c53c7d</span>
+<span class="line">[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache</span>
+<span class="line">[    0.000000] Machine: Freescale i.MX6 Quad/DualLite (Device Tree)</span>
+<span class="line">[    0.000000] Memory policy: ECC disabled, Data cache writealloc</span>
+<span class="line">[    0.000000] CPU: All CPU(s) started in SVC mode.</span>
+<span class="line">[    0.000000] Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 130048</span>
+<span class="line">[    0.000000] Kernel command line: console=ttymxc0,115200 init=/linuxrc root=/dev/ram0 rw rootfstype=ext4 video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32</span>
+<span class="line">[    0.000000] PID hash table entries: 2048 (order: 1, 8192 bytes)</span>
+<span class="line">[    0.000000] Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)</span>
+<span class="line">[    0.000000] Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)</span>
+<span class="line">[    0.000000] Memory: 512MB = 512MB total</span>
+<span class="line">[    0.000000] Memory: 506588k/506588k available, 28516k reserved, 0K highmem</span>
+<span class="line">[    0.000000] Virtual kernel memory layout:</span>
+<span class="line">[    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)</span>
+<span class="line">[    0.000000]     fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)</span>
+<span class="line">[    0.000000]     DMA     : 0xf4600000 - 0xffe00000   ( 184 MB)</span>
+<span class="line">[    0.000000]     vmalloc : 0xa0800000 - 0xf4000000   (1336 MB)</span>
+<span class="line">[    0.000000]     lowmem  : 0x80000000 - 0xa0000000   ( 512 MB)</span>
+<span class="line">[    0.000000]     modules : 0x7f000000 - 0x80000000   (  16 MB)</span>
+<span class="line">[    0.000000]       .init : 0x80008000 - 0x8003e000   ( 216 kB)</span>
+<span class="line">[    0.000000]       .text : 0x8003e000 - 0x80710000   (7096 kB)</span>
+<span class="line">[    0.000000]       .data : 0x80710000 - 0x807c6a00   ( 731 kB)</span>
+<span class="line">[    0.000000] Mount-cache hash table entries: 512</span>
+<span class="line">[    0.500000] Initializing cgroup subsys cpuacct</span>
+<span class="line">[    0.500000] Initializing cgroup subsys memory</span>
+<span class="line">[    0.500000] Initializing cgroup subsys devices</span>
+<span class="line">[    0.500000] Initializing cgroup subsys freezer</span>
+<span class="line">[    0.500000] CPU: Testing write buffer coherency: ok</span>
+<span class="line">[    0.500000] ftrace: allocating 22289 entries in 66 pages</span>
+<span class="line">[    0.600000] Calibrating delay loop... 1581.05 BogoMIPS (lpj=7905280)</span>
+<span class="line">[    0.600000] pid_max: default: 32768 minimum: 301</span>
+<span class="line">[    0.600000] Security Framework initialized</span>
+<span class="line">[    0.600000] Mount-cache hash table entries: 512</span>
+<span class="line">[    0.600000] Initializing cgroup subsys debug</span>
+<span class="line">[    0.600000] CPU1: Booted secondary processor</span>
+<span class="line">[    0.600000] CPU2: Booted secondary processor</span>
+<span class="line">[    0.600000] CPU3: Booted secondary processor</span>
+<span class="line">[    0.600000] Brought up 4 CPUs</span>
+<span class="line">[    0.600000] SMP: Total of 4 processors activated (6324.20 BogoMIPS).</span>
+<span class="line">[    0.600000] devtmpfs: initialized</span>
+<span class="line">[    0.600000] regulator-dummy: no parameters</span>
+<span class="line">[    0.600000] NET: Registered protocol family 16</span>
+<span class="line">[    0.600000] DMA: preallocated 256 KiB pool for atomic coherent allocations</span>
+<span class="line">[    0.600000] FEC Ethernet Driver</span>
+<span class="line">[    0.600000] FEC: Invalid MAC address: 00:00:00:00:00:00</span>
+<span class="line">[    0.600000] FEC: Using random MAC address: 4a:30:9c:7f:6e:4f</span>
+<span class="line">[    0.600000] bio: create slab &lt;bio-0&gt; at 0</span>
+<span class="line">[    0.600000] SCSI subsystem initialized</span>
+<span class="line">[    0.600000] usbcore: registered new interface driver usbfs</span>
+<span class="line">[    0.600000] usbcore: registered new interface driver hub</span>
+<span class="line">[    0.600000] usbcore: registered new device driver usb</span>
+<span class="line">[    0.600000] Switching to clocksource mxc_timer1</span>
+<span class="line">[    0.600000] NET: Registered protocol family 2</span>
+<span class="line">[    0.600000] IP route cache hash table entries: 4096 (order: 2, 16384 bytes)</span>
+<span class="line">[    0.600000] TCP established hash table entries: 16384 (order: 5, 131072 bytes)</span>
+<span class="line">[    0.600000] TCP bind hash table entries: 16384 (order: 5, 131072 bytes)</span>
+<span class="line">[    0.600000] TCP: Hash tables configured (established 16384 bind 16384)</span>
+<span class="line">[    0.600000] TCP reno registered</span>
+<span class="line">[    0.600000] UDP hash table entries: 256 (order: 1, 8192 bytes)</span>
+<span class="line">[    0.600000] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes)</span>
+<span class="line">[    0.600000] NET: Registered protocol family 1</span>
+<span class="line">[    0.600000] RPC: Registered named UNIX socket transport module.</span>
+<span class="line">[    0.600000] RPC: Registered udp transport module.</span>
+<span class="line">[    0.600000] RPC: Registered tcp transport module.</span>
+<span class="line">[    0.600000] RPC: Registered tcp NFSv4.1 backchannel transport module.</span>
+<span class="line">[    0.600000] Trying to unpack rootfs image as initramfs...</span>
+<span class="line">[    0.600000] Freeing initrd memory: 8280K</span>
+<span class="line">[    0.600000] audit: initializing netlink socket (disabled)</span>
+<span class="line">[    0.600000] type=2000 audit(0.600:1): initialized</span>
+<span class="line">[    0.600000] bounce pool size: 64 pages</span>
+<span class="line">[    0.600000] NFS: Registering the id_resolver key type</span>
+<span class="line">[    0.600000] jffs2: version 2.2. (NAND) © 2001-2006 Red Hat, Inc.</span>
+<span class="line">[    0.600000] fuse init (API version 7.18)</span>
+<span class="line">[    0.600000] msgmni has been set to 993</span>
+<span class="line">[    0.600000] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 253)</span>
+<span class="line">[    0.600000] io scheduler noop registered</span>
+<span class="line">[    0.600000] io scheduler deadline registered</span>
+<span class="line">[    0.600000] io scheduler cfq registered (default)</span>
+<span class="line">[    0.600000] mxc_sdc_fb fb.27: register mxc display driver hdmi</span>
+<span class="line">[    0.600000] Console: switching to colour frame buffer device 240x67</span>
+<span class="line">[    0.600000] mxc_sdc_fb fb.27: initialized</span>
+<span class="line">[    0.600000] Serial: IMX driver</span>
+<span class="line">[    0.600000] IMX serial driver initialized</span>
+<span class="line">[    0.600000] mxs-auart 2020000.serial: could not find pctldev for node /soc/aips-bus@02000000/pinctrl@020e0000/uart1grp, deferring probe</span>
+<span class="line">[    0.600000] loop: module loaded</span>
+<span class="line">[    0.600000] FEC: Driver loaded.</span>
+<span class="line">[    0.600000] FEC: Using MII controller</span>
+<span class="line">[    0.600000] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver</span>
+<span class="line">[    0.600000] usbcore: registered new interface driver cdc_acm</span>
+<span class="line">[    0.600000] cdc_acm: USB Abstract Control Model driver for USB modems and ISDN adapters</span>
+<span class="line">[    0.600000] Initializing USB Mass Storage driver...</span>
+<span class="line">[    0.600000] usbcore: registered new interface driver usb-storage</span>
+<span class="line">[    0.600000] USB Mass Storage support registered.</span>
+<span class="line">[    0.600000] mice: PS/2 mouse device common for all mice</span>
+<span class="line">[    0.600000] input: TSC2007 Touchscreen as /devices/platform/tsc2007/input/input0</span>
+<span class="line">[    0.600000] i2c /dev entries driver</span>
+<span class="line">[    0.600000] IR NEC protocol handler initialized</span>
+<span class="line">[    0.600000] IR RC5 protocol handler initialized</span>
+<span class="line">[    0.600000] IR RC6 protocol handler initialized</span>
+<span class="line">[    0.600000] IR JVC protocol handler initialized</span>
+<span class="line">[    0.600000] IR Sony protocol handler initialized</span>
+<span class="line">[    0.600000] IR SANYO protocol handler initialized</span>
+<span class="line">[    0.600000] IR Sharp protocol handler initialized</span>
+<span class="line">[    0.600000] IR MCE Keyboard/mouse protocol handler initialized</span>
+<span class="line">[    0.600000] IR XMP protocol handler initialized</span>
+<span class="line">[    0.600000] usbcore: registered new interface driver usbhid</span>
+<span class="line">[    0.600000] usbhid: USB HID core driver</span>
+<span class="line">[    0.600000] logger: created 64K log 'log_main'</span>
+<span class="line">[    0.600000] logger: created 256K log 'log_events'</span>
+<span class="line">[    0.600000] logger: created 64K log 'log_radio'</span>
+<span class="line">[    0.600000] logger: created 64K log 'log_system'</span>
+<span class="line">[    0.600000] TCP cubic registered</span>
+<span class="line">[    0.600000] NET: Registered protocol family 10</span>
+<span class="line">[    0.600000] NET: Registered protocol family 17</span>
+<span class="line">[    0.600000] Registering the dns_resolver key type</span>
+<span class="line">[    0.600000] ThumbEE CPU extension supported.</span>
+<span class="line">[    0.600000] Registering SWP/SWPB emulation handler</span>
+<span class="line">[    0.600000] registered taskstats version 1</span>
+<span class="line">[    0.600000] zram: Created 1 device(s) ...</span>
+<span class="line">[    0.600000] VFP support v0.3: implementor 41 architecture 3 part 30 variant 9 rev 4</span>
+<span class="line">[    0.600000] Bus freq driver module loaded</span>
+<span class="line">[    0.600000] Bus freq driver Enabled</span>
+<span class="line">[    0.600000] mxc_dvfs_core_probe</span>
+<span class="line">[    0.600000] DVFS driver module loaded</span>
+<span class="line">[    0.600000] input: gpio-keys as /devices/platform/gpio-keys/input/input1</span>
+<span class="line">[    0.600000] ALSA device list:</span>
+<span class="line">[    0.600000]   #0: IMX-HDMI-SOC</span>
+<span class="line">[    0.600000] EXT4-fs (ram0): mounted filesystem with ordered data mode. Opts: (null)</span>
+<span class="line">[    0.600000] Freeing init memory: 216K</span>
+<span class="line">[    0.600000] init: /dev/hw_random not found</span>
+<span class="line">[    0.600000] init: cannot open '/initlogo.rle'</span>
+<span class="line">[    0.600000] init: /dev/hw_random not found</span>
+<span class="line">[    0.600000] yaffs: dev is 32505857 name is "mtdblock1" rw</span>
+<span class="line">[    0.600000] yaffs: passed flags ""</span>
+<span class="line">[    0.600000] yaffs: Attempting MTD mount on 31.1, "mtdblock1"</span>
+<span class="line">[    0.600000] yaffs: auto selecting yaffs2</span>
+<span class="line">[    0.600000] yaffs_read_super: isCheckpointed 0</span>
+<span class="line">[    0.600000] NET: Registered protocol family 1</span>
+<span class="line">[    0.600000] yaffs: dev is 32505858 name is "mtdblock2" rw</span>
+<span class="line">[    0.600000] yaffs: passed flags ""</span>
+<span class="line">[    0.600000] yaffs: Attempting MTD mount on 31.2, "mtdblock2"</span>
+<span class="line">[    0.600000] yaffs: auto selecting yaffs2</span>
+<span class="line">[    0.600000] yaffs_read_super: isCheckpointed 1</span>
+<span class="line">[    0.600000] VFS: Mounted root (ext4 filesystem) on device 1:0.</span>
+<span class="line">[    0.600000] devtmpfs: mounted</span>
+<span class="line">[    0.600000] Freeing unused kernel memory: 216K (80008000 - 8003e000)</span>
+<span class="line">Starting Control4 Director...</span>
+<span class="line">Initializing Control4 services...</span>
+<span class="line">Starting Zigbee coordinator... <span class="status-ok">OK</span></span>
+<span class="line">Initializing audio subsystem... <span class="status-ok">OK</span></span>
+<span class="line">Loading device database... <span class="status-ok">OK</span></span>
+<span class="line">Starting network services... <span class="status-ok">OK</span></span>
+<span class="line">Initializing security subsystem... <span class="status-ok">OK</span></span>
+<span class="line">Starting system watchdog... <span class="status-ok">OK</span></span>
+<span class="line">Control4 Director started successfully.</span>
+<span class="line">System ready.</span>
+<span class="line"></span>
+<span class="line">Control4 OS Version: 2.10.0.587469</span>
+<span class="line">Director Version: 2.10.0.587469</span>
+<span class="line">System Uptime: 0 days 00:00:25</span>
+<span class="line"></span>
+<span class="line">Boot complete. Switching to display output...<span class="progress">█</span></span>
+            </div>
+        </div>
+        <div class="white-screen" id="white-screen"></div>
     </div>
 
     <script>
-        // Add some random flicker effect to the terminal
         document.addEventListener('DOMContentLoaded', function() {
             const terminal = document.getElementById('terminal');
+            const whiteScreen = document.getElementById('white-screen');
             
-            // Add occasional random flicker
-            setInterval(() => {
-                if (Math.random() < 0.02) { // 2% chance every second
-                    terminal.style.opacity = '0.95';
-                    setTimeout(() => {
-                        terminal.style.opacity = '1';
-                    }, 50);
-                }
-            }, 1000);
-            
-            // Add blinking cursor at the end
-            const cursor = document.createElement('div');
-            cursor.className = 'boot-line blink';
-            cursor.innerHTML = '_';
-            cursor.style.animationDelay = '10.5s';
-            terminal.appendChild(cursor);
-            
-            // Auto scroll to bottom as content loads
-            let scrollPosition = 0;
-            const scrollInterval = setInterval(() => {
+            // Автопрокрутка по мере появления строк
+            let scrollInterval = setInterval(() => {
                 terminal.scrollTop = terminal.scrollHeight;
-                scrollPosition++;
-                
-                // Stop scrolling after white screen appears
-                if (scrollPosition > 120) {
-                    clearInterval(scrollInterval);
-                }
             }, 100);
+            
+            // Добавляем мерцание текста для реалистичности
+            setInterval(() => {
+                if (Math.random() < 0.05) {
+                    const lines = document.querySelectorAll('.line');
+                    if (lines.length > 0) {
+                        const randomLine = lines[Math.floor(Math.random() * lines.length)];
+                        randomLine.style.opacity = '0.7';
+                        setTimeout(() => {
+                            randomLine.style.opacity = '1';
+                        }, 50);
+                    }
+                }
+            }, 500);
+            
+            // Добавляем случайное вертикальное смещение
+            setInterval(() => {
+                if (Math.random() < 0.03) {
+                    terminal.style.transform = 'translateY(1px)';
+                    setTimeout(() => {
+                        terminal.style.transform = 'translateY(0)';
+                    }, 100);
+                }
+            }, 300);
+            
+            // Включаем белый экран через 15 секунд
+            setTimeout(() => {
+                whiteScreen.style.animation = 'whiteScreen 0.5s linear forwards';
+                clearInterval(scrollInterval);
+            }, 15000);
+            
+            // Добавляем звуковые эффекты (опционально)
+            const addSoundEffect = () => {
+                if (Math.random() < 0.01) {
+                    // Имитация тихого шума монитора
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = 100 + Math.random() * 200;
+                    oscillator.type = 'sine';
+                    gainNode.gain.value = 0.001; // Очень тихо
+                    
+                    oscillator.start();
+                    setTimeout(() => {
+                        oscillator.stop();
+                    }, 100);
+                }
+            };
+            
+            // Запускаем звуковые эффекты (можно закомментировать)
+            // setInterval(addSoundEffect, 2000);
+            
+            // Имитация загрузки с помощью посимвольного появления
+            const lines = document.querySelectorAll('.line');
+            lines.forEach((line, index) => {
+                const originalText = line.textContent;
+                line.textContent = '';
+                
+                setTimeout(() => {
+                    let i = 0;
+                    const typeInterval = setInterval(() => {
+                        if (i < originalText.length) {
+                            // Добавляем случайные задержки для реалистичности
+                            if (Math.random() > 0.1) {
+                                line.textContent += originalText[i];
+                                i++;
+                            }
+                        } else {
+                            clearInterval(typeInterval);
+                        }
+                    }, 2); // Скорость печати символов
+                }, index * 80); // Задержка между строками
+            });
         });
     </script>
 </body>
